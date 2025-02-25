@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main
+      - master  # geändert von "main" zu "master"
   # ...existing trigger configuration...
 
 jobs:
