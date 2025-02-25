@@ -1,0 +1,231 @@
+@use "sass:color" as color;
+@use '../styles/variables' as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: linear-gradient(45deg, $secondary-color, #0a0a0a);
+  color: $text-color;
+  padding: 2rem;
+  text-align: center;
+  animation: fadeIn 1s ease-out;
+}
+
+h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+p {
+  font-size: 1.2rem;
+  max-width: 800px;
+  line-height: 1.6;
+  margin: 1rem 0;
+}
+
+.address {
+  background-color: $primary-color;
+  color: $secondary-color;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  margin: 1rem 0;
+}
+
+.walletInfo {
+  background: rgba(247, 147, 26, 0.2);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  width: 80%;
+  text-align: left;
+}
+
+.walletCard {
+  background: linear-gradient(135deg, rgba(0, 150, 136, 0.2), rgba(0, 150, 136, 0.1));
+  border: 1px solid rgba($primary-color, 0.3);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin: 1rem auto;
+  max-width: 600px;
+  text-align: left;
+  
+  h2 {
+    margin-bottom: 0.5rem;
+    font-size: 1.8rem;
+  }
+  
+  p {
+    font-size: 1rem;
+    margin: 0.3rem 0;
+  }
+}
+
+.miningStatus {
+  background: rgba(255, 235, 59, 0.2);
+  border: 1px solid rgba($primary-color, 0.3);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 1rem;
+  margin: 1rem auto 2rem;
+  max-width: 600px;
+  text-align: left;
+  
+  p {
+    font-size: 1rem;
+    margin: 0.3rem 0;
+  }
+}
+
+.miningBlock {
+  background: linear-gradient(135deg, rgba(247, 147, 26, 0.15), rgba(247, 147, 26, 0.05));
+  border: 1px solid rgba($primary-color, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  max-width: 600px;
+  margin: 2rem auto;
+  text-align: left;
+  font-family: 'Roboto', sans-serif;
+}
+
+.miningBlock h2 {
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  color: $primary-color;
+  border-bottom: 1px solid rgba($primary-color, 0.3);
+  padding-bottom: 0.5rem;
+}
+
+.miningBlock p {
+  margin: 1rem 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  /* Füge diese Eigenschaften hinzu, damit Text bei zu wenig Platz umbricht */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.hashTarget {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.lessThan {
+  margin: 0 0.5rem;
+  color: $primary-color;
+  font-weight: bold;
+}
+
+.miningBlock p strong {
+  display: inline-block;
+  width: 150px;
+  color: $primary-color;
+}
+
+.nextButton {
+  background: $primary-color;
+  color: $secondary-color;
+  font-size: 1.2rem;
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: background 0.3s ease, transform 0.3s ease;
+  margin-top: 1.5rem;
+  margin-right: 0.5rem;
+}
+
+.nextButton:hover {
+  background: $hover-color;
+  transform: translateY(-2px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.blockchainDisplay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0rem;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+}
+
+.block {
+  background: rgba(0, 150, 136, 0.2);
+  border: 1px solid rgba(0, 150, 136, 0.5);
+  border-radius: 8px;
+  padding: 0.2rem;
+  min-width: 80px;
+  text-align: center;
+  color: $text-color;
+}
+
+.prevHash {
+  font-size: 0.7rem;
+  margin-top: 0.3rem;
+  color: color.adjust($primary-color, $lightness: 20%);
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.foundAnimation {
+  animation: pop 0.5s ease-out;
+}
+
+.blockButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.walletsContainer {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 800px) {
+  .block {
+    padding: 0.5rem;  // Reduzierte Innenabstände
+    margin: 0.5rem 0; // Reduzierte Außenabstände
+    font-size: 0.85rem; // Optional: kleinere Schriftgröße
+  }
+  p {
+    font-size: 1rem;
+    max-width: 800px;
+    line-height: 1;
+    margin: 1rem 0;
+  }
+  .txId {
+    word-break: break-all;
+  }
+}

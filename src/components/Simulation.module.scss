@@ -1,0 +1,47 @@
+@use '../styles/variables' as *;
+
+.simulation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: linear-gradient(45deg, $secondary-color, #0a0a0a);
+  color: $text-color;
+  padding: 2rem;
+  text-align: center;
+  animation: fadeIn 1s ease-out;
+}
+
+.stepContainer {
+  margin-bottom: 2rem;
+  animation: slideIn 0.8s ease-out;
+}
+
+.nextButton {
+  background: $primary-color;
+  color: $secondary-color;
+  font-size: 1.2rem;
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.nextButton:hover {
+  background: $hover-color;
+  transform: translateY(-2px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

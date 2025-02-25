@@ -1,0 +1,70 @@
+@use '../styles/variables' as *;
+
+/* Define fadeInSlide keyframe */
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: linear-gradient(45deg, $secondary-color, #0a0a0a);
+  color: $text-color;
+  padding: 2rem;
+  text-align: center;
+  animation: fadeIn 1s ease-out;
+}
+
+h1 {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeInSlide 1s forwards;
+  animation-delay: 0.5s;
+}
+
+p {
+  font-size: 1.25rem;
+  max-width: 800px;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: fadeInSlide 1s forwards;
+  animation-delay: 1s;
+}
+
+.nextButton {
+  background: $primary-color;
+  color: $secondary-color;
+  font-size: 1.2rem;
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: background 0.3s ease, transform 0.3s ease;
+  opacity: 0;
+  animation: fadeInSlide 1s forwards;
+  animation-delay: 1.5s;
+}
+
+.nextButton:hover {
+  background: $hover-color;
+  transform: translateY(-2px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

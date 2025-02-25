@@ -1,0 +1,102 @@
+@use '../styles/variables' as *;
+
+/* Keyframe for fading in and sliding up */
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Modernes Design mit Schatten und Abständen */
+.landing {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: $secondary-color;
+  text-align: center;
+  color: $text-color;
+  height: 100vh;        // fixed viewport height
+  overflow: hidden;     // hide any overflow to prevent scrolling
+  padding: 2rem;
+  margin: 0;
+  background-image: linear-gradient(45deg, $secondary-color, #0a0a0a); // consider moving #0a0a0a into variables too, if needed
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  font-size: 3.5rem;
+  font-weight: 900;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeInSlide 1s forwards;
+  animation-delay: 0.5s;
+}
+
+.subtitle {
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: $subtitle-color;
+  margin-bottom: 2rem;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  animation: fadeInSlide 1s forwards;
+  animation-delay: 1s;
+}
+
+.description {
+  font-size: 1.25rem;
+  margin: 1.5rem 0 3rem;
+  max-width: 800px;
+  line-height: 1.6;
+  opacity: 0;
+  animation: fadeInSlide 1s forwards;
+  animation-delay: 1.5s;
+}
+
+.startButton {
+  background: $primary-color;
+  color: $secondary-color;
+  font-size: 1.3rem;
+  padding: 1rem 3rem;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(247, 147, 26, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  margin: 1rem 0;
+  opacity: 0;
+  animation: fadeInSlide 1s forwards;
+  animation-delay: 2s;
+}
+
+.startButton:hover {
+  background: $hover-color;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(247, 147, 26, 0.5);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .title {
+    font-size: 2.5rem;
+  }
+  
+  .subtitle {
+    font-size: 1.4rem;
+  }
+    
+  .landing {
+    padding: 1rem;
+  }
+}

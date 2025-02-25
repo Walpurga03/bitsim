@@ -1,0 +1,47 @@
+@use "sass:color" as color;
+@use '../styles/variables' as *;
+
+.infoIcon {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  font-size: 2rem;
+  color: $primary-color;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.menu {
+  position: absolute;
+  top: 3rem;
+  left: 1rem;
+  width: 220px;
+  background-color: $secondary-color;
+  color: $text-color;
+  padding: 1rem;
+  z-index: 1001;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    padding: 0.7rem;
+    margin: 0.7rem 0;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+      background-color: color.adjust($primary-color, $lightness: 30%);
+      transform: translateY(-2px);
+    }
+  }
+}
