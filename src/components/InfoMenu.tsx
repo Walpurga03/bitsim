@@ -34,32 +34,102 @@ Beispiele für feste Regeln:
 - Transaktionen dürfen nur vorhandene, noch nicht ausgegebene Bitcoins verwenden.
 Durch diesen Mechanismus erreicht Bitcoin Einigkeit im Netzwerk und verhindert Manipulationen wie doppelte Ausgaben (Double-Spending), ohne dass eine zentrale Instanz benötigt wird.`,
     
-    Mining: `Mining:
-Mining ist ein spannender Prozess, bei dem neue Blöcke zur Blockchain hinzugefügt werden. Miner sammeln Transaktionen, prüfen ihre Gültigkeit und fügen sie in Blöcke ein. 
-Durch den Einsatz des Proof-of-Work-Algorithmus sorgen sie dafür, dass das Netzwerk reibungslos und sicher funktioniert. Dabei tragen die Miner aktiv zur Stabilität und Dezentralisierung des Systems bei und werden als Anerkennung für ihren Beitrag mit neu generierten Bitcoins belohnt.`,
+    Mining: `Mining im Bitcoin-Netzwerk:
+Mining erklärt:
+Bitcoin-Mining ist der Prozess, bei dem Transaktionen verifiziert und zur Blockchain hinzugefügt werden. Die Miner konkurrieren darum, einen neuen Block zu erzeugen, indem sie folgende Aufgaben erfüllen:
+Technischer Ablauf:
+- Sammeln von Transaktionen: Miner wählen aus dem Mempool unbestätigte Transaktionen aus
+- Blockbildung: Die ausgewählten Transaktionen werden zu einem Kandidatenblock zusammengefasst
+- Mathematisches Puzzle lösen: Der Miner sucht einen speziellen Nonce-Wert, der zu einem Block-Hash unter dem aktuellen Schwierigkeits-Target führt
+- Proof-of-Work: Das wiederholte Hashen mit verschiedenen Nonce-Werten stellt eine messbare Rechenarbeit dar
+- Verbreitung: Ein erfolgreicher Block wird im Netzwerk verbreitet und von anderen Nodes verifiziert
+
+Belohnungen:
+- Block-Belohnung: Aktuell neu geschaffene Bitcoins pro Block
+- Transaktionsgebühren: Zusätzliche Anreize durch Gebühren der enthaltenen Transaktionen
+
+Das Mining sichert das Netzwerk gegen Angriffe, da ein Angreifer mehr als 50% der gesamten Rechenleistung des Netzwerks kontrollieren müsste, um die Blockchain zu manipulieren. Gleichzeitig stellt es einen fairen Mechanismus zur Ausgabe neuer Bitcoins dar.`,
     
-    PoW: `PoW (Proof-of-Work):
-Proof-of-Work ist ein innovativer Mechanismus, bei dem Miner komplexe rechnergestützte Aufgaben lösen, um die Echtheit eines neuen Blocks zu bestätigen. 
-Dieses Verfahren stellt sicher, dass nur regulierte und geprüfte Blöcke zur Blockchain hinzugefügt werden, was die Sicherheit und Stabilität des Netzwerks stärkt.`,
+    PoW: `Proof-of-Work (PoW) im Bitcoin-Netzwerk:
+Proof-of-Work erklärt:
+Proof-of-Work ist das kryptografische Verfahren, mit dem Bitcoin sicherstellt, dass nur Blöcke mit nachgewiesener Rechenarbeit zur Blockchain hinzugefügt werden können.
+Technische Details:
+- Die Herausforderung: Finde einen Nonce-Wert, sodass der Hash des gesamten Blocks unter einem bestimmten Zielwert (Target) liegt.
+- SHA-256: Bitcoin verwendet die kryptografische Hashfunktion SHA-256, die für jeden Input einen eindeutigen, nicht vorhersagbaren Output erzeugt.
+- Rechenintensiv: Das Finden einer Lösung erfordert Millionen oder Milliarden von Versuchen.
+- Leicht zu überprüfen: Andere Nodes können die gefundene Lösung mit nur einer einzigen Hash-Berechnung verifizieren.
+- Anpassbare Schwierigkeit: Die Target-Schwierigkeit wird alle 2016 Blöcke angepasst, um eine durchschnittliche Blockzeit von 10 Minuten zu gewährleisten.
+Der Proof-of-Work-Mechanismus macht Angriffe auf das Netzwerk extrem kostspielig und bewirkt, dass eine Manipulation der Blockchain eine massive Investition in Rechenleistung erfordern würde, die den möglichen Gewinn übersteigt.`,
     
-    Node: `Node:
-Ein Node (Knoten) ist ein wesentlicher Baustein des dezentralen Bitcoin-Netzwerks. Jeder Node speichert die vollständige Blockchain, 
-prüft Transaktionen und Blöcke auf ihre Gültigkeit und tauscht kontinuierlich Informationen mit anderen Nodes aus, um einen 
-einheitlichen und aktuellen Datenstand sicherzustellen. Dieser fortlaufende Informationsaustausch fördert den Netzwerk-Konsens 
-und trägt maßgeblich zur Integrität des Systems bei.`,
+    Node: `Nodes im Bitcoin-Netzwerk:
+Nodes erklärt:
+Ein Node (Knoten) ist ein Computer oder Server, der am Bitcoin-Netzwerk teilnimmt und wesentliche Funktionen für dessen Betrieb erfüllt.
+Arten von Nodes:
+- Full Node: Speichert die komplette Blockchain, prüft alle Regeln und verbreitet Informationen.
+- Mining Node: Ein Full Node mit zusätzlicher Mining-Software, der aktiv nach neuen Blöcken sucht.
+- Light Node (SPV): Speichert nur Block-Header und eigene Transaktionen, geeignet für mobile Geräte.
+
+Hauptaufgaben eines Full Nodes:
+- Validierung: Überprüft eigenständig jede Transaktion und jeden Block auf Regelkonformität.
+- Datenspeicherung: Hält die gesamte Blockchain lokal verfügbar (derzeit über 500 GB).
+- Weiterleitung: Überträgt neue Transaktionen und Blöcke an verbundene Peers.
+- Peer-to-Peer-Kommunikation: Tauscht Daten mit anderen Nodes über das Bitcoin-Protokoll aus.
+
+Je mehr unabhängige Nodes im Netzwerk aktiv sind, desto dezentraler und widerstandsfähiger ist Bitcoin gegen Zensur und Manipulation. Jeder kann einen Node betreiben und damit direkt zur Sicherheit des Netzwerks beitragen.`,
     
-    Blockchain: `Blockchain:
-Die Blockchain ist ein digitales, öffentliches und unveränderliches Kassenbuch, in dem alle Transaktionen und Blöcke in chronologischer Reihenfolge aufgezeichnet werden. Jeder Block enthält den Hash seines Vorgängers, was einen lückenlosen und manipulationssicheren Ablauf gewährleistet. Diese Technologie bildet das Fundament des dezentralen Bitcoin-Netzwerks und sorgt für Transparenz sowie Vertrauen im gesamten System.`,
+    Blockchain: `Die Blockchain-Technologie in Bitcoin:
+Blockchain erklärt:
+Die Blockchain ist die grundlegende Datenstruktur von Bitcoin – ein chronologisch verkettetes, digitales Kassenbuch, das alle jemals durchgeführten Transaktionen permanent und öffentlich speichert.
+Aufbau der Blockchain:
+- Blöcke: Container für Transaktionen, die etwa alle 10 Minuten erzeugt werden.
+- Verkettung: Jeder Block enthält den kryptografischen Hash seines Vorgängerblocks.
+- Merkle Tree: Eine baumartige Datenstruktur innerhalb des Blocks, die alle Transaktionen effizient organisiert.
+- Block-Header: Enthält Metadaten wie Version, Zeitstempel, Schwierigkeitsgrad und Nonce.
+
+Schlüsseleigenschaften:
+- Unveränderlichkeit: Eine Änderung in einem Block würde alle folgenden Blöcke ungültig machen.
+- Transparenz: Jeder kann die gesamte Transaktionshistorie einsehen.
+- Dezentralisierung: Die Blockchain wird redundant auf tausenden Computern weltweit gespeichert.
+- Fälschungssicherheit: Eine Manipulation würde massive Rechenleistung erfordern und sofort erkannt werden.
+
+Die Blockchain löst das "Double-Spending-Problem" digitaler Währungen, indem sie einen zeitlich geordneten, manipulationssicheren Nachweis über jede Transaktion liefert, ohne dass eine vertrauenswürdige zentrale Instanz nötig ist.`,
     
-    Difficulty: `Difficulty:
-Der Mining-Schwierigkeitsgrad bestimmt, wie anspruchsvoll es ist, einen neuen Block zu finden. Er wird dynamisch angepasst, wobei in der Regel alle 2016 Blöcke (etwa alle zwei Wochen) der Durchschnitt der Blockgenerierungszeit ermittelt wird. 
-Sollte dieser Durchschnitt unter 10 Minuten liegen, wird das Target (der numerische Schwierigkeitswert) gesenkt – das heißt, es wird kleiner –, sodass es schwieriger wird, einen Block zu finden. Umgekehrt wird das Target vergrößert, wenn die durchschnittliche Blockzeit über 10 Minuten liegt. 
-Dieses Verfahren sorgt dafür, dass unabhängig von der insgesamt eingesetzten Rechenleistung im Netzwerk im Durchschnitt alle 10 Minuten ein Block generiert wird und das System stabil bleibt.`,
+    Difficulty: `Difficulty-Adjustment im Bitcoin-Netzwerk:
+Difficulty erklärt:
+Die Difficulty (Schwierigkeit) ist ein dynamischer Parameter im Bitcoin-Protokoll, der reguliert, wie schwer es ist, einen gültigen Block zu finden, um die Blockzeit von etwa 10 Minuten konstant zu halten.
+Funktionsweise:
+- Target-Wert: Ein numerischer Wert, der festlegt, wie klein der Hash eines Blocks sein muss, um akzeptiert zu werden.
+- Schwierigkeitsanpassung: Findet alle 2016 Blöcke (ca. alle 2 Wochen) statt.
+Automatische Regulierung:
+- Wurden die 2016 Blöcke schneller als 14 Tage gefunden → Schwierigkeit steigt.
+- Wurden die 2016 Blöcke langsamer als 14 Tage gefunden → Schwierigkeit sinkt.
+Maximale Anpassung: Der Schwierigkeitsgrad kann sich pro Zyklus maximal um Faktor 4 ändern.
+Bedeutung:
+- Stabilität: Sorgt für konstante Blockzeiten trotz wachsender Netzwerk-Hashrate.
+- Vorhersehbare Ausgabe: Ermöglicht eine kalkulierbare Bitcoin-Erzeugungsrate.
+- Sicherheit: Eine höhere Schwierigkeit bedeutet einen besseren Schutz gegen Angriffe.
+Der Difficulty-Adjustment ist einer der genialsten Aspekte des Bitcoin-Designs, da er automatisch auf Veränderungen in der Netzwerk-Rechenleistung reagiert und die Kernfunktionen des Systems stabil hält.`,
     
-    Transaktionen: `Transaktionen:
-Bei Bitcoin werden alle Transfers als Transaktionen verarbeitet, die sowohl Inputs (auch UTXOs genannt) als auch Outputs umfassen. 
-Inputs repräsentieren dabei ungenutzte Ausgaben aus vorherigen Transaktionen, während Outputs den Betrag sowie die Empfängeradresse definieren. 
-Alle Transaktionen werden kryptographisch signiert, um ihre Authentizität und Integrität sicherzustellen.`,
+    Transaktionen: `Transaktionen im Bitcoin-Netzwerk:
+Transaktionen erklärt:
+Bitcoin-Transaktionen sind digitale Datensätze, die den Transfer von Bitcoin-Werten dokumentieren und in der Blockchain gespeichert werden.
+Struktur einer Transaktion:
+- Inputs: Verweise auf frühere Transaktionsausgänge (UTXOs), die ausgegeben werden sollen.
+- Outputs: Neue UTXOs, die die Empfängeradressen und Beträge festlegen.
+- Signatur: Kryptografischer Beweis, dass der Sender befugt ist, die Inputs auszugeben.
+- Gebühr: Differenz zwischen Input-Summe und Output-Summe, die an Miner geht.
+
+UTXO-Modell:
+- Unspent Transaction Output (UTXO): Unausgegebene Bitcoin-Beträge, die einem Besitzer zugeordnet sind.
+- Keine Konten: Bitcoin verwendet keine Konten mit Salden, sondern nur diese "unverbrauchten Ausgänge".
+- Wechselgeld: Muss als separater Output an die eigene Adresse zurückgesendet werden.
+
+Verifizierung:
+- Jeder Node prüft: Sind alle referenzierten Inputs vorhanden und unverbraucht?
+- Signaturen: Stimmen die kryptografischen Signaturen mit den betreffenden Public Keys überein?
+- Beträge: Ist die Summe der Outputs plus Gebühren gleich der Summe der Inputs?
+
+Sobald eine Transaktion in einem Block bestätigt wurde, werden die verwendeten Inputs als "ausgegeben" markiert und die neuen Outputs als "unausgegeben" (UTXOs) für zukünftige Transaktionen verfügbar.`,
     
     Halving: `Halving:
 Beim Halving wird die Belohnung für das Mining – also die Anzahl der neu generierten Bitcoins pro gefundenem Block – alle 210.000 Blöcke (rund alle vier Jahre) halbiert. Dieser Mechanismus reduziert schrittweise das Angebot an neuen Bitcoins, was langfristig zu einer deflationären Währung führt und zur Werterhaltung beiträgt.`,

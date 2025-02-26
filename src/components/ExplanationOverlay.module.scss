@@ -1,4 +1,5 @@
 @use '../styles/variables' as *;
+@use "sass:color";
 
 .overlay {
   position: fixed;
@@ -30,6 +31,8 @@
   max-width: 600px;
   width: 90%;
   animation: slideIn 0.5s ease forwards;
+  max-height: 90vh;  // max. Höhe relativ zum Viewport
+  overflow-y: auto;  // aktiviert Scrollen, wenn der Inhalt zu lang ist
   
   p {
     font-family: 'Roboto', sans-serif;
@@ -64,4 +67,42 @@
 .closeButton:hover {
   background: $hover-color;
   transform: translateY(-2px);
+}
+
+@media (max-width: 380px) {
+  .content {
+    padding: 1rem;       // Weniger Padding, damit mehr Platz für den Text bleibt
+    max-width: 95%;      // Vergrößerte Breite, damit das Overlay den vielschichtigen Text aufnehmen kann
+    font-size: 0.9rem;   // Basis-Fontgröße anpassen
+
+    p {
+      font-size: 0.85rem;   // Noch etwas kleinere Schrift, damit längere Texte in den sichtbaren Bereich passen
+      line-height: 1.4;     // Engerer Zeilenabstand
+      margin: 0.75rem 0;    // Weniger Außenabstand
+    }
+  }
+  
+  .closeButton {
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+  }
+}
+
+@media (min-width: 381px) and (max-width: 481px) {
+  .content {
+    padding: 1.8rem;       // Angepasstes Padding für mehr Komfort
+    max-width: 85%;        // Etwas schmalere Breite für mittlere Displays
+    font-size: 1rem;       // Etwas größere Basis-Fontgröße
+
+    p {
+      font-size: 0.95rem;   // Leicht vergrößerte Schrift für bessere Lesbarkeit
+      line-height: 1.6;
+      margin: 0.9rem 0;
+    }
+  }
+  
+  .closeButton {
+    font-size: 0.95rem;
+    padding: 0.6rem 1.2rem;
+  }
 }

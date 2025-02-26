@@ -86,19 +86,4 @@
   box-shadow: 0 8px 28px rgba(247, 147, 26, 0.5);
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .title {
-    font-size: 2.5rem;
-  }
-  
-  .subtitle {
-    font-size: 1.4rem;
-  }
-    
-  .landing {
-    padding: 1rem;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-}
+// Alle Media Queries wurden entfernt.
