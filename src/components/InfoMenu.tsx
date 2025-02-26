@@ -21,13 +21,18 @@ const InfoMenu: React.FC<InfoMenuProps> = ({ onMenuItemClick, hideIcon = false }
 
   // Erweiterte Erklärungen für weitere Begriffe:
   const explanations: Record<string, string> = {
-    Konsens: `Konsens:
-In einem dezentralen Netzwerk wie Bitcoin gibt es keinen zentralen Autor. Stattdessen müssen alle Nodes – also die
-Teilnehmer des Netzwerks – sich auf einen gemeinsamen Stand der Blockchain einigen. Dieses Einigen geschieht
-über Mechanismen wie Proof-of-Work, bei denen alle Teilnehmer die gleichen Regeln befolgen. 
-Der Konsens-Mechanismus gewährleistet, dass nur gültige Transaktionen und Blöcke in die Blockchain aufgenommen werden und
-doppelte Ausgaben (Double-Spending) verhindert werden. Somit sichert der Konsens die Integrität und Unveränderlichkeit
-der gesamten Blockchain.`,
+    Konsens: `Konsens im Bitcoin-Netzwerk:
+Der Bitcoin-Konsens sorgt dafür, dass alle Teilnehmer des Netzwerks sich ohne zentrale Kontrolle auf den gleichen Stand der Blockchain einigen können.
+Kernelemente:
+- Längste-Kette-Regel: Alle Nodes akzeptieren automatisch die Blockchain mit der meisten Rechenarbeit als die gültige Kette.
+- Validierungsregeln: Jeder Node prüft selbständig alle Blöcke und Transaktionen nach festgelegten Regeln.
+- Bestätigungen: Mit jedem weiteren Block über einer Transaktion sinkt das Risiko einer Umkehrung drastisch.
+Beispiele für feste Regeln:
+- Jede Transaktion muss korrekt signiert sein.
+- Neue Bitcoins dürfen nur gemäß dem Ausgabeplan erzeugt werden, der auf maximal 21 Millionen Bitcoins begrenzt ist.
+- Die Block-Belohnung muss dem aktuellen Halving-Stand entsprechen.
+- Transaktionen dürfen nur vorhandene, noch nicht ausgegebene Bitcoins verwenden.
+Durch diesen Mechanismus erreicht Bitcoin Einigkeit im Netzwerk und verhindert Manipulationen wie doppelte Ausgaben (Double-Spending), ohne dass eine zentrale Instanz benötigt wird.`,
     
     Mining: `Mining:
 Mining ist ein spannender Prozess, bei dem neue Blöcke zur Blockchain hinzugefügt werden. Miner sammeln Transaktionen, prüfen ihre Gültigkeit und fügen sie in Blöcke ein. 

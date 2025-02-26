@@ -98,5 +98,7 @@
     
   .landing {
     padding: 1rem;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
