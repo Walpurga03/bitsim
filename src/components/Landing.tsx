@@ -4,20 +4,26 @@ import InfoMenu from './InfoMenu';
 import ExplanationOverlay from './ExplanationOverlay';
 import Simulation from './Simulation';
 
+// Erklärungstyp anpassen
+interface ExplanationData {
+  explanation: string;
+  audioFile?: string;
+}
+
 const Landing: React.FC = () => {
-  const [overlayText, setOverlayText] = useState('');
+  const [overlayData, setOverlayData] = useState<ExplanationData | null>(null);
   const [simulate, setSimulate] = useState(false);
 
   const startSimulation = () => {
     setSimulate(true);
   };
 
-  const handleMenuItemClick = (explanation: string) => {
-    setOverlayText(explanation);
+  const handleMenuItemClick = (data: ExplanationData) => {
+    setOverlayData(data);
   };
 
   const closeOverlay = () => {
-    setOverlayText('');
+    setOverlayData(null);
   };
 
   if (simulate) {
@@ -26,7 +32,7 @@ const Landing: React.FC = () => {
 
   return (
     <div className={styles.landing}>
-      <InfoMenu onMenuItemClick={handleMenuItemClick} hideIcon={overlayText !== ''} />
+      <InfoMenu onMenuItemClick={handleMenuItemClick} hideIcon={!!overlayData} />
       <h1 className={styles.title}>Bitcoin Simulation</h1>
       <h2 className={styles.subtitle}>Verstehen Sie die Grundlagen von Blockchain und Bitcoin</h2>
       <p className={styles.description}>
@@ -39,8 +45,8 @@ const Landing: React.FC = () => {
         Simulation starten
       </button>
       
-      {overlayText && (
-        <ExplanationOverlay text={overlayText} onClose={closeOverlay} />
+      {overlayData && (
+        <ExplanationOverlay text={overlayData.explanation} onClose={closeOverlay} audioFile={overlayData.audioFile} />
       )}
     </div>
   );

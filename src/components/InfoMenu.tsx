@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
 import styles from './InfoMenu.module.scss';
-import { contactConfig } from '../config/contactConfig';  // Importiere die Kontakt-Konfiguration
-import { FaGithub, FaBolt } from 'react-icons/fa';
+import { contactConfig } from '../config/contactConfig';
+import { FaGithub, FaBolt } from 'react-icons/fa'; // Lautsprecher-Icon entfernt
 import nostrImg from '../assets/nostr.gif';
 
+// Audio-Dateien importieren
+import konsensAudio from '../assets/audio/Konsens.mp3';
+import miningAudio from '../assets/audio/Mining.mp3';
+
+interface ExplanationData {
+  explanation: string;
+  audioFile?: string;
+}
+
 interface InfoMenuProps {
-  onMenuItemClick: (explanation: string) => void;
+  onMenuItemClick: (data: ExplanationData) => void;
   hideIcon?: boolean;
 }
 
@@ -13,13 +22,11 @@ const InfoMenu: React.FC<InfoMenuProps> = ({ onMenuItemClick, hideIcon = false }
   const [open, setOpen] = useState(false);
   const toggleMenu = () => setOpen(!open);
 
-  // Funktion zum Kopieren in die Zwischenablage
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     alert('Adresse in die Zwischenablage kopiert!');
   };
 
-  // Erweiterte Erklärungen für weitere Begriffe:
   const explanations: Record<string, string> = {
     Konsens: `Konsens im Bitcoin-Netzwerk:
 Der Bitcoin-Konsens sorgt dafür, dass alle Teilnehmer des Netzwerks sich ohne zentrale Kontrolle auf den gleichen Stand der Blockchain einigen können.
@@ -131,22 +138,50 @@ Verifizierung:
 
 Sobald eine Transaktion in einem Block bestätigt wurde, werden die verwendeten Inputs als "ausgegeben" markiert und die neuen Outputs als "unausgegeben" (UTXOs) für zukünftige Transaktionen verfügbar.`,
     
-    Halving: `Halving:
-Beim Halving wird die Belohnung für das Mining – also die Anzahl der neu generierten Bitcoins pro gefundenem Block – alle 210.000 Blöcke (rund alle vier Jahre) halbiert. Dieser Mechanismus reduziert schrittweise das Angebot an neuen Bitcoins, was langfristig zu einer deflationären Währung führt und zur Werterhaltung beiträgt.`,
+    Halving: `Halving im Bitcoin-Netzwerk:
+Halving erklärt:
+Das Halving ist ein programmierter Mechanismus im Bitcoin-Protokoll, der die Inflationsrate kontrolliert und die Knappheit sicherstellt.
+Kernelemente:
+- Regelmäßige Reduzierung: Alle 210.000 Blöcke (etwa alle 4 Jahre) halbiert sich die Mining-Belohnung.
+- Ausgabekontrolle: Begann mit 50 BTC pro Block, jetzt bei 6,25 BTC, nächstes Halving auf 3,125 BTC.
+- Maximale Menge: Der Halving-Mechanismus stellt sicher, dass nie mehr als 21 Millionen Bitcoins erzeugt werden können.
+- Vorhersehbare Knappheit: Im Gegensatz zu traditionellen Währungen ist das Angebot mathematisch festgelegt.
 
-Keypairs: `Keypairs:
-Jedes Wallet besitzt ein Paar aus Private und Public Key.
-- Der Private Key bleibt geheim und wird zur Signierung von Transaktionen verwendet.
-- Der Public Key ist öffentlich und dient zur Validierung von Transaktionen.
-Diese Schlüsselpaare gewährleisten die Sicherheit der Transaktionen, da nur der Inhaber des Private Keys berechtigt ist, Gelder zu transferieren.`,
+Historische Halvings:
+- 2012: Reduzierung von 50 auf 25 BTC.
+- 2016: Reduzierung von 25 auf 12,5 BTC.
+- 2020: Reduzierung von 12,5 auf 6,25 BTC.
+- Nächstes Halving: ca. 2024.
 
-Kontakt: `Kontakt:
+Dieser Mechanismus schafft ein vorhersehbares, zunehmend knappes Geldangebot, was Bitcoin zu einer potenziell deflationären Währung macht und zur langfristigen Werterhaltung beitragen kann.`,
+    
+    Keypairs: `Keypairs im Bitcoin-Netzwerk:
+Keypairs erklärt:
+Keypairs (Schlüsselpaare) sind das Fundament der Sicherheit im Bitcoin-Netzwerk und ermöglichen digitales Eigentum ohne zentrale Autorität.
+Kernelemente:
+- **Private Key:** Eine zufällig generierte, 256-Bit lange Zahl, die streng geheim bleiben muss. Funktioniert wie ein digitaler Schlüssel zum Wallet. Wer den Private Key besitzt, kontrolliert die Bitcoins. Mathematisch fast unmöglich zu erraten (2^256 mögliche Kombinationen).
+- **Public Key:** Wird mathematisch aus dem Private Key abgeleitet. Kann öffentlich geteilt werden, ohne ein Sicherheitsrisiko darzustellen. Dient zur Verifizierung von Signaturen. Bitcoin-Adressen werden durch Hashing des Public Keys erzeugt.
+- **Digitale Signatur:** Bei jeder Transaktion erzeugt der Private Key eine einzigartige Signatur, die beweist, dass der Sender berechtigt ist, seine Bitcoins auszugeben. Diese Signatur kann mit dem Public Key von jedem verifiziert werden und verhindert Fälschungen sowie unbefugte Transaktionen.
+
+Die Keypair-Technologie ermöglicht ein System, in dem jeder seine eigene Bank sein kann, ohne Vertrauen in Dritte setzen zu müssen – ein Kernprinzip von Bitcoin.`,
+    
+    Kontakt: `Kontakt:
 Für Fragen, Anregungen oder Spenden können Sie mich über die folgenden Kanäle kontaktieren:`,
 
 };
 
+  // Mapping von Kategorien zu importierten Audiodateien
+  const audioMapping: Record<string, string> = {
+    Konsens: konsensAudio,
+    Mining: miningAudio,
+    // weitere Zuordnungen ergänzen ...
+  };
+
   const handleItemClick = (item: string) => {
-    onMenuItemClick(explanations[item] || '');
+    onMenuItemClick({
+      explanation: explanations[item] || '',
+      audioFile: audioMapping[item],
+    });
     setOpen(false);
   };
 
@@ -168,7 +203,7 @@ Für Fragen, Anregungen oder Spenden können Sie mich über die folgenden Kanäl
                     <button onClick={() => copyToClipboard(contactConfig.github)}>
                       <FaGithub size={20} />
                     </button>
-                    <button onClick={() => copyToClipboard(contactConfig. nostr)}>
+                    <button onClick={() => copyToClipboard(contactConfig.nostr)}>
                       <img src={nostrImg} alt="nostr" style={{ width: 20, height: 20 }} />
                     </button>
                     <button onClick={() => copyToClipboard(contactConfig.lightning)}>
