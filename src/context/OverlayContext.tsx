@@ -1,17 +1,26 @@
-import React, { createContext, useState, ReactNode } from 'react';
+import React, { createContext, useState, FC } from 'react';
 
-interface OverlayContextType {
-  text: string;
-  setText: (text: string) => void;
+export interface OverlayData {
+  explanation: string;
+  audioFile?: string;
 }
 
-export const OverlayContext = createContext<OverlayContextType>({
-  text: '',
-  setText: () => {}
+interface OverlayContextProps {
+  text: OverlayData | null;
+  setText: (text: OverlayData | null) => void;
+}
+
+export const OverlayContext = createContext<OverlayContextProps>({
+  text: null,
+  setText: () => {},
 });
 
-export const OverlayProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [text, setText] = useState('');
+interface OverlayProviderProps {
+  children: React.ReactNode;
+}
+
+export const OverlayProvider: FC<OverlayProviderProps> = ({ children }) => {
+  const [text, setText] = useState<OverlayData | null>(null);
   return (
     <OverlayContext.Provider value={{ text, setText }}>
       {children}

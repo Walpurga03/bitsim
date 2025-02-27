@@ -9,12 +9,18 @@ function AppContent() {
   return (
     <>
       <header className="App-header">
-        <InfoMenu onMenuItemClick={(explanation) => setText(explanation)} />
+        <InfoMenu onMenuItemClick={(data) => setText(data)} />
       </header>
       <main>
         <Landing />
       </main>
-      {text && <ExplanationOverlay text={text} onClose={() => setText('')} />}
+      {text && (
+        <ExplanationOverlay
+          text={text.explanation}
+          onClose={() => setText(null)}
+          audioFile={text.audioFile}
+        />
+      )}
     </>
   );
 }
