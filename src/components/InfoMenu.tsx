@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './InfoMenu.module.scss';
 import { contactConfig } from '../config/contactConfig';
-import { FaGithub, FaBolt } from 'react-icons/fa'; // Lautsprecher-Icon entfernt
+import { FaGithub, FaBolt, FaTimes } from 'react-icons/fa';
+import { IoInformationCircle } from 'react-icons/io5';
 import nostrImg from '../assets/nostr.gif';
 
 // Audio-Dateien importieren
@@ -20,7 +21,49 @@ interface InfoMenuProps {
 
 const InfoMenu: React.FC<InfoMenuProps> = ({ onMenuItemClick, hideIcon = false }) => {
   const [open, setOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
   const toggleMenu = () => setOpen(!open);
+
+  // Click outside handler zum Schließen des Menüs
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node) && 
+          !(event.target as Element).classList.contains(styles.infoIcon)) {
+        setOpen(false);
+      }
+    };
+
+    if (open) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [open]);
+
+  // Escape-Taste zum Schließen des Menüs
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+      }
+    };
+
+    if (open) {
+      document.addEventListener('keydown', handleEscKey);
+    } else {
+      document.removeEventListener('keydown', handleEscKey);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+    };
+  }, [open]);
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -168,7 +211,7 @@ Die Keypair-Technologie ermöglicht ein System, in dem jeder seine eigene Bank s
     Kontakt: `Kontakt:
 Für Fragen, Anregungen oder Spenden können Sie mich über die folgenden Kanäle kontaktieren:`,
 
-};
+  };
 
   // Mapping von Kategorien zu importierten Audiodateien
   const audioMapping: Record<string, string> = {
@@ -178,41 +221,66 @@ Für Fragen, Anregungen oder Spenden können Sie mich über die folgenden Kanäl
   };
 
   const handleItemClick = (item: string) => {
+    setSelectedItem(item);
     onMenuItemClick({
       explanation: explanations[item] || '',
       audioFile: audioMapping[item],
     });
-    setOpen(false);
+    // Bei kleinen Bildschirmen das Menü nach Auswahl schließen
+    if (window.innerWidth <= 768) {
+      setOpen(false);
+    }
   };
 
   return (
-    <div>
+    <div className={styles.infoMenu}>
       {!hideIcon && (
         <div className={styles.infoIcon} onClick={toggleMenu}>
+          <IoInformationCircle size={20} style={{ marginRight: '6px' }} />
           INFO
         </div>
       )}
       {open && (
-        <div className={styles.menu}>
+        <div className={styles.menu} ref={menuRef}>
+          <button className={styles.closeButton} onClick={toggleMenu}>
+            <FaTimes size={18} />
+          </button>
           <ul>
             {Object.keys(explanations).map((item) =>
               item === 'Kontakt' ? (
-                <li key="Kontakt">
-                  <span>{item}:</span>
+                <li 
+                  key="Kontakt" 
+                  className={`${styles.contactItem} ${selectedItem === 'Kontakt' ? styles.selected : ''}`}
+                  onClick={() => handleItemClick('Kontakt')}
+                >
+                  <span>Kontakt</span>
                   <div className={styles.contactButtons}>
-                    <button onClick={() => copyToClipboard(contactConfig.github)}>
+                    <button onClick={(e) => {
+                      e.stopPropagation();
+                      copyToClipboard(contactConfig.github);
+                    }}>
                       <FaGithub size={20} />
                     </button>
-                    <button onClick={() => copyToClipboard(contactConfig.nostr)}>
+                    <button onClick={(e) => {
+                      e.stopPropagation();
+                      copyToClipboard(contactConfig.nostr);
+                    }}>
                       <img src={nostrImg} alt="nostr" style={{ width: 20, height: 20 }} />
                     </button>
-                    <button onClick={() => copyToClipboard(contactConfig.lightning)}>
+                    <button onClick={(e) => {
+                      e.stopPropagation();
+                      copyToClipboard(contactConfig.lightning);
+                    }}>
                       <FaBolt size={20} />
                     </button>
                   </div>
                 </li>
               ) : (
-                <li key={item} onClick={() => handleItemClick(item)}>
+                <li 
+                  key={item} 
+                  onClick={() => handleItemClick(item)}
+                  className={selectedItem === item ? styles.selected : ''}
+                >
                   {item}
                 </li>
               )

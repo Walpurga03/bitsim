@@ -1,48 +1,166 @@
 @use "sass:color" as color;
 @use '../styles/variables' as *;
 
-.infoIcon {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  font-size: 2rem;
-  color: $primary-color;
-  cursor: pointer;
+.infoMenu {
+  position: relative;
   z-index: 1001;
 }
 
+.infoIcon {
+  position: fixed;
+  top: 1.5rem;
+  left: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: $primary-color;
+  background-color: rgba($secondary-color, 0.9);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+  
+  @media (max-width: 768px) {
+    top: 1rem;
+    left: 1rem;
+    font-size: 1rem;
+    padding: 0.5rem 0.75rem;
+  }
+}
+
 .menu {
-  position: absolute;
-  top: 3rem;
-  left: 1rem;
-  width: 220px;
+  position: fixed;
+  top: 5rem;
+  left: 1.5rem;
+  width: 280px;
+  max-width: 90vw;
   background-color: $secondary-color;
   color: $text-color;
-  padding: 1rem;
+  padding: 1.25rem;
   z-index: 1001;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  font-size: 1rem; // Basis-Fontsize für größere Bildschirme
-
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  transform-origin: top left;
+  animation: menuAppear 0.3s ease forwards;
+  overflow-y: auto;
+  max-height: calc(100vh - 7rem);
+  
+  @media (max-width: 768px) {
+    left: 1rem;
+    top: 4rem;
+    width: calc(100% - 2rem);
+    padding: 1rem;
+  }
+  
   ul {
     list-style: none;
     padding: 0;
     margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 0.75rem;
+    
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
   }
-
+  
   li {
-    padding: 0.7rem;
-    margin: 0.7rem 0;
+    padding: 0.85rem;
+    margin: 0;
     font-size: 1rem;
     font-weight: 500;
     text-align: center;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background 0.2s ease, transform 0.2s ease;
-
+    transition: all 0.25s ease;
+    background-color: rgba($primary-color, 0.05);
+    border: 1px solid rgba($primary-color, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
     &:hover {
-      background-color: color.adjust($primary-color, $lightness: 30%);
+      background-color: color.adjust($primary-color, $lightness: 5%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      border-color: transparent;
+      color: rgba($secondary-color, 0.9);
+    }
+    
+    &.selected {
+      background-color: $primary-color;
+      color: white;
+      transform: scale(1.02);
+    }
+    
+    &.contactItem {
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 1rem;
+    }
+  }
+}
+
+.contactButtons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.15);
+    border: none;
+    border-radius: 50%;
+    padding: 0.75rem;
+    color: $text-color;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.3);
       transform: translateY(-2px);
     }
+    
+    img {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+    }
+  }
+}
+
+.closeButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $text-color;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  
+  &:hover {
+    opacity: 1;
+  }
+}
+
+@keyframes menuAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }

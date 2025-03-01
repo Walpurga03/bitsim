@@ -7,13 +7,14 @@
   left: 0;
   width: 100%;
   height: 100%;
-  backdrop-filter: blur(8px);
-  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(12px);
+  background-color: rgba(0, 0, 0, 0.75);
   display: flex;
   justify-content: center;
   align-items: center;
-  animation: fadeIn 0.5s ease forwards;
+  animation: fadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   z-index: 2000;
+  padding: 1rem;
 }
 
 @keyframes fadeIn {
@@ -22,87 +23,177 @@
 }
 
 .content {
-  background: linear-gradient(135deg, $secondary-color, #0a0a0a);
+  background: linear-gradient(145deg, $secondary-color, #0a0a0a);
   padding: 2.5rem;
-  border-radius: 15px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
   color: $text-color;
-  text-align: center;
-  max-width: 600px;
-  width: 90%;
-  animation: slideIn 0.5s ease forwards;
-  max-height: 90vh;  // max. Höhe relativ zum Viewport
-  overflow-y: auto;  // aktiviert Scrollen, wenn der Inhalt zu lang ist
+  max-width: 650px;
+  width: 100%;
+  animation: slideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  max-height: 85vh;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  h2 {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(90deg, $primary-color, adjust-hue($primary-color, 30deg));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    text-align: left;
+  }
   
   p {
     font-family: 'Roboto', sans-serif;
-    font-size: 1.2rem;
-    line-height: 1.8;
+    font-size: 1.1rem;
+    line-height: 1.7;
     text-align: left;
-    margin: 1rem 0;
+    margin: 1.2rem 0;
     font-weight: 400;
-    letter-spacing: 0.5px;
-    color: adjust($text-color, 10%);
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.3px;
+    color: adjust-color($text-color, $lightness: 5%);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  }
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
   }
 }
 
 @keyframes slideIn {
-  from { transform: translateY(20px); opacity: 0; }
+  from { transform: translateY(30px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
 
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.audioButton {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 12px;
+  cursor: pointer;
+  color: $text-color;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(5px);
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+  }
+  
+  &.playing {
+    background: rgba($primary-color, 0.3);
+  }
+}
+
 .closeButton {
-  margin-top: 1.5rem;
   background: $primary-color;
   color: $secondary-color;
-  padding: 0.7rem 1.5rem;
+  padding: 0.7rem 1.8rem;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 1rem;
-  transition: background 0.3s ease, transform 0.3s ease;
+  font-weight: 600;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  
+  &:hover {
+    background: $hover-color;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(1px);
+  }
 }
 
-.closeButton:hover {
-  background: $hover-color;
-  transform: translateY(-2px);
-}
-
-@media (max-width: 380px) {
+// Improved Responsive Design
+@media (max-width: 480px) {
   .content {
-    padding: 1rem;       // Weniger Padding, damit mehr Platz für den Text bleibt
-    max-width: 95%;      // Vergrößerte Breite, damit das Overlay den vielschichtigen Text aufnehmen kann
-    font-size: 0.9rem;   // Basis-Fontgröße anpassen
-
+    padding: 1.5rem;
+    max-width: 100%;
+    border-radius: 15px;
+    
+    h2 {
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+    }
+    
     p {
-      font-size: 0.85rem;   // Noch etwas kleinere Schrift, damit längere Texte in den sichtbaren Bereich passen
-      line-height: 1.4;     // Engerer Zeilenabstand
-      margin: 0.75rem 0;    // Weniger Außenabstand
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin: 0.8rem 0;
     }
   }
   
-  .closeButton {
-    font-size: 0.85rem;
-    padding: 0.5rem 1rem;
-  }
-}
-
-@media (min-width: 381px) and (max-width: 481px) {
-  .content {
-    padding: 1.8rem;       // Angepasstes Padding für mehr Komfort
-    max-width: 85%;        // Etwas schmalere Breite für mittlere Displays
-    font-size: 1rem;       // Etwas größere Basis-Fontgröße
-
-    p {
-      font-size: 0.95rem;   // Leicht vergrößerte Schrift für bessere Lesbarkeit
-      line-height: 1.6;
-      margin: 0.9rem 0;
-    }
+  .buttonContainer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
   }
   
-  .closeButton {
+  .closeButton, .audioButton {
+    width: 100%;
+    justify-content: center;
+    padding: 0.8rem;
     font-size: 0.95rem;
-    padding: 0.6rem 1.2rem;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .content {
+    padding: 2rem;
+    max-width: 90%;
+    
+    h2 {
+      font-size: 1.6rem;
+    }
+    
+    p {
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+  }
+  
+  .buttonContainer {
+    justify-content: space-between;
+  }
+}
+
+@media (min-width: 769px) {
+  .content {
+    padding: 2.5rem 3rem;
   }
 }
