@@ -147,7 +147,7 @@ Halving erklärt:
 Das Halving ist ein programmierter Mechanismus im Bitcoin-Protokoll, der die Inflationsrate kontrolliert und die Knappheit sicherstellt.
 Kernelemente:
 - Regelmäßige Reduzierung: Alle 210.000 Blöcke (etwa alle 4 Jahre) halbiert sich die Mining-Belohnung.
-- Ausgabekontrolle: Begann mit 50 BTC pro Block, jetzt bei 6,25 BTC, nächstes Halving auf 3,125 BTC.
+- Ausgabekontrolle: Begann mit 50 BTC pro Block, jetzt bei 3,125 BTC, nächstes Halving auf 1,5625 BTC.
 - Maximale Menge: Der Halving-Mechanismus stellt sicher, dass nie mehr als 21 Millionen Bitcoins erzeugt werden können.
 - Vorhersehbare Knappheit: Im Gegensatz zu traditionellen Währungen ist das Angebot mathematisch festgelegt.
 
@@ -155,7 +155,8 @@ Historische Halvings:
 - 2012: Reduzierung von 50 auf 25 BTC.
 - 2016: Reduzierung von 25 auf 12,5 BTC.
 - 2020: Reduzierung von 12,5 auf 6,25 BTC.
-- Nächstes Halving: ca. 2024.
+- 2024: Reduzierung von 6,25 auf 3,125 BTC.
+- Nächstes Halving: ca. 2028.
 
 Dieser Mechanismus schafft ein vorhersehbares, zunehmend knappes Geldangebot, was Bitcoin zu einer potenziell deflationären Währung macht und zur langfristigen Werterhaltung beitragen kann.`,Keypairs:`Keypairs im Bitcoin-Netzwerk:
 Keypairs erklärt:
