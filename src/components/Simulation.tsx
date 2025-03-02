@@ -50,18 +50,14 @@ const Simulation: React.FC = () => {
           )}
           
           {currentPageIndex < simulationPages.length - 1 ? (
-            <button 
-              className={styles.nextButton} 
-              onClick={goToNextPage}
-            >
-              Weiter →
-            </button>
+            <>
+            </>
           ) : (
             <button 
               className={styles.nextButton} 
               onClick={goToNextPage}
             >
-              Abschließen
+              Ende
             </button>
           )}
         </div>

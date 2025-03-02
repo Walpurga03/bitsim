@@ -22,7 +22,7 @@
   color: $text-color;
   padding: 2rem;
   text-align: center;
-  animation: fadeIn 1s ease-out;
+  //animation: fadeIn 1s ease-out;
 }
 
 h1 {
@@ -40,7 +40,6 @@ p {
   margin-bottom: 2rem;
   opacity: 0;
   animation: fadeInSlide 1s forwards;
-  animation-delay: 1s;
 }
 
 .nextButton {
