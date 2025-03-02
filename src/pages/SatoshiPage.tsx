@@ -4,8 +4,8 @@ import MiningExplanationPopup from '../components/MiningExplanationPopup';
 import NodeExplanationPopup from '../components/NodeExplanationPopup';
 import DifficultyAdjustmentPopup from '../components/DifficultyAdjustmentPopup';
 import TransactionExplanationPopup from '../components/TransactionExplanationPopup';
-import CombinedTransactionWalletsPage from './CombinedTransactionWalletsPage'; // Achte auf den korrekten Pfad
-import HalvingExplanationPopup from '../components/HalvingExplanationPopup';  // Neuer Import
+import CombinedTransactionWalletsPage from './CombinedTransactionWalletsPage';
+import HalvingExplanationPopup from '../components/HalvingExplanationPopup';
 
 interface MiningResult {
   hash: number;
@@ -15,7 +15,7 @@ interface MiningResult {
   transactions: string;
   merkleRoot: string;
   found: boolean;
-  blockNumber: number; // new property for absolute block number
+  blockNumber: number;
 }
 
 interface WalletInfo {
@@ -31,7 +31,7 @@ interface SatoshiPageProps {
 }
 
 const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
-  // Zustände für Mining und die verschiedenen Ansichten
+  // States for mining and different views
   const [miningStarted, setMiningStarted] = useState(false);
   const [miningResult, setMiningResult] = useState<MiningResult | null>(null);
   const [showPopup, setShowPopup] = useState(false);
@@ -43,22 +43,12 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
   const [showHallsWallet, setShowHallsWallet] = useState(false);
   const [showDifficultyPopup, setShowDifficultyPopup] = useState(false);
   const [showTransactionPopup, setShowTransactionPopup] = useState(false);
-  const [] = useState(false);
-  const [] = useState(false);
   const [showCombinedPage, setShowCombinedPage] = useState(false);
-  // Neuer State für die Transaktions-ID aus der kombinierten Seite:
   const [txIdFromCombined, setTxIdFromCombined] = useState<string>('');
   const [pendingTransactionAmount, setPendingTransactionAmount] = useState<number>(0);
   const [showHalvingPopup, setShowHalvingPopup] = useState(false);
-  // Füge den isMobile-State hinzu:
   const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 800);
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const [walletInfo, setWalletInfo] = useState<WalletInfo>({
     balance: 0,
@@ -72,6 +62,15 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
   const hallAddress = "1HallLegendeXXX";
   const initialTarget = 210000;
   
+  // Handle responsive view
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 800);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
+  // Show mining explanation when first starting
   useEffect(() => {
     if (miningStarted && !preMiningExplanationShown) {
       setShowPopup(true);
@@ -79,34 +78,44 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
     }
   }, [miningStarted, preMiningExplanationShown]);
   
+  // Show node explanation after second block
   useEffect(() => {
     if (walletInfo.currentBlock >= 2 && !nodeExplanationShown) {
       setShowNodePopup(true);
     }
   }, [walletInfo.currentBlock, nodeExplanationShown]);
   
+  // Show difficulty adjustment popup at block 2016
   useEffect(() => {
     if (walletInfo.currentBlock === 2016) {
       setShowDifficultyPopup(true);
     }
   }, [walletInfo.currentBlock]);
   
+  // Show transaction popup at block 2018
   useEffect(() => {
     if (walletInfo.currentBlock === 2018) {
-      // Hier wird showTransactionPopup aktiviert, wenn du den Button "Transaktion simulieren" verwenden möchtest.
       setShowTransactionPopup(true);
     }
   }, [walletInfo.currentBlock]);
   
   const simulateMining = () => {
+    // Prevent rapid clicking
+    if (isAnimating) return;
+    
+    setIsAnimating(true);
+    setTimeout(() => setIsAnimating(false), 800);
+    
     const effectiveTarget = walletInfo.currentBlock < 2016 ? initialTarget : 140000;
     const generatedHash = Math.floor(Math.random() * 1000000);
     const nonce = Math.floor(Math.random() * 100000);
     const now = new Date();
     now.setFullYear(now.getFullYear() - 16);
     const timestamp = now.toLocaleString();
+    
     let transactions: string;
     let merkleRoot: string;
+    
     if (walletInfo.currentBlock + 1 === 1) {
       transactions = "Keine Transaktionen vorhanden";
       merkleRoot = "Nicht vorhanden";
@@ -115,6 +124,7 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
       transactions = `${txCount}`;
       merkleRoot = `${Math.random().toString(16).substr(2, 8)}${walletInfo.currentBlock + 1}`;
     }
+    
     const blockFound = generatedHash < effectiveTarget;
     const newBlock = walletInfo.currentBlock + 1;
     const newBlockData: MiningResult = {
@@ -129,6 +139,7 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
     };
   
     setMiningResult(newBlockData);
+    
     if (blockFound) {
       setChainBlocks(prev => {
         const newChain = [...prev, newBlockData];
@@ -137,21 +148,23 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
         }
         return newChain;
       });
+      
       let newEpoch = walletInfo.currentEpoch;
       let newReward = walletInfo.currentReward;
+      
       if (newBlock % 210000 === 0) {
         newEpoch = walletInfo.currentEpoch + 1;
         newReward = walletInfo.currentReward / 2;
-        // Öffne das Halving-Popup, wenn 210000 erreicht wurden
         setShowHalvingPopup(true);
       }
+      
       if (newBlock === 2020) {
         newEpoch = walletInfo.currentEpoch + 1;
         newReward = walletInfo.currentReward / 2;
-        // Öffne das Halving-Popup
         setShowHalvingPopup(true);
       }
-      // Falls ein Transaktionsbetrag ansteht, aktualisiere die Balances
+      
+      // Handle pending transaction if any
       if (pendingTransactionAmount > 0) {
         setWalletInfo(prev => ({
           ...prev,
@@ -161,7 +174,6 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
           currentEpoch: newEpoch,
           currentReward: newReward,
         }));
-        // Entferne die Transaktions-ID, nachdem der Betrag übertragen wurde:
         setTxIdFromCombined('');
         setPendingTransactionAmount(0);
       } else {
@@ -180,11 +192,10 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
     ? chainBlocks[chainBlocks.length - 1].hash 
     : "Nicht vorhanden";
   
-  // Bestimme, welche Blöcke angezeigt werden sollen:
+  // Determine which blocks to display based on screen size
   const blocksToDisplay = isMobile ? chainBlocks.slice(-2) : chainBlocks;
 
-  // Routenwechsel: Prüfe die Zustände und rendere die jeweilige Seite.
-  
+  // Handle navigation to combined page
   if (showCombinedPage) {
     return (
       <CombinedTransactionWalletsPage 
@@ -200,9 +211,27 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
     );
   }
   
+  // Skip to advanced blocks
+  const skipToAdvancedBlocks = () => {
+    setChainBlocks([
+      { blockNumber: 2010, hash: 175026, nonce: 0, target: initialTarget, timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
+      { blockNumber: 2011, hash: 21169, nonce: 0, target: initialTarget, timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
+      { blockNumber: 2012, hash: 88168, nonce: 0, target: initialTarget, timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
+      { blockNumber: 2013, hash: 159457, nonce: 0, target: initialTarget, timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
+      { blockNumber: 2014, hash: 207500, nonce: 0, target: initialTarget, timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
+    ]);
+    setWalletInfo({
+      ...walletInfo,
+      currentBlock: 2014,
+      balance: 2014 * 50,
+    });
+    setShowHallsWallet(true);
+    onNext();
+  };
+  
   return (
     <div className={styles.page}>
-      {!miningStarted && <h1>Satoshi Nakamoto</h1>}
+      {/* Blockchain display at top */}
       {chainBlocks.length > 0 && (
         <div className={styles.blockchainDisplay}>
           {blocksToDisplay.map(block => {
@@ -212,14 +241,17 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
               <div key={block.blockNumber} className={styles.block}>
                 <p><strong>Block {block.blockNumber}</strong></p>
                 <p>Hash: {block.hash}</p>
-                <p>Last Hash: {prevDisplay}</p>
+                <p>Last: {prevDisplay}</p>
               </div>
             );
           })}
         </div>
       )}
+      
+      {/* Initial intro screen */}
       {!miningStarted ? (
-        <>
+        <div className={styles.introSection}>
+          <h1>Satoshi Nakamoto</h1>
           <p>
             Satoshi Nakamoto, der Schöpfer von Bitcoin, hat die ersten Blöcke selbst erstellt.
             Als einziger Teilnehmer des Netzwerks wuchs sein Bitcoin-Bestand allmählich,
@@ -233,9 +265,10 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
           <button className={styles.nextButton} onClick={() => setMiningStarted(true)}>
             Mining demonstrieren
           </button>
-        </>
+        </div>
       ) : (
         <>
+          {/* Wallet display area */}
           <div className={styles.walletsContainer}>
             <div className={styles.walletCard}>
               <h2>Satoshi's Wallet</h2>
@@ -250,13 +283,21 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
               </div>
             )}
           </div>
+          
+          {/* Mining status */}
           <div className={styles.miningStatus}>
-            <p><strong>Aktuelle Epoche:</strong> {walletInfo.currentEpoch}</p>
-            <p><strong>Aktueller Block:</strong> {walletInfo.currentBlock}</p>
-            <p><strong>Aktuelle Belohnung:</strong> {walletInfo.currentReward} BTC</p>
+            <p><strong>Epoche:</strong> {walletInfo.currentEpoch}</p>
+            <p><strong>Block:</strong> {walletInfo.currentBlock}</p>
+            <p><strong>Belohnung:</strong> {walletInfo.currentReward} BTC</p>
           </div>
+          
+          {/* Mining interface */}
           {!miningResult ? (
-            <button className={styles.nextButton} onClick={simulateMining}>
+            <button 
+              className={styles.mineButton} 
+              onClick={simulateMining}
+              disabled={isAnimating}
+            >
               Block minen
             </button>
           ) : (
@@ -264,45 +305,40 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
               <h2>Mining Block</h2>
               <div className={styles.hashTarget}>
                 <p>
-                  <strong>Blockhash:</strong> {miningResult.hash} <span className={styles.lessThan}>&lt;</span> <strong>Difficulty Target:</strong> {miningResult.target}
+                  <strong>Blockhash:</strong> {miningResult.hash}
+                </p>
+                <span className={styles.lessThan}>&lt;</span>
+                <p>
+                  <strong>Difficulty:</strong> {miningResult.target}
                 </p>
               </div>
+              
               {showPrevHash && walletInfo.currentBlock >= 6 && (
-                <p><strong>Vorheriger Blockhash:</strong> {previousBlockHash}</p>
+                <p><strong>Vorheriger Hash:</strong> {previousBlockHash}</p>
               )}
               <p><strong>Nonce:</strong> {miningResult.nonce}</p>
               <p><strong>Zeitstempel:</strong> {miningResult.timestamp}</p>
               <p><strong>Transaktionen:</strong> {miningResult.transactions}</p>
               <p><strong>Merkle-Root:</strong> {miningResult.merkleRoot}</p>
-              <p><strong>Status:</strong> {miningResult.found ? "Block gefunden!" : "Block nicht gefunden!"}</p>
-              {/* Wenn eine Transaktions-ID von der kombinierten Seite zurückkam, zeige sie hier an */}
+              <p><strong>Status:</strong> {miningResult.found ? "Block gefunden! ✅" : "Block nicht gefunden ❌"}</p>
+              
+              {/* Transaction ID if available */}
               {txIdFromCombined && (
                 <p className={styles.txId}>
                   <strong>Transaktions-ID:</strong> {txIdFromCombined}
                 </p>
               )}
+              
               <div className={styles.blockButtons}>
-                <button className={styles.nextButton} onClick={simulateMining}>
-                  Pow
+                <button 
+                  className={styles.mineButton} 
+                  onClick={simulateMining}
+                  disabled={isAnimating}
+                >
+                  Mining starten
                 </button>
                 {walletInfo.currentBlock >= 5 && !showHallsWallet && (
-                  <button className={styles.nextButton} onClick={() => {
-                      // Alte "Weiter"-Logik, die später zu einer anderen Seite führt:
-                      setChainBlocks([
-                        { blockNumber: 2010, hash: 175026, nonce: 0, target: initialTarget, timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
-                        { blockNumber: 2011, hash: 21169, nonce: 0, target: initialTarget, timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
-                        { blockNumber: 2012, hash: 88168, nonce: 0, target: initialTarget, timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
-                        { blockNumber: 2013, hash: 159457, nonce: 0, target: initialTarget, timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
-                        { blockNumber: 2014, hash: 207500, nonce: 0, target: initialTarget, timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
-                      ]);
-                      setWalletInfo({
-                        ...walletInfo,
-                        currentBlock: 2014,
-                        balance: 2014 * 50,
-                      });
-                      setShowHallsWallet(true);
-                      onNext();
-                  }}>
+                  <button className={styles.nextButton} onClick={skipToAdvancedBlocks}>
                     Weiter
                   </button>
                 )}
@@ -311,6 +347,8 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
           )}
         </>
       )}
+      
+      {/* Popups */}
       {showPopup && <MiningExplanationPopup onClose={() => setShowPopup(false)} />}
       {showNodePopup && (
         <NodeExplanationPopup onClose={() => {
@@ -322,7 +360,6 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
       {showTransactionPopup && (
         <TransactionExplanationPopup onClose={() => {
           setShowTransactionPopup(false);
-          // Wechsel zur kombinierten Seite mit Wallets und Transaktion:
           setShowCombinedPage(true);
         }} />
       )}

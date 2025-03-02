@@ -30,7 +30,7 @@
   color: $text-color;
   max-width: 650px;
   width: 100%;
-  animation: slideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  //animation: slideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   max-height: 85vh;
   overflow-y: auto;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -40,7 +40,7 @@
     font-size: 1.8rem;
     font-weight: 600;
     margin-bottom: 1.5rem;
-    background: linear-gradient(90deg, $primary-color, adjust-hue($primary-color, 30deg));
+    background: linear-gradient(90deg, $primary-color,($primary-color, 30deg));
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
@@ -55,7 +55,7 @@
     margin: 1.2rem 0;
     font-weight: 400;
     letter-spacing: 0.3px;
-    color: adjust-color($text-color, $lightness: 5%);
+    color:color.adjust($text-color, $lightness: 5%);
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
   }
 
