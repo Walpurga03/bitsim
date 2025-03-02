@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './InfoMenu.module.scss';
 import { contactConfig } from '../config/contactConfig';
-import { FaGithub, FaBolt, FaTimes } from 'react-icons/fa';
+import { FaGithub, FaBolt} from 'react-icons/fa';
 import { IoInformationCircle } from 'react-icons/io5';
 import nostrImg from '../assets/nostr.gif';
 
