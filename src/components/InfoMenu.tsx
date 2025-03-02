@@ -243,9 +243,6 @@ Für Fragen, Anregungen oder Spenden können Sie mich über die folgenden Kanäl
       )}
       {open && (
         <div className={styles.menu} ref={menuRef}>
-          <button className={styles.closeButton} onClick={toggleMenu}>
-            <FaTimes size={18} />
-          </button>
           <ul>
             {Object.keys(explanations).map((item) =>
               item === 'Kontakt' ? (
