@@ -12,9 +12,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  animation: fadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation: fadeIn $transition-medium cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   z-index: 2000;
-  padding: 1rem;
+  padding: $space-md;
 }
 
 @keyframes fadeIn {
@@ -23,24 +23,25 @@
 }
 
 .content {
-  background: linear-gradient(145deg, $secondary-color, #0a0a0a);
-  padding: 2.5rem;
-  border-radius: 20px;
+  background: linear-gradient(145deg, $secondary-color, color.adjust($secondary-color, $hue: 10deg));
+
+  padding: $space-xl;
+  border-radius: $border-radius * 4;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
   color: $text-color;
   max-width: 650px;
   width: 100%;
-  animation: slideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation: slideIn $transition-medium cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   max-height: 85vh;
   overflow-y: auto;
   border: 1px solid rgba(255, 255, 255, 0.1);
   
   h2 {
-    font-family: 'Roboto', sans-serif;
-    font-size: 1.8rem;
+    font-family: $font-primary;
+    font-size: $font-size-xlarge;
     font-weight: 600;
-    margin-bottom: 1.5rem;
-    background: linear-gradient(90deg, $primary-color,($primary-color, 30deg));
+    margin-bottom: $space-lg;
+    background: linear-gradient(90deg, $primary-color, color.adjust($primary-color, $hue: 30deg));
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
@@ -48,14 +49,14 @@
   }
   
   p {
-    font-family: 'Roboto', sans-serif;
-    font-size: 1.1rem;
+    font-family: $font-primary;
+    font-size: $font-size-medium;
     line-height: 1.7;
     text-align: left;
-    margin: 1.2rem 0;
+    margin: $space-md 0;
     font-weight: 400;
     letter-spacing: 0.3px;
-    color:color.adjust($text-color, $lightness: 5%);
+    color: color.adjust($text-color, $lightness: 5%);
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
   }
 

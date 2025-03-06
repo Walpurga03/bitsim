@@ -1,0 +1,113 @@
+@use "sass:color" as color;
+@use '../styles/variables' as *;
+
+.simulation {
+  min-height: 100vh;
+  background: linear-gradient(135deg, $secondary-color, #0a0a0a);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+  overflow-x: hidden;
+  position: relative;
+  
+  // Optionales subtiles Hintergrundmuster
+  &::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.02;
+    background-image: radial-gradient(#f7931a 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+.pageTitle {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin: 2rem 0;
+  background: linear-gradient(90deg, $primary-color, color.adjust($primary-color, $lightness: 15%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 15px rgba($primary-color, 0.2);
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.stepContainer {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  animation: fadeUp 0.8s ease-out;
+}
+
+.navigationControls {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.prevButton, .nextButton {
+  background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: 10%));
+  color: $secondary-color;
+  font-size: 1rem;
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s ease;
+  }
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 15px rgba($primary-color, 0.5), 0 15px 30px rgba(0, 0, 0, 0.3);
+    
+    &::before {
+      left: 100%;
+    }
+  }
+  
+  &:active {
+    transform: translateY(-1px);
+  }
+}
+
+.prevButton {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  color: $text-color;
+  
+  &:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+  }
+}
+
+.progressIndicator {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+  margin: 1.5rem 0;
+}

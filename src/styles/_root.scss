@@ -1,0 +1,38 @@
+@use 'variables' as *;
+
+// Diese Datei konvertiert SCSS-Variablen in CSS-Custom-Properties
+:root {
+  // Farben
+  --color-primary: #{$primary-color};
+  --color-secondary: #{$secondary-color};
+  --color-text: #{$text-color};
+  --color-hover: #{$hover-color};
+  --color-subtitle: #{$subtitle-color};
+  --color-accent: #{$accent-color};
+  --color-danger: #{$danger-color};
+  --color-success: #{$success-color};
+  
+  // Schriften
+  --font-primary: #{$font-primary};
+  --font-mono: #{$font-mono};
+  
+  // Schriftgrößen
+  --font-size-small: #{$font-size-small};
+  --font-size-base: #{$font-size-base};
+  --font-size-medium: #{$font-size-medium};
+  --font-size-large: #{$font-size-large};
+  --font-size-xlarge: #{$font-size-xlarge};
+  --font-size-xxlarge: #{$font-size-xxlarge};
+  
+  // Abstände
+  --space-xs: #{$space-xs};
+  --space-sm: #{$space-sm};
+  --space-md: #{$space-md};
+  --space-lg: #{$space-lg};
+  --space-xl: #{$space-xl};
+  --space-xxl: #{$space-xxl};
+  
+  // Andere
+  --border-radius: #{$border-radius};
+  --box-shadow: #{$box-shadow};
+}

@@ -1,5 +1,41 @@
+// Bitcoin-Farbschema und andere Design-Konstanten
+
+// Primäre Farben
 $primary-color: #F7931A; // Bitcoin-Orange
 $secondary-color: #1A1A1A; // Tiefgrauer Hintergrund
 $text-color: #ffffff;      // Weißer Text
 $hover-color: #d18f00;     // Orange-Hover-Effect
 $subtitle-color: #ccc;      // Grauer Untertitel
+
+// Weitere UI-Farben
+$accent-color: #3490dc;    // Akzentfarbe für Links etc.
+$danger-color: #e3342f;    // Für Fehler/Warnungen
+$success-color: #38c172;   // Für Erfolg-Status
+
+// Schriften - Poppins (moderne Sans-Serif)
+$font-primary: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+$font-heading: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+$font-mono: 'SF Mono', 'Roboto Mono', 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
+
+// Schriftgrößen
+$font-size-small: 0.875rem;
+$font-size-base: 1rem;
+$font-size-medium: 1.125rem;
+$font-size-large: 1.25rem;
+$font-size-xlarge: 1.5rem;
+$font-size-xxlarge: 2rem;
+
+// Abstände
+$space-xs: 0.25rem;
+$space-sm: 0.5rem;
+$space-md: 1rem;
+$space-lg: 1.5rem;
+$space-xl: 2rem;
+$space-xxl: 3rem;
+
+// Andere
+$border-radius: 0.5rem;
+$box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+$transition-fast: 0.2s ease;
+$transition-medium: 0.3s ease;
+$transition-slow: 0.5s ease;
