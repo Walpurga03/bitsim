@@ -6,7 +6,7 @@ import DifficultyAdjustmentPopup from '../components/DifficultyAdjustmentPopup';
 import TransactionExplanationPopup from '../components/TransactionExplanationPopup';
 import CombinedTransactionWalletsPage from './CombinedTransactionWalletsPage';
 import HalvingExplanationPopup from '../components/HalvingExplanationPopup';
-import { mineBlock } from '../utils/miningUtils';
+import { mineBlock, DIFFICULTY_LEVELS } from '../utils/miningUtils';
 
 interface MiningResult {
   hash: string; // Ändern von number zu string für hexadezimale Hash-Darstellung
@@ -62,6 +62,7 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
   const satoshiAddress = "1SatoshiPioneerXXX";
   const hallAddress = "1HallLegendeXXX";
   const initialTarget = 210000;
+
   
   // Handle responsive view
   useEffect(() => {
@@ -101,13 +102,10 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
   }, [walletInfo.currentBlock]);
   
   const simulateMining = () => {
-    // Prevent rapid clicking
     if (isAnimating) return;
     
     setIsAnimating(true);
-    
-    // Längere Animation-Dauer, um Mining-Gefühl zu verbessern
-    setTimeout(() => setIsAnimating(false), 2000); // Vorher: 800ms
+    setTimeout(() => setIsAnimating(false), 2000);
     
     // Erstelle den Zeitstempel
     const now = new Date();
@@ -123,8 +121,8 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
       transactions = `${txCount} Transaktion${txCount > 1 ? 'en' : ''}`;
     }
     
-    // Erzeuge die Merkle-Root
-    const merkleRoot = transactions + "-" + Math.random().toString(16).substr(2, 8);
+    // Erzeuge die Merkle-Root (ohne Transaktionsanzahl, da diese separat angezeigt wird)
+    const merkleRoot = Math.random().toString(16).substr(2, 8);
     
     // Vorheriger Block-Hash
     const previousHash = chainBlocks.length > 0 
@@ -139,28 +137,44 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
     miningAnimation.className = styles.miningAnimation;
     document.body.appendChild(miningAnimation);
     
-    // Mining mit Timeout, um UI-Thread nicht zu blockieren und Animation zu simulieren
+    // Mining mit Timeout
     setTimeout(() => {
-      // Mining durchführen mit vereinfachter Logik
-      const { hash, nonce, found, target } = mineBlock(blockData);
+      // Wähle die Schwierigkeit basierend auf verschiedenen Bedingungen:
+      let difficulty;
+      
+      // Nach Block 2016 verwenden wir MEDIUM (0.7)
+      if (walletInfo.currentBlock >= 2016) {
+        difficulty = DIFFICULTY_LEVELS.MEDIUM; // 0.7
+        console.log("NACH Block 2016: Target auf 0.7 (MEDIUM) gesetzt");
+      } else {
+        // Vor Block 2016 EASY (1)
+        difficulty = DIFFICULTY_LEVELS.EASY; // 1
+        console.log("VOR Block 2016: Target auf 1 (EASY)");
+      }
+      
+      // Mining mit expliziter Schwierigkeit durchführen
+      const result = mineBlock(blockData, difficulty);
+      
+      console.log(`Mining abgeschlossen. Hash: ${result.hash}, Target: ${result.target}, Gefunden: ${result.found}`);
       
       // Neues Block-Objekt erstellen
       const newBlock = walletInfo.currentBlock + 1;
       
       const newBlockData: MiningResult = {
-        hash: hash.toString(),
-        nonce,
-        target: target.toString(),
+        hash: result.hash.toString(),
+        nonce: result.nonce,
+        target: result.target.toString(), // Hier wird der tatsächliche Target-Wert gespeichert
         timestamp,
         transactions,
         merkleRoot,
-        found,
+        found: result.found,  // Verwende das tatsächliche Ergebnis
         blockNumber: newBlock,
       };
       
       setMiningResult(newBlockData);
       
-      if (found) {
+      // Nur wenn ein Block gefunden wurde (hash < target), aktualisiere die Chain
+      if (result.found) {
         setChainBlocks(prev => {
           const newChain = [...prev, newBlockData];
           while (newChain.length > 5) {
@@ -205,9 +219,13 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
             currentReward: newReward,
           }));
         }
+      } else {
+        // Block NICHT gefunden: Keine Änderung an Wallet oder Chain
+        console.log("Block nicht gefunden. Keine Belohnung.");
       }
+      
       document.body.removeChild(miningAnimation);
-    }, 1000); // Verzögerung für realistischeres Mining-Gefühl
+    }, 1000);
   };
   
   const previousBlockHash = chainBlocks.length > 0 
@@ -236,11 +254,11 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
   // Skip to advanced blocks
   const skipToAdvancedBlocks = () => {
     setChainBlocks([
-      { blockNumber: 2010, hash: "175026", nonce: 0, target: initialTarget.toString(), timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
-      { blockNumber: 2011, hash: "21169", nonce: 0, target: initialTarget.toString(), timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
-      { blockNumber: 2012, hash: "88168", nonce: 0, target: initialTarget.toString(), timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
-      { blockNumber: 2013, hash: "159457", nonce: 0, target: initialTarget.toString(), timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
-      { blockNumber: 2014, hash: "207500", nonce: 0, target: initialTarget.toString(), timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
+      { blockNumber: 2010, hash: "0.175026", nonce: 0, target: initialTarget.toString(), timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
+      { blockNumber: 2011, hash: "0.21169", nonce: 0, target: initialTarget.toString(), timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
+      { blockNumber: 2012, hash: "0.68168", nonce: 0, target: initialTarget.toString(), timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
+      { blockNumber: 2013, hash: "0.159457", nonce: 0, target: initialTarget.toString(), timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
+      { blockNumber: 2014, hash: "0.207500", nonce: 0, target: initialTarget.toString(), timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
     ]);
     setWalletInfo({
       ...walletInfo,
@@ -322,7 +340,7 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
               {isAnimating ? 'Mining läuft...' : 'Block minen'}
             </button>
           ) : (
-            <div className={`${styles.miningBlock} ${miningResult.found ? styles.foundAnimation : ''}`}>
+            <div className={`${styles.miningBlock} ${miningResult.found ? styles.foundAnimation : styles.notFoundAnimation}`}>
               <h2>Mining Block</h2>
               <div className={styles.hashTarget}>
                 <div className={styles.hashDisplay}>
@@ -332,11 +350,20 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
                   </span>
                 </div>
                 
-                <span className={styles.mustBeBelow}>muss kleiner sein als</span>
+                <span className={styles.mustBeBelow}>
+                  muss kleiner sein als
+                </span>
                 
                 <div>
-                  <strong>Target:</strong> 
-                  <span className={styles.target}>1</span>
+                  <strong>Target:</strong>
+                  <span className={styles.target}>
+                    {miningResult.target}
+                    <div className={styles.difficultyLabel}>
+                      {Object.entries(DIFFICULTY_LEVELS).find(
+                        ([value]) => Math.abs(parseFloat(value.toString()) - parseFloat(miningResult.target)) < 0.01
+                      )?.[0] || ''}
+                    </div>
+                  </span>
                 </div>
               </div>
               
@@ -347,7 +374,10 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
               <p><strong>Zeitstempel:</strong> {miningResult.timestamp}</p>
               <p><strong>Transaktionen:</strong> {miningResult.transactions}</p>
               <p><strong>Merkle-Root:</strong> {miningResult.merkleRoot}</p>
-              <p><strong>Status:</strong> {miningResult.found ? "Block gefunden! ✅" : "Block nicht gefunden ❌"}</p>
+              <p><strong>Status:</strong> {miningResult.found ? 
+                "Block gefunden! ✅ Du erhältst eine Belohnung!" : 
+                "Block nicht gefunden ❌ Versuche es erneut!"}
+              </p>
               
               {/* Transaction ID if available */}
               {txIdFromCombined && (
@@ -362,7 +392,7 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
                   onClick={simulateMining}
                   disabled={isAnimating}
                 >
-                  Mining starten
+                  {isAnimating ? 'Mining läuft...' : miningResult.found ? 'Nächster Block' : 'Erneut versuchen'}
                 </button>
                 {walletInfo.currentBlock >= 5 && !showHallsWallet && (
                   <button className={styles.nextButton} onClick={skipToAdvancedBlocks}>
@@ -383,7 +413,12 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
           setNodeExplanationShown(true);
         }} />
       )}
-      {showDifficultyPopup && <DifficultyAdjustmentPopup onClose={() => setShowDifficultyPopup(false)} />}
+      {showDifficultyPopup && (
+        <DifficultyAdjustmentPopup onClose={() => {
+          setShowDifficultyPopup(false);
+          // Hier nicht mehr nötig, da wir direkt auf die Block-Nummer prüfen
+        }} />
+      )}
       {showTransactionPopup && (
         <TransactionExplanationPopup onClose={() => {
           setShowTransactionPopup(false);
@@ -395,11 +430,11 @@ const SatoshiPage: React.FC<SatoshiPageProps> = ({ onNext }) => {
           onClose={() => {
             setShowHalvingPopup(false);
             setChainBlocks([
-              { blockNumber: 200996, hash: "175026", nonce: 0, target: initialTarget.toString(), timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
-              { blockNumber: 200997, hash: "21169", nonce: 0, target: initialTarget.toString(), timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
-              { blockNumber: 200998, hash: "88168", nonce: 0, target: initialTarget.toString(), timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
-              { blockNumber: 200999, hash: "159457", nonce: 0, target: initialTarget.toString(), timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
-              { blockNumber: 210000, hash: "207500", nonce: 0, target: initialTarget.toString(), timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
+              { blockNumber: 200996, hash: "0.175026", nonce: 0, target: initialTarget.toString(), timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
+              { blockNumber: 200997, hash: "0.21169", nonce: 0, target: initialTarget.toString(), timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
+              { blockNumber: 200998, hash: "0.68168", nonce: 0, target: initialTarget.toString(), timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
+              { blockNumber: 200999, hash: "0.159457", nonce: 0, target: initialTarget.toString(), timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
+              { blockNumber: 210000, hash: "0.207500", nonce: 0, target: initialTarget.toString(), timestamp: new Date().toLocaleString(), transactions: "Fake block", merkleRoot: "Merkle", found: true },
             ]);
             // Aktualisiere den aktuellen Block auf 21000, sodass beim nächsten Minting 21001 berechnet wird.
             setWalletInfo(prev => ({ ...prev, currentBlock: 210000 }));

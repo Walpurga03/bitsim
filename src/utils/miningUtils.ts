@@ -18,45 +18,94 @@ export const generateSimpleHash = (input: string): number => {
     hash = hash & hash; // Konvertiere zu 32bit Integer
   }
   
-  // Konvertiere zu einer Zahl zwischen 0 und 9.99
-  const normalizedHash = Math.abs(hash % 1000) / 100;
-  return parseFloat(normalizedHash.toFixed(2)); // 2 Dezimalstellen für bessere Lesbarkeit
+  // Normalisiere den Hash in den Bereich [0.00001, 5.00000]:
+  const minVal = 0.00001;
+  const maxVal = 5.00000;
+  const range = maxVal - minVal;
+  // Verwende abs(hash % 1000) und dividiere durch 1000, um einen Wert zwischen 0 und 1 zu erhalten.
+  const normalized = Math.abs(hash % 1000) / 1000;
+  return parseFloat((minVal + normalized * range).toFixed(5));
 };
 
 /**
- * Sucht nach einem gültigen Block-Hash durch Verändern der Nonce
- * Hash muss unter dem Target-Wert liegen
+ * Bestimmt die aktuelle Mining-Schwierigkeit basierend auf der Blockhöhe
+ */
+export const getTargetForBlock = (blockHeight: number): number => {
+  // Start mit einfacher Schwierigkeit, dann zunehmend schwerer
+  if (blockHeight < 5) return 0.5;     // Sehr einfach am Anfang
+  if (blockHeight < 20) return 0.3;    // Mittelschwer
+  if (blockHeight < 100) return 0.2;   // Schwerer
+  return 0.1;                          // Sehr schwer für fortgeschrittene Blöcke
+};
+
+// Aktualisierte Difficulty-Level innerhalb des gewünschten Zahlenbereichs
+export const DIFFICULTY_LEVELS = {
+  EASY:     1.00000,   // Einfach
+  MEDIUM:   0.70000,   // Mittel
+  HARD:     0.50000,   // Schwer
+};
+
+// Zusätzliche Utility-Funktion zum Finden des Namens der Difficulty
+export const getDifficultyName = (target: number): string => {
+  const entry = Object.entries(DIFFICULTY_LEVELS).find(
+    ([_, value]) => Math.abs(value - target) < 0.001
+  );
+  return entry ? entry[0] : 'CUSTOM';
+};
+
+// Ein realistischeres Maximum für Mining-Versuche setzen
+const MAX_MINING_ATTEMPTS = 40; // Erhöhen für realistischeres Mining
+
+/**
+ * Verbesserter mineBlock mit flexibler Difficulty-Einstellung
+ * @param blockData Die Block-Daten (Hash des vorherigen Blocks + Timestamp + Merkle-Root)
+ * @param difficulty Optionale explizite Schwierigkeit (Target-Wert zwischen 0 und 1)
+ * @param blockHeight Optional für automatische Schwierigkeitsbestimmung, wenn difficulty nicht angegeben
+ * @param maxAttempts Maximale Anzahl von Versuchen
  */
 export const mineBlock = (
-  blockData: string, 
-  maxAttempts: number = 3000 // Mehr Versuche erlauben
-): { hash: number; nonce: number; found: boolean; target: number } => {
-  const target = 0.3; // Niedrigeres Target macht es schwieriger (vorher: 1)
-  let nonce = Math.floor(Math.random() * 100); // Beginne mit einer zufälligen Nonce
+  blockData: string,
+  difficulty?: number,        // Neuer Parameter für manuelle Difficulty-Einstellung
+  blockHeight: number = 0,    // Optional für automatische Difficulty
+): { hash: number; nonce: number; found: boolean; target: number; attempts: number } => {
+  // Verwende entweder explizite Schwierigkeit oder berechne sie aus der Blockhöhe
+  const target = difficulty !== undefined ? difficulty : getTargetForBlock(blockHeight);
+  
+  // Starte mit einer zufälligen Nonce
+  let nonce = Math.floor(Math.random() * 100);
   let hash = 0;
   let found = false;
+  let attempts = 0;
   
-  // Begrenze die Versuche auf maxAttempts (mehr als vorher)
-  let attempt;
-  for (attempt = 0; attempt < maxAttempts; attempt++) {
-    // Kombiniere Block-Daten mit Nonce
+  // Mining versuchen
+  for (attempts = 0; attempts < MAX_MINING_ATTEMPTS; attempts++) {
     const dataWithNonce = `${blockData}-${nonce}`;
-    
-    // Hash berechnen (zwischen 0 und 9.99)
     hash = generateSimpleHash(dataWithNonce);
     
-    // Prüfe, ob Hash kleiner als Target ist
+    // DEBUG-LOG für jeden Versuch:
+    console.log(`Versuch ${attempts+1}: Hash=${hash.toFixed(2)}, Target=${target.toFixed(2)}`);
+    
     if (hash < target) {
       found = true;
       break;
     }
     
-    // Nonce erhöhen und neu versuchen
     nonce++;
   }
   
-  // Zeige auch einen erfolglosen Hash nach maxAttempts Versuchen
-  return { hash, nonce, found, target };
+  // Gib die Anzahl der Versuche explizit mit zurück
+  return { hash, nonce, found, target, attempts: attempts + 1 };
+};
+
+/**
+ * Schätzt, wie viele Versuche für ein bestimmtes Target benötigt werden.
+ * @param target Der Target-Wert (0-1, je kleiner desto schwieriger)
+ * @returns Geschätzte Anzahl der benötigten Versuche
+ */
+export const estimatedAttemptsForTarget = (target: number): number => {
+  // Grobe Schätzung: Bei Target = 1 braucht man im Durchschnitt 1 Versuch,
+  // bei Target = 0.5 etwa 2 Versuche, bei Target = 0.1 etwa 10 Versuche
+  return Math.round(1 / target);
 };
 
 /**

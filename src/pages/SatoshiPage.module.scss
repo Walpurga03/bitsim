@@ -222,17 +222,17 @@ p {
   }
 }
 
-// Modern mining block
+// Kompakterer Mining-Block
 .miningBlock {
   background: linear-gradient(145deg, rgba(20, 20, 20, 0.9), rgba(5, 5, 5, 0.95));
   backdrop-filter: blur(10px);
   border: $card-border;
   box-shadow: $card-shadow;
   border-radius: 24px;
-  padding: 2.5rem;
+  padding: 1.5rem; // Reduziert von 2.5rem
   width: 100%;
   max-width: 900px;
-  margin: 2rem auto;
+  margin: 1.5rem auto; // Reduziert von 2rem auto
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
   position: relative;
   overflow: hidden;
@@ -262,11 +262,11 @@ p {
   }
 
   h2 {
-    margin-bottom: 2rem;
-    font-size: clamp(1.5rem, 3vw, 2rem);
+    margin-bottom: 1rem; // Reduziert von 2rem
+    font-size: clamp(1.3rem, 3vw, 1.7rem); // Kleinere Schriftgröße
     color: $primary-color;
     position: relative;
-    padding-bottom: 0.8rem;
+    padding-bottom: 0.5rem; // Reduziert von 0.8rem
     text-align: center;
     
     &::after {
@@ -274,7 +274,7 @@ p {
       position: absolute;
       left: 50%;
       bottom: 0;
-      width: 80px;
+      width: 60px; // Reduziert von 80px
       height: 2px;
       background: $accent-gradient;
       transform: translateX(-50%);
@@ -282,8 +282,8 @@ p {
   }
 
   p {
-    margin: 1rem 0;
-    font-size: clamp(0.85rem, 1.8vw, 1rem);
+    margin: 0.6rem 0; // Reduziert von 1rem 0
+    font-size: clamp(0.8rem, 1.6vw, 0.95rem); // Kleinere Schriftgröße
     line-height: 1.6;
     word-wrap: break-word;
     overflow-wrap: break-word;
@@ -294,21 +294,23 @@ p {
     strong {
       color: rgba($primary-color, 0.9);
       margin-right: 1rem;
-      min-width: 120px;
+      min-width: 100px; // Reduziert von 120px
       font-weight: 600;
       letter-spacing: 0.01em;
     }
   }
 }
 
-// Modernized hash target display
+// Modernized hash target display - horizontal layout
 .hashTarget {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-  padding: 1.5rem;
+  flex-direction: row; // Geändert von column zu row
+  align-items: center; // Zentrierte Ausrichtung
+  justify-content: center;
+  flex-wrap: wrap; // Falls der Bildschirm zu schmal wird
+  gap: 0.8rem 1.5rem; // Horizontaler Gap etwas größer
+  margin-bottom: 1.2rem;
+  padding: 1rem;
   background: rgba(0, 0, 0, 0.4);
   border-radius: 16px;
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
@@ -331,7 +333,7 @@ p {
     font-family: $font-mono;
     font-size: clamp(1.5rem, 4vw, 2rem); // Kleinere Schrift (vorher: 2rem, 5vw, 3rem)
     font-weight: bold;
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.8rem; // Reduziert von 0.5rem 1rem
     border-radius: 8px; // Kleinerer Radius
     display: inline-block;
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
@@ -348,52 +350,92 @@ p {
     
     &.invalidHash {
       color: #F44336;
-      background: rgba(244, 67, 54, 0.1);
+      background: rgba(244, 67, 54, 0.15);
+      position: relative;
+      
+      &::after {
+        content: "Zu hoch!";
+        position: absolute;
+        bottom: -18px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.7rem;
+        color: #F44336;
+        white-space: nowrap;
+      }
     }
   }
 }
 
-@keyframes pulse {
-  0% { transform: scale(1); box-shadow: 0 0 15px rgba(76, 175, 80, 0.3); }
-  50% { transform: scale(1.03); box-shadow: 0 0 20px rgba(76, 175, 80, 0.5); }
-  100% { transform: scale(1); box-shadow: 0 0 15px rgba(76, 175, 80, 0.3); }
-}
-
 .mustBeBelow {
-  display: block;
-  margin: 0;
-  font-size: clamp(0.8rem, 1.5vw, 0.9rem); // Kleinere Schrift
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
   color: rgba($text-color, 0.7);
   font-style: italic;
-  position: relative;
-  padding: 0.4rem 1.5rem;
+  padding: 0 0.5rem;
   
-  &::before, &::after {
+  // Pfeile zur Visualisierung
+  &::before {
     content: "";
-    position: absolute;
-    top: 50%;
-    width: 1.5rem;
-    height: 1px;
-    background: rgba($text-color, 0.4);
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-left: 8px solid rgba($text-color, 0.4);
+    border-bottom: 6px solid transparent;
+    margin-right: 0.5rem;
   }
-  
-  &::before { left: 0; }
-  &::after { right: 0; }
 }
 
 .target {
   font-family: $font-mono;
-  font-size: clamp(1.5rem, 4vw, 2rem); // Kleinere Schrift (vorher: 2rem, 5vw, 3rem)
+  font-size: 1.2rem; // Gleiche Größe wie Hash
   font-weight: bold;
   color: $primary-color;
-  padding: 0.5rem 1rem;
+  padding: 0.3rem 0.6rem;
   background: rgba($primary-color, 0.1);
-  border-radius: 8px; // Kleinerer Radius
+  border-radius: 8px;
   display: inline-block;
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  max-width: 250px; // Schmaler (vorher: 350px)
   border: 1px solid rgba($primary-color, 0.2);
+  
+  strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: $text-color;
+    font-weight: 400;
+    opacity: 0.7;
+  }
+  
+  // Hinzufügen von Styles für das Difficulty-Label
+  .difficultyLabel {
+    font-size: 0.7rem;
+    opacity: 0.7;
+    margin-top: 0.3rem;
+    font-weight: normal;
+    white-space: nowrap;
+    color: rgba($text-color, 0.8);
+    letter-spacing: 0.05em;
+  }
+}
+
+// Responsive Anpassungen für den neuen horizontalen Layout
+@media (max-width: 580px) {
+  .hashTarget {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  
+  .mustBeBelow {
+    transform: rotate(90deg);
+    margin: 0.3rem 0;
+    
+    &::before {
+      transform: rotate(-90deg);
+    }
+  }
 }
 
 // Modern styled buttons
@@ -458,12 +500,13 @@ p {
   }
 }
 
+// Kompaktere Button-Anordnung
 .blockButtons {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
   justify-content: center;
-  margin-top: 2rem;
+  margin-top: 1.2rem; // Reduziert von 2rem
 }
 
 // Modern blockchain display
@@ -526,6 +569,17 @@ p {
   &.newBlock {
     animation: blockAdded 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
+}
+
+// Füge eine Animation für nicht gefundene Blöcke hinzu
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.notFoundAnimation {
+  animation: shake 0.8s cubic-bezier(.36,.07,.19,.97) both;
 }
 
 // Enhanced animations
