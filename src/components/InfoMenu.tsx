@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from '../styles/InfoMenu.module.scss';
 import { contactConfig } from '../config/contactConfig';
 import { FaGithub, FaBolt } from 'react-icons/fa';
-import { IoInformationCircle, IoCloseCircle } from 'react-icons/io5';
+import { IoInformationCircle } from 'react-icons/io5';
 import nostrImg from '../assets/nostr.gif';
 
 // Audio-Dateien importieren

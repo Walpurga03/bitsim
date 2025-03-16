@@ -2,10 +2,10 @@ import React from 'react';
 import styles from "../styles/ConsensusPage.module.scss";
 
 interface ConsensusPageProps {
-  onNext: () => void;
+  // onNext wurde entfernt, da es nicht verwendet wird
 }
 
-const ConsensusPage: React.FC<ConsensusPageProps> = ({ onNext }) => {
+const ConsensusPage: React.FC<ConsensusPageProps> = () => {
   return (
     <div className={styles.page}>
       <h1 className={styles.title}>Spielregeln des Netzwerks</h1>

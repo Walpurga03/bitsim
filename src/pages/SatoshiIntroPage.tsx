@@ -2,10 +2,10 @@ import React from 'react';
 import styles from '../styles/SatoshiPage.module.scss';
 
 interface SatoshiIntroPageProps {
-  onNext: () => void;
+  // onNext wurde entfernt, da es nicht verwendet wird
 }
 
-const SatoshiIntroPage: React.FC<SatoshiIntroPageProps> = ({ onNext }) => {
+const SatoshiIntroPage: React.FC<SatoshiIntroPageProps> = () => {
   return (
     <div className={styles.page}>
       <div className={styles.introSection}>
