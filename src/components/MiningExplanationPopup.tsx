@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import styles from './MiningExplanationPopup.module.scss';
+import styles from '../styles/MiningExplanationPopup.module.scss';
 
 interface MiningExplanationPopupProps {
   onClose: () => void;

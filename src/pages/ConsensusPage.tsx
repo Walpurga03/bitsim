@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './ConsensusPage.module.scss';
+import styles from "../styles/ConsensusPage.module.scss";
 
 interface ConsensusPageProps {
   onNext: () => void;
@@ -8,27 +8,18 @@ interface ConsensusPageProps {
 const ConsensusPage: React.FC<ConsensusPageProps> = ({ onNext }) => {
   return (
     <div className={styles.page}>
-      <h1>Spielregeln des Netzwerks</h1>
-      <p>
-        Im Bitcoin-Netzwerk gelten feste Regeln, die für Sicherheit und Stabilität sorgen. Zunächst 
-        sorgt der Konsensmechanismus dafür, dass alle Teilnehmer – die sogenannten Nodes – sich auf den 
-        aktuellen Stand der Blockchain einigen. Miner erfüllen ihre Aufgabe, indem sie durch den 
-        Proof-of-Work neue Blöcke erzeugen, die dann in das öffentliche und unveränderliche Kassenbuch 
-        aufgenommen werden.
-      </p>
-      <p>
-        Ein zentraler Bestandteil ist die dynamische Anpassung der Schwierigkeit (Difficulty). Dieser 
-        Mechanismus stellt sicher, dass im Durchschnitt alle 10 Minuten ein neuer Block generiert wird, 
-        unabhängig von der global eingesetzten Rechenleistung. Überdies wird die Belohnung der Miner, auch 
-        als Block Reward bekannt, regelmäßig – alle 210.000 Blöcke – halbiert (Halving). Dadurch wird das 
-        Angebot an neuen Bitcoins schrittweise reduziert, was zur langfristigen Wertstabilität beiträgt und 
-        vor inflationären Effekten schützt.
-      </p>
-      <p>
-        Zusammen bilden diese Elemente – Konsens, Mining, Difficulty und Halving – die grundlegenden 
-        Spielregeln, die das dezentrale System von Bitcoin absichern und stabilisieren.
-      </p>
-      <button className={styles.nextButton} onClick={onNext}>Weiter</button>
+      <h1 className={styles.title}>Spielregeln des Netzwerks</h1>
+      <div className={styles.card}>
+        <p>
+          Im Bitcoin-Netzwerk gibt es keinen zentralen Verwalter. Stattdessen stützt sich das System auf einen dezentralen Konsensmechanismus. Jeder Node führt eine vollständige Kopie der Blockchain und verifiziert eigenständig alle Blöcke und Transaktionen.
+        </p>
+        <p>
+          Miner lösen durch Proof-of-Work komplexe mathematische Rätsel, um einen neuen Block zu erzeugen. Wird ein Block erfolgreich gefunden, wird er in die Blockchain aufgenommen – so entsteht ein öffentliches, unveränderliches Register aller Transaktionen.
+        </p>
+        <p>
+          Zur Gewährleistung einer konstanten Blockzeit (ca. 10 Minuten) wird die Schwierigkeit regelmäßig angepasst. Gleichzeitig sorgt die periodische Halbierung der Block-Belohnung dafür, dass die Gesamtzahl der Bitcoins langfristig begrenzt bleibt.
+        </p>
+      </div>
     </div>
   );
 };

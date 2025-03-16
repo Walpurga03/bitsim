@@ -1,0 +1,241 @@
+@use '../styles/variables' as *;
+
+/* Keyframe for fading in and sliding up */
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Modernes Design mit Schatten und Abständen */
+.landing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: clamp(1rem, 5vw, 3rem);
+  text-align: center;
+  background: linear-gradient(135deg, $secondary-color 0%, $text-color-black 100%);
+  color: $text-color-with;
+}
+
+.title {
+  font-size: clamp(2rem, 8vw, 3.5rem);
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, $primary-color 0%, $primary-color, 15%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+  max-width: 100%;
+  word-wrap: break-word;
+}
+
+.subtitle {
+  font-size: clamp(1.2rem, 4vw, 2rem);
+  margin-bottom: 2rem;
+  opacity: 0.9;
+  max-width: 800px;
+  word-wrap: break-word;
+}
+
+.description {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  max-width: 800px;
+  opacity: 0.8;
+  word-wrap: break-word;
+}
+
+.note {
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
+  opacity: 0.6;
+  font-style: italic;
+  margin: 1.5rem 0;
+  max-width: 700px;
+  word-wrap: break-word;
+}
+
+.startButton {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  padding: clamp(0.8rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2.5rem);
+  background-color: $primary-color;
+  color: $text-color-black;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  
+  &:hover {
+    background-color: $primary-color, 8%;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.infoHint {
+  font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+  background-color: rgba($primary-color, 0.1);
+  border-left: 3px solid $primary-color;
+  padding: 0.8rem 1rem;
+  border-radius: 0.5rem;
+  margin: 1.5rem auto;
+  max-width: 800px;
+  text-align: left;
+  
+  strong {
+    color: $primary-color;
+  }
+  
+  // Animation für den Hinweis
+  animation: pulse 2s infinite;
+  
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba($primary-color, 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 6px rgba($primary-color, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba($primary-color, 0);
+    }
+  }
+}
+
+// Mobile Small
+@include mobile-s {
+  .landing {
+    padding: 1rem;
+    justify-content: flex-start;
+    padding-top: 5rem;
+  }
+  
+  .title {
+    font-size: 1.8rem;
+  }
+  
+  .subtitle {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .description {
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+  
+  .startButton {
+    font-size: 0.95rem;
+    padding: 0.7rem 1.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .infoHint {
+    font-size: 0.9rem;
+    padding: 0.7rem 0.8rem;
+    margin: 1rem 0;
+  }
+}
+
+// Mobile Large
+@include mobile-l {
+  .landing {
+    padding: 1.5rem;
+    justify-content: flex-start;
+    padding-top: 3.5rem;
+  }
+  
+  .title {
+    font-size: 2rem;
+  }
+  
+  .description {
+    font-size: 1rem;
+  }
+}
+
+// Tablet
+@include tablet {
+  .landing {
+    padding: 2rem;
+    justify-content: flex-start;
+    padding-top: 4rem;
+  }
+  
+  .description {
+    font-size: 1.05rem;
+    max-width: 600px;
+  }
+}
+
+// Laptop
+@include laptop {
+  .landing {
+    padding: 2.5rem;
+  }
+  
+  .description {
+    max-width: 700px;
+  }
+}
+
+// Desktop
+@include desktop {
+  .landing {
+    padding: 3rem;
+  }
+  
+  .title {
+    font-size: 3.5rem;
+  }
+  
+  .subtitle {
+    font-size: 1.8rem;
+    margin-bottom: 2.5rem;
+  }
+  
+  .description {
+    font-size: 1.2rem;
+    max-width: 800px;
+    margin-bottom: 2rem;
+  }
+  
+  .note {
+    font-size: 1rem;
+    max-width: 800px;
+  }
+  
+  .startButton {
+    font-size: 1.25rem;
+    padding: 1rem 2.5rem;
+  }
+}
+
+// Very Large Screens
+@include large-desktop {
+  .landing {
+    padding: 4rem;
+  }
+  
+  .description {
+    max-width: 900px;
+  }
+}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from './CombinedTransactionWalletsPage.module.scss';
+import styles from '../styles/CombinedTransactionWalletsPage.module.scss';
 import { computeTransactionId } from '../utils/cryptoTransactionDemo';
 
 interface Wallet {

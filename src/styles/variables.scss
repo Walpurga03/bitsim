@@ -3,7 +3,8 @@
 // Primäre Farben
 $primary-color: #F7931A; // Bitcoin-Orange
 $secondary-color: #1A1A1A; // Tiefgrauer Hintergrund
-$text-color: #ffffff;      // Weißer Text
+$text-color-black: #000000;    // Schwarzer Text
+$text-color-with: #ffffff;      // Weißer Text
 $hover-color: #d18f00;     // Orange-Hover-Effect
 $subtitle-color: #ccc;      // Grauer Untertitel
 
@@ -39,3 +40,52 @@ $box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 $transition-fast: 0.2s ease;
 $transition-medium: 0.3s ease;
 $transition-slow: 0.5s ease;
+
+// Breakpoints für responsive Design
+$breakpoint-mobile-s: 375px;
+$breakpoint-mobile-l: 428px;
+$breakpoint-tablet: 768px;
+$breakpoint-laptop: 1024px;
+$breakpoint-desktop: 1440px;
+
+// Mixins für Media Queries
+@mixin mobile-s {
+  @media (max-width: $breakpoint-mobile-s) {
+    @content;
+  }
+}
+
+@mixin mobile-l {
+  @media (min-width: ($breakpoint-mobile-s + 1)) and (max-width: $breakpoint-mobile-l) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: ($breakpoint-mobile-l + 1)) and (max-width: $breakpoint-tablet) {
+    @content;
+  }
+}
+
+@mixin laptop {
+  @media (min-width: ($breakpoint-tablet + 1)) and (max-width: $breakpoint-laptop) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: ($breakpoint-laptop + 1)) {
+    @content;
+  }
+}
+
+@mixin large-desktop {
+  @media (min-width: $breakpoint-desktop) {
+    @content;
+  }
+}
+
+// Responsive Font-Size
+@mixin responsive-font($min-size, $max-size) {
+  font-size: clamp(#{$min-size}, calc(#{$min-size} + #{$max-size - $min-size} * ((100vw - #{$breakpoint-mobile-s}px) / (#{$breakpoint-desktop} - #{$breakpoint-mobile-s}))), #{$max-size});
+}

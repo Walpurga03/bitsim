@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import styles from './NodeExplanationPopup.module.scss';
+import styles from '../styles/NodeExplanationPopup.module.scss';
 
 interface NodeExplanationPopupProps {
   onClose: () => void;

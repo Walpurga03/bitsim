@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './TransactionExplanationPopup.module.scss';
+import styles from "../styles/TransactionExplanationPopup.module.scss";
 
 interface TransactionExplanationPopupProps {
   onClose: () => void;

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
-import styles from './ExplanationOverlay.module.scss';
+import styles from '../styles/ExplanationOverlay.module.scss';
 
 interface ExplanationOverlayProps {
   text: any;

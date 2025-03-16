@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import styles from './HalvingExplanationPopup.module.scss';
+import styles from '../styles/HalvingExplanationPopup.module.scss';
 
 interface HalvingExplanationPopupProps {
   onClose: () => void;

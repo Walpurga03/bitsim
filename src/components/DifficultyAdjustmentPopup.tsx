@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import styles from './DifficultyAdjustmentPopup.module.scss';
+import styles from '../styles/DifficultyAdjustmentPopup.module.scss';
 
 interface DifficultyAdjustmentPopupProps {
   onClose: () => void;
