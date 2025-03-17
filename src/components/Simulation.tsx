@@ -6,6 +6,7 @@ import NodeNetworkPage from '../pages/NodeNetworkPage';
 import DifficultyAdjustmentPage from '../pages/DifficultyAdjustmentPage';
 import { TransactionPage } from '../pages/TransactionPage';
 import HalvingPage from '../pages/HalvingPage';
+import MempoolPage from '../pages/MempoolPage';
 import styles from '../styles/Simulation.module.scss';
 
 const simulationPages = [
@@ -15,7 +16,8 @@ const simulationPages = [
   { id: 4, title: 'Das Bitcoin-Netzwerk', component: NodeNetworkPage },
   { id: 5, title: 'Schwierigkeitsanpassung', component: DifficultyAdjustmentPage },
   { id: 6, title: 'Transaktionen', component: TransactionPage },
-  { id: 7, title: 'Block-Belohnung & Halving', component: HalvingPage },
+  { id: 7, title: 'Mempool & Gebührenmarkt', component: MempoolPage },
+  { id: 8, title: 'Block-Belohnung & Halving', component: HalvingPage },
   // Weitere Seiten können hier hinzugefügt werden.
 ];
 

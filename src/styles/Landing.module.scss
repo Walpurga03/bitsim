@@ -1,10 +1,11 @@
+@use "sass:color";
 @use '../styles/variables' as *;
 
-/* Keyframe for fading in and sliding up */
+/* Keyframe für Fadeup-Animationen */
 @keyframes fadeInSlide {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -12,46 +13,119 @@
   }
 }
 
-/* Modernes Design mit Schatten und Abständen */
+/* Neue, modernere Landing Page */
 .landing {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   min-height: 100vh;
-  padding: clamp(1rem, 5vw, 3rem);
+  padding: clamp(1.5rem, 5vw, 3rem);
   text-align: center;
-  background: linear-gradient(135deg, $secondary-color 0%, $text-color-black 100%);
+  background: radial-gradient(circle at 50% 0%, 
+    rgba($primary-color, 0.15) 0%, 
+    rgba(0, 0, 0, 0) 50%),
+    linear-gradient(135deg, $secondary-color 0%, $text-color-black 100%);
   color: $text-color-with;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    z-index: -1;
+  }
+}
+
+.heroSection {
+  margin-bottom: 3rem;
+  animation: fadeInSlide 0.8s ease-out;
+  max-width: 1000px;
 }
 
 .title {
-  font-size: clamp(2rem, 8vw, 3.5rem);
+  font-size: clamp(2.5rem, 10vw, 5rem);
   margin-bottom: 0.5rem;
-  background: linear-gradient(90deg, $primary-color 0%, $primary-color, 15%);
+  background: linear-gradient(90deg, $primary-color, color.adjust($primary-color, $lightness: 15%));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0 15px rgba($primary-color, 0.3);
   max-width: 100%;
   word-wrap: break-word;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
 
 .subtitle {
-  font-size: clamp(1.2rem, 4vw, 2rem);
+  font-size: clamp(1.3rem, 4vw, 2.2rem);
   margin-bottom: 2rem;
   opacity: 0.9;
   max-width: 800px;
   word-wrap: break-word;
+  font-weight: 400;
+  color: rgba($text-color-with, 0.9);
+  letter-spacing: 0.01em;
+}
+
+.contentSection {
+  max-width: 1200px;
+  width: 100%;
+  animation: fadeInSlide 0.8s ease-out 0.2s both;
 }
 
 .description {
-  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
   line-height: 1.6;
   margin-bottom: 1.5rem;
   max-width: 800px;
-  opacity: 0.8;
+  opacity: 0.85;
   word-wrap: break-word;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin: 3rem 0;
+}
+
+.featureCard {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  padding: 1.8rem;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border-color: rgba($primary-color, 0.3);
+  }
+  
+  h3 {
+    margin: 1rem 0;
+    font-size: 1.3rem;
+    color: $primary-color;
+  }
+  
+  p {
+    font-size: 1rem;
+    opacity: 0.8;
+  }
+}
+
+.featureIcon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .note {
@@ -63,41 +137,22 @@
   word-wrap: break-word;
 }
 
-.startButton {
-  font-size: clamp(1rem, 2vw, 1.25rem);
-  padding: clamp(0.8rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2.5rem);
-  background-color: $primary-color;
-  color: $text-color-black;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  margin-top: 1rem;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  
-  &:hover {
-    background-color: $primary-color, 8%;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-  }
-  
-  &:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-  }
+.infoHintContainer {
+  width: 100%;
+  max-width: 800px;
+  margin: 1rem 0 2rem;
+  animation: fadeInSlide 0.8s ease-out 0.4s both;
 }
 
 .infoHint {
   font-size: clamp(0.95rem, 1.8vw, 1.1rem);
-  background-color: rgba($primary-color, 0.1);
-  border-left: 3px solid $primary-color;
-  padding: 0.8rem 1rem;
-  border-radius: 0.5rem;
-  margin: 1.5rem auto;
-  max-width: 800px;
+  background-color: rgba($primary-color, 0.08);
+  border: 1px solid rgba($primary-color, 0.2);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   text-align: left;
   
   strong {
@@ -105,137 +160,115 @@
   }
   
   // Animation für den Hinweis
-  animation: pulse 2s infinite;
+  animation: pulse 3s infinite;
   
-  @keyframes pulse {
-    0% {
-      box-shadow: 0 0 0 0 rgba($primary-color, 0.4);
-    }
-    70% {
-      box-shadow: 0 0 0 6px rgba($primary-color, 0);
-    }
-    100% {
-      box-shadow: 0 0 0 0 rgba($primary-color, 0);
-    }
+  .infoIcon {
+    color: $primary-color;
+    min-width: 20px;
+  }
+  
+  p {
+    margin: 0;
   }
 }
 
-// Mobile Small
-@include mobile-s {
-  .landing {
-    padding: 1rem;
-    justify-content: flex-start;
-    padding-top: 5rem;
+.startButton {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  padding: clamp(0.9rem, 2vw, 1.1rem) clamp(2rem, 4vw, 3rem);
+  background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: -10%));
+  color: $text-color-black;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  margin-top: 2rem;
+  transition: all 0.3s ease;
+  font-weight: 700;
+  box-shadow: 0 10px 25px rgba($primary-color, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  animation: fadeInSlide 0.8s ease-out 0.6s both;
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba($primary-color, 0.5);
   }
   
-  .title {
-    font-size: 1.8rem;
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 5px 15px rgba($primary-color, 0.4);
   }
   
-  .subtitle {
-    font-size: 1.1rem;
-    margin-bottom: 1.5rem;
+  .buttonIcon {
+    transition: transform 0.3s ease;
   }
   
-  .description {
-    font-size: 0.95rem;
-    margin-bottom: 1rem;
-  }
-  
-  .startButton {
-    font-size: 0.95rem;
-    padding: 0.7rem 1.5rem;
-    margin-top: 0.5rem;
-  }
-  
-  .infoHint {
-    font-size: 0.9rem;
-    padding: 0.7rem 0.8rem;
-    margin: 1rem 0;
+  &:hover .buttonIcon {
+    transform: translateX(5px);
   }
 }
 
-// Mobile Large
-@include mobile-l {
-  .landing {
-    padding: 1.5rem;
-    justify-content: flex-start;
-    padding-top: 3.5rem;
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba($primary-color, 0.4);
   }
-  
-  .title {
-    font-size: 2rem;
+  70% {
+    box-shadow: 0 0 0 8px rgba($primary-color, 0);
   }
-  
-  .description {
-    font-size: 1rem;
+  100% {
+    box-shadow: 0 0 0 0 rgba($primary-color, 0);
   }
 }
 
-// Tablet
-@include tablet {
+/* Verbesserte Responsive-Anpassungen */
+@media (max-width: 480px) {
   .landing {
-    padding: 2rem;
-    justify-content: flex-start;
-    padding-top: 4rem;
+    padding: 1rem 1.5rem;
   }
   
-  .description {
-    font-size: 1.05rem;
-    max-width: 600px;
-  }
-}
-
-// Laptop
-@include laptop {
-  .landing {
-    padding: 2.5rem;
-  }
-  
-  .description {
-    max-width: 700px;
-  }
-}
-
-// Desktop
-@include desktop {
-  .landing {
-    padding: 3rem;
-  }
-  
-  .title {
-    font-size: 3.5rem;
-  }
-  
-  .subtitle {
-    font-size: 1.8rem;
-    margin-bottom: 2.5rem;
-  }
-  
-  .description {
-    font-size: 1.2rem;
-    max-width: 800px;
+  .heroSection {
     margin-bottom: 2rem;
   }
   
-  .note {
-    font-size: 1rem;
-    max-width: 800px;
+  .title {
+    font-size: 2.5rem;
   }
   
-  .startButton {
-    font-size: 1.25rem;
-    padding: 1rem 2.5rem;
+  .subtitle {
+    font-size: 1.2rem;
+  }
+  
+  .featuresGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  
+  .featureCard {
+    padding: 1.5rem;
+  }
+  
+  .infoHint {
+    padding: 0.8rem 1rem;
+    flex-direction: column;
+    text-align: center;
   }
 }
 
-// Very Large Screens
-@include large-desktop {
-  .landing {
-    padding: 4rem;
+@media (min-width: 481px) and (max-width: 768px) {
+  .featuresGrid {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
   }
-  
-  .description {
-    max-width: 900px;
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .featuresGrid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

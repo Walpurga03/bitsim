@@ -269,9 +269,6 @@ const HalvingPage: React.FC<HalvingPageProps> = ({ onNext }) => {
             >
               {isAnimating ? 'Mining läuft...' : miningResult.found ? 'Nächster Block' : 'Erneut versuchen'}
             </button>
-            <button className={styles.nextButton} onClick={onNext}>
-              Simulation abschließen
-            </button>
           </div>
         </div>
       )}
@@ -284,18 +281,11 @@ const HalvingPage: React.FC<HalvingPageProps> = ({ onNext }) => {
         }} />
       )}
       
-      {/* Additional information about future halvings */}
-      <div className={styles.futureHalvings}>
-        <h3>Zukünftige Halvings</h3>
-        <ul>
-          <li>2. Halving bei Block 420.000: 12,5 BTC Belohnung</li>
-          <li>3. Halving bei Block 630.000: 6,25 BTC Belohnung</li>
-          <li>4. Halving bei Block 840.000: 3,125 BTC Belohnung</li>
-        </ul>
-        <p>
-          Durch diesen Mechanismus wird die maximale Anzahl von Bitcoin auf 21 Millionen begrenzt,
-          was Bitcoin zu einem knappen Gut macht.
-        </p>
+      {/* Navigation button to go to next page */}
+      <div className={styles.navigationButtons}>
+        <button className={styles.nextButton} onClick={onNext}>
+          Weiter zum nächsten Kapitel
+        </button>
       </div>
     </div>
   );

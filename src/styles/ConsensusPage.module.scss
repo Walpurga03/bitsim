@@ -1,4 +1,6 @@
+@use "sass:color";
 @use '../styles/variables' as *;
+
 
 /* Define fadeInSlide keyframe */
 @keyframes fadeInSlide {
@@ -12,12 +14,32 @@
   }
 }
 
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba($primary-color, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba($primary-color, 0.6);
+  }
+}
+
 .page {
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 100vh;
   padding: 2rem;
-  //min-height: 100vh;
   background: linear-gradient(135deg, #1A1A1A, #000000);
   color: #ffffff;
   text-align: center;
@@ -40,19 +62,266 @@ p {
   animation: fadeInSlide 1s forwards;
 }
 
-.title {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+.container {
+  max-width: 1200px;
+  width: 100%;
+  animation: fadeInUp 0.8s ease-out forwards;
 }
 
-.card {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 1rem;
-  padding: 2rem;
-  max-width: 800px;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+.title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin-bottom: 1.5rem;
+  text-align: center;
+  background: linear-gradient(90deg, $primary-color, color.adjust($primary-color, $lightness: 15%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 15px rgba($primary-color, 0.3);
+  font-weight: 700;
+}
+
+.introText {
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+  text-align: center;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.highlight {
+  color: $primary-color;
+  font-weight: 600;
+}
+
+.principlesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); // Standard: 3 pro Zeile
+  gap: 1.5rem;
+  margin: 2.5rem 0;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.principleCard {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  padding: 1.8rem;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, $primary-color, transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  
+  &:hover, &.active {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border-color: rgba($primary-color, 0.3);
+    background: linear-gradient(145deg, rgba(26, 26, 26, 0.9), rgba(10, 10, 10, 0.8));
+    
+    &::before {
+      transform: scaleX(1);
+    }
+    
+    .cardIcon {
+      transform: scale(1.15);
+      color: $primary-color;
+    }
+  }
+  
+  &.active {
+    animation: pulseGlow 2s infinite;
+  }
+  
+  h3 {
+    margin: 1rem 0;
+    font-size: 1.4rem;
+    color: $primary-color;
+  }
+  
+  p {
+    font-size: 1rem;
+    opacity: 0.9;
+    line-height: 1.5;
+  }
+}
+
+.cardIcon {
+  font-size: 2.2rem;
+  color: rgba($primary-color, 0.7);
+  transition: all 0.3s ease;
+}
+
+.consensusExplanation {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  margin: 3rem 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  
+  h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+    color: $primary-color;
+  }
+}
+
+.processList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.processStep {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  opacity: 0;
+  animation: fadeInUp 0.5s forwards;
+  
+  @for $i from 1 through 4 {
+    &:nth-child(#{$i}) {
+      animation-delay: $i * 0.15s;
+    }
+  }
+}
+
+.stepNumber {
+  background-color: rgba($primary-color, 0.2);
+  color: $primary-color;
+  border: 2px solid $primary-color;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.stepContent {
+  flex: 1;
+  
+  h4 {
+    margin: 0 0 0.3rem 0;
+    font-size: 1.2rem;
+    color: rgba($primary-color, 0.9);
+  }
+  
+  p {
+    margin: 0;
+    line-height: 1.5;
+    opacity: 0.9;
+  }
+}
+
+.infoBox {
+  background: linear-gradient(145deg, rgba($primary-color, 0.1), rgba($primary-color, 0.05));
+  border-left: 4px solid $primary-color;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  
+  h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: $primary-color;
+    font-size: 1.3rem;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+}
+
+// Responsive improvements
+@media (max-width: 1024px) and (min-width: 769px) {
+  .principlesGrid {
+    grid-template-columns: repeat(2, 1fr); // Mittlere Bildschirme: 2 pro Zeile
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 1.5rem;
+  }
+  
+  .principlesGrid {
+    grid-template-columns: 1fr; // Mobile: 1 pro Zeile
+  }
+  
+  .processStep {
+    gap: 1rem;
+  }
+  
+  .stepNumber {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+  
+  .consensusExplanation {
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.8rem;
+  }
+  
+  .principleCard {
+    padding: 1.3rem;
+    
+    h3 {
+      font-size: 1.2rem;
+    }
+    
+    p {
+      font-size: 0.9rem;
+    }
+  }
+  
+  .stepContent h4 {
+    font-size: 1rem;
+  }
+  
+  .infoBox {
+    padding: 1rem;
+  }
+}
+
+// Animation for staggered entry of cards
+.principleCard {
+  opacity: 0;
+  animation: fadeInUp 0.5s forwards;
+  
+  @for $i from 1 through 6 {
+    &:nth-child(#{$i}) {
+      animation-delay: 0.1s + ($i * 0.1s);
+    }
+  }
 }
 
 .nextButton {

@@ -230,6 +230,25 @@ const InfoMenu: React.FC<InfoMenuProps> = ({ onMenuItemClick, hideIcon = false }
     Kontakt: `Kontakt:
     Für Fragen, Anregungen oder Spenden können Sie mich über die folgenden Kanäle kontaktieren:`,
 
+    Mempool: `Der Mempool im Bitcoin-Netzwerk:
+
+Was ist der Mempool?
+Der Mempool (Memory Pool) ist die temporäre Datenbank jedes Bitcoin Full Nodes, in der alle unbestätigten Transaktionen gesammelt werden, bevor sie in einen Block aufgenommen werden.
+
+Funktionsweise:
+1. Neue Transaktionen werden zuerst über das Peer-to-Peer-Netzwerk an die Nodes gesendet
+2. Jeder Node prüft die Gültigkeit der Transaktion (gültige Signatur, ausreichendes Guthaben)
+3. Gültige Transaktionen werden im lokalen Mempool gespeichert und an andere Nodes weitergeleitet
+4. Miner wählen Transaktionen aus ihrem Mempool für ihre Blöcke aus - normalerweise die mit den höchsten Gebühren zuerst
+
+Besonderheiten:
+- Größenlimit: Jeder Node hat ein individuelles Limit (oft 300MB) für seinen Mempool
+- Gebührenmarkt: Bei hoher Netzwerkauslastung steigen die Gebühren durch Wettbewerb
+- Child Pays For Parent (CPFP): Eine nachfolgende Transaktion kann die Priorität einer vorherigen erhöhen
+- Replace By Fee (RBF): Eine Transaktion kann durch eine Version mit höherer Gebühr ersetzt werden
+- Zeitbasierte Entfernung: Transaktionen mit sehr niedrigen Gebühren werden nach 14 Tagen aus dem Mempool entfernt
+
+Im Idealzustand ist der Mempool fast leer (alle Transaktionen werden schnell bestätigt). In Zeiten hoher Aktivität kann er aber auf Millionen ausstehender Transaktionen anwachsen, was zu längeren Wartezeiten und höheren Gebühren führt.`,
   };
 
   // Mapping von Kategorien zu importierten Audiodateien
@@ -254,7 +273,7 @@ const InfoMenu: React.FC<InfoMenuProps> = ({ onMenuItemClick, hideIcon = false }
   };
 
   // Liste aller Menüpunkte
-  const menuItems = ["Blockchain", "Konsens", "Node", "Mining", "PoW", "Difficulty", "Halving", "Transaktionen", "Keypairs", "Kontakt"];
+  const menuItems = ["Blockchain", "Konsens", "Node", "Mining", "PoW", "Difficulty", "Mempool", "Transaktionen", "Halving", "Keypairs", "Kontakt"];
 
   return (
     <div className={styles.infoMenu}>

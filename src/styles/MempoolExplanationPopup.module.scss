@@ -1,0 +1,188 @@
+@use "sass:color";
+@use '../styles/variables' as *;
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.content {
+  background: linear-gradient(145deg, rgba(30, 30, 30, 0.95), rgba(10, 10, 10, 0.95));
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba($primary-color, 0.2);
+  position: relative;
+  color: #fff;
+  animation: popIn 0.3s ease-out forwards;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.title {
+  font-size: 1.8rem;
+  color: $primary-color;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: 700;
+  position: relative;
+  padding-bottom: 1rem;
+  
+  &::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    height: 2px;
+    width: 60px;
+    background: linear-gradient(to right, transparent, $primary-color, transparent);
+  }
+}
+
+.explanationText {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  white-space: pre-line;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.closeButton {
+  background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: 10%));
+  color: $secondary-color;
+  border: none;
+  border-radius: 30px;
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba($primary-color, 0.4);
+  }
+  
+  &:active {
+    transform: translateY(-1px);
+  }
+}
+
+@media (max-width: 600px) {
+  .content {
+    padding: 1.5rem;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+  }
+  
+  .explanationText {
+    font-size: 0.9rem;
+  }
+}
+
+// Füge diese neuen Styles für die vereinfachte Grafik hinzu
+.graphicContainer {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.mempoolGraphic {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 auto;
+  max-width: 400px;
+}
+
+.transactions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 150px;
+}
+
+.highFeeTransaction, .mediumFeeTransaction, .lowFeeTransaction {
+  height: 20px;
+  border-radius: 4px;
+}
+
+.highFeeTransaction {
+  background-color: #2ecc71;
+  width: 100%;
+}
+
+.mediumFeeTransaction {
+  background-color: #f39c12;
+  width: 90%;
+}
+
+.lowFeeTransaction {
+  background-color: #e74c3c;
+  width: 80%;
+}
+
+.arrow {
+  width: 50px;
+  height: 2px;
+  background-color: rgba($primary-color, 0.7);
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 10px solid rgba($primary-color, 0.7);
+  }
+}
+
+.block {
+  width: 100px;
+  height: 100px;
+  border: 2px dashed rgba($primary-color, 0.7);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.blockContent {
+  font-weight: bold;
+  color: $primary-color;
+}
+
+.graphicCaption {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-top: 1rem;
+}

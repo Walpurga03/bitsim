@@ -299,7 +299,7 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
               {isAnimating ? 'Mining läuft...' : miningResult.found ? 'Nächster Block' : 'Erneut versuchen'}
             </button>
             <button className={styles.nextButton} onClick={onNext}>
-              Zum Halving
+              Zum MemPool
             </button>
           </div>
         </div>

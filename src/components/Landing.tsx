@@ -3,6 +3,7 @@ import styles from "../styles/Landing.module.scss";
 import InfoMenu from './InfoMenu';
 import ExplanationOverlay from './ExplanationOverlay';
 import Simulation from './Simulation';
+import { FaInfoCircle, FaArrowRight } from 'react-icons/fa';
 
 // Erklärungstyp anpassen
 interface ExplanationData {
@@ -33,25 +34,58 @@ const Landing: React.FC = () => {
   return (
     <div className={styles.landing}>
       <InfoMenu onMenuItemClick={handleMenuItemClick} hideIcon={!!overlayData} />
-      <h1 className={styles.title}>Bitcoin Simulation</h1>
-      <h2 className={styles.subtitle}>Entdecken Sie die faszinierende Welt von Bitcoin</h2>
-      <p className={styles.description}>
-        Tauchen Sie ein in die Grundlagen der revolutionären Bitcoin-Technologie! In dieser Simulation erleben Sie, wie die dezentrale Blockchain als digitales Kassenbuch alle Transaktionen speichert und warum sie nahezu unveränderlich ist.
-      </p>
-      <p className={styles.description}>
-        Verstehen Sie den Proof-of-Work beim Mining, wo Computer spannende Rechenrätsel lösen, um neue Blöcke zu erzeugen. Erfahren Sie, wie Nodes im Netzwerk zusammenarbeiten und durch den Konsens-Mechanismus ohne zentrale Kontrolle Einigkeit erzielen.
-      </p>
-      <p className={styles.description}>
-        Entdecken Sie clevere Konzepte wie die automatische Schwierigkeitsanpassung und das regelmäßige Halving der Belohnungen. Und nicht zuletzt: Sehen Sie, wie das System aus privaten und öffentlichen Schlüsseln Ihre Bitcoin-Transaktionen sicher macht – ganz ohne Banken oder zentrale Vermittler.
-      </p>
-      <p className={styles.infoHint}>
-        <strong>Tipp:</strong> Klicken Sie auf den INFO-Button oben rechts, um detaillierte Erklärungen zu allen technischen Begriffen zu erhalten!
-      </p>
+      
+      <div className={styles.heroSection}>
+        <h1 className={styles.title}>Bitcoin Simulation</h1>
+        <h2 className={styles.subtitle}>Entdecke die Bausteine von Bitcoin</h2>
+      </div>
+      
+      <div className={styles.contentSection}>
+        <p className={styles.description}>
+          Willkommen in der interaktiven Bitcoin-Welt! Hier kannst du spielerisch verstehen, wie Bitcoin funktioniert - ohne komplizierte Fachbegriffe.
+        </p>
+        
+        <p className={styles.description}>
+          Du wirst selbst Blocks minen, Transaktionen durchführen und lernen, wie das Netzwerk ohne zentrale Kontrolle arbeitet.
+        </p>
+        
+        <div className={styles.featuresGrid}>
+          <div className={styles.featureCard}>
+            <div className={styles.featureIcon}>🔍</div>
+            <h3>Mining verstehen</h3>
+            <p>Finde heraus, wie Computer Rechenrätsel lösen, um neue Bitcoin zu erzeugen</p>
+          </div>
+          
+          <div className={styles.featureCard}>
+            <div className={styles.featureIcon}>🔄</div>
+            <h3>Transaktionen senden</h3>
+            <p>Erlebe, wie Bitcoin-Zahlungen funktionieren und bestätigt werden</p>
+          </div>
+          
+          <div className={styles.featureCard}>
+            <div className={styles.featureIcon}>📊</div>
+            <h3>Mempool erkunden</h3>
+            <p>Wähle als Miner die lukrativsten Transaktionen für deinen Block aus</p>
+          </div>
+        </div>
+      </div>
+      
+      <div className={styles.infoHintContainer}>
+        <div className={styles.infoHint}>
+          <FaInfoCircle size={20} className={styles.infoIcon} />
+          <p>
+            <strong>Tipp:</strong> Klicke auf den <strong>INFO-Button</strong> rechts oben, um tiefergehende 
+            technische Erklärungen zu allen Bitcoin-Begriffen zu erhalten!
+          </p>
+        </div>
+      </div>
+      
       <p className={styles.note}>
-        Hinweis: Diese Simulation dient ausschließlich Lernzwecken und ist vereinfacht dargestellt.
+        Diese Simulation dient ausschließlich Lernzwecken und ist vereinfacht dargestellt.
       </p>
+      
       <button className={styles.startButton} onClick={startSimulation}>
-        Simulation starten
+        Simulation starten <FaArrowRight className={styles.buttonIcon} />
       </button>
       
       {overlayData && (
