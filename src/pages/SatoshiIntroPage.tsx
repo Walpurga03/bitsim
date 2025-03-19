@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from '../styles/SatoshiPage.module.scss';
-import { FaLink, FaBitcoin, FaCalendarAlt, FaUserSecret, FaPizzaSlice } from 'react-icons/fa';
-
+import { FaLink, FaBitcoin, FaCalendarAlt, FaPizzaSlice} from 'react-icons/fa';
+import { CgSmileMouthOpen } from "react-icons/cg";
 interface SatoshiIntroPageProps {}
 
 const SatoshiIntroPage: React.FC<SatoshiIntroPageProps> = () => {
@@ -30,18 +30,18 @@ const SatoshiIntroPage: React.FC<SatoshiIntroPageProps> = () => {
       content: 'Die erste Bitcoin-Transaktion findet statt: Satoshi sendet 10 BTC an Hal Finney, einen frühen Unterstützer des Projekts. Finney twitterte den inzwischen berühmten Satz: "Running Bitcoin" während er die Software testete.'
     },
     {
-      id: 'disappearance',
-      title: 'Verschwinden',
-      date: 'Mitte 2011',
-      icon: <FaUserSecret />,
-      content: 'Satoshi Nakamoto zog sich von der aktiven Entwicklung von Bitcoin zurück und verschwand. Sein letzter bekannter Kontakt war im April 2011. Bis heute ist unklar, wer sich hinter dem Pseudonym verbirgt.'
-    },
-    {
       id: 'pizza',
       title: 'Pizza Tag',
       date: '22. Mai 2010',
       icon: <FaPizzaSlice />,
       content: 'Laszlo Hanyecz tätigte die erste reale Transaktion mit Bitcoin: Er kaufte zwei Pizzen für 10.000 BTC (heute mehrere hundert Millionen Euro wert). Dieser Tag markiert den Beginn der praktischen Nutzung von Bitcoin als Tauschmittel und wird jährlich als "Bitcoin Pizza Day" gefeiert.'
+    },
+    {
+      id: 'erbe',
+      title: 'Das Erbe',
+      date: 'Bitcoin',
+      icon: <CgSmileMouthOpen />,
+      content: 'Satoshi hinterließ mehr als nur Code. Die Prinzipien von Dezentralisierung und finanzieller Souveränität, die in Bitcoin eingebettet sind, haben eine globale Bewegung ausgelöst. Sein Verschwinden unterstreicht die Idee, dass Bitcoin niemandem gehört – es gehört allen, die Teil des Netzwerks sind.'
     }
   ];
 
@@ -109,15 +109,6 @@ const SatoshiIntroPage: React.FC<SatoshiIntroPageProps> = () => {
             </div>
           ))}
         </div>
-      </div>
-      
-      <div className={styles.legacySection}>
-        <h2>Das Erbe</h2>
-        <p>
-          Satoshi hinterließ mehr als nur Code. Die Prinzipien von Dezentralisierung und finanzieller Souveränität, die in Bitcoin eingebettet sind, 
-          haben eine globale Bewegung ausgelöst. Sein Verschwinden unterstreicht die Idee, dass Bitcoin niemandem gehört – 
-          es gehört allen, die Teil des Netzwerks sind.
-        </p>
       </div>
     </div>
   );

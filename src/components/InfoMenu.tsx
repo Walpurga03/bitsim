@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from '../styles/InfoMenu.module.scss';
 import { contactConfig } from '../config/contactConfig';
-import { FaGithub, FaBolt } from 'react-icons/fa';
+import { FaGithub } from 'react-icons/fa';
 import { IoInformationCircle } from 'react-icons/io5';
 import nostrImg from '../assets/nostr.gif';
 
@@ -78,7 +78,6 @@ const InfoMenu: React.FC<InfoMenuProps> = ({ onMenuItemClick, hideIcon = false }
       .then(() => {
         // Erfolgreiche Kopier-Animation oder Feedback
         const message = `${type}-Adresse in die Zwischenablage kopiert!`;
-        // Hier könnten wir statt alert ein besseres Feedback-Element einsetzen
         alert(message);
       })
       .catch(err => {
@@ -328,15 +327,6 @@ Im Idealzustand ist der Mempool fast leer (alle Transaktionen werden schnell bes
                       aria-label="Nostr-Link kopieren"
                     >
                       <img src={nostrImg} alt="nostr" style={{ width: 20, height: 20 }} />
-                    </button>
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        copyToClipboard(contactConfig.lightning, 'Lightning');
-                      }}
-                      aria-label="Lightning-Adresse kopieren"
-                    >
-                      <FaBolt size={20} />
                     </button>
                   </div>
                 </li>

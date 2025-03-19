@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import styles from '../styles/SatoshiPage.module.scss'; // Aktualisierter Pfad
+import styles from '../styles/SatoshiPage.module.scss';
 import MiningExplanationPopup from '../components/MiningExplanationPopup';
 import { mineBlock, DIFFICULTY_LEVELS } from '../utils/miningUtils';
+import { FaHammer, FaAngleDoubleDown, FaInfoCircle } from 'react-icons/fa';
 
 interface MiningResult {
   hash: string; 
@@ -31,6 +32,7 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
     currentReward: 50,
   });
   const [isMobile, setIsMobile] = useState(false);
+  const [showMiningProcess, setShowMiningProcess] = useState(false);
   
   const satoshiAddress = "1SatoshiPioneerXXX";
   
@@ -61,7 +63,7 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
     if (isAnimating) return;
     
     setIsAnimating(true);
-    setTimeout(() => setIsAnimating(false), 2000);
+    setShowMiningProcess(true);
     
     // Create timestamp
     const now = new Date();
@@ -134,8 +136,14 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
         }));
       }
       
+      setIsAnimating(false);
       document.body.removeChild(miningAnimation);
-    }, 1000);
+      
+      // Hide mining process after result
+      setTimeout(() => {
+        setShowMiningProcess(false);
+      }, 2000);
+    }, 3000);
   };
   
   // Determine which blocks to display based on screen size
@@ -145,11 +153,23 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
     <div className={styles.page}>
       {!miningStarted ? (
         <div className={styles.introSection}>
-          <h1 className={styles.title}>Mining Demonstration</h1>
+          <h1 className={styles.title}>Mining: Der Herzschlag von Bitcoin</h1>
           <p className={styles.description}>
-            Im Mining lösen Sie ein mathematisches Puzzle, um einen neuen Block zur Blockchain hinzuzufügen.
-            Hier erfahren Sie live, wie Ihr Rechner einen gültigen Block findet und für seine Arbeit belohnt wird.
+            Mining ist der Prozess, bei dem neue Bitcoin-Blöcke erzeugt und Transaktionen bestätigt werden. 
+            Als Miner wirst du ein mathematisches Rätsel lösen, um einen neuen Block zur Blockchain hinzuzufügen.
           </p>
+          
+          <div className={styles.miningInfoBox}>
+            <h3><FaInfoCircle className={styles.infoIcon} /> So funktioniert Mining:</h3>
+            <ol className={styles.miningStepsList}>
+              <li>Das Netzwerk sammelt neue Transaktionen in einem Pool</li>
+              <li>Du als Miner wählst Transaktionen aus und formst einen Block</li>
+              <li>Du versuchst, einen speziellen Zahlenwert (Nonce) zu finden, der einen gültigen Block-Hash erzeugt</li>
+              <li>Der Hash muss unter einem bestimmten Zielwert (Target) liegen</li>
+              <li>Bei Erfolg erhältst du eine Belohnung in Bitcoin</li>
+            </ol>
+          </div>
+          
           <button className={styles.nextButton} onClick={() => setMiningStarted(true)}>
             Mining starten
           </button>
@@ -159,50 +179,70 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
           {/* Wallet display area */}
           <div className={styles.walletsContainer}>
             <div className={styles.walletCard}>
-              <h2>Satoshi's Wallet</h2>
+              <h2>Deine Mining-Wallet</h2>
               <p><strong>Adresse:</strong> {satoshiAddress}</p>
               <p><strong>Balance:</strong> {walletInfo.balance} BTC</p>
+              <p><strong>Block-Höhe:</strong> {walletInfo.currentBlock}</p>
+              <p><strong>Mining-Belohnung:</strong> {walletInfo.currentReward} BTC pro Block</p>
             </div>
           </div>
-          
-          {/* Mining status */}
-          <div className={styles.miningStatus}>
-            <p><strong>Block:</strong> {walletInfo.currentBlock}</p>
-            <p><strong>Belohnung:</strong> {walletInfo.currentReward} BTC</p>
-          </div>
-          
           {/* Blockchain display at top */}
-          {chainBlocks.length > 0 && (
+          <div className={styles.visualBlockchain}>
+            <h2 className={styles.blockchainTitle}>Deine Blockchain</h2>
             <div className={styles.blockchainDisplay}>
-              {blocksToDisplay.map(block => {
-                const previous = chainBlocks.find(b => b.blockNumber === (block.blockNumber - 1));
-                let prevDisplay = previous ? previous.hash.toString() : (block.blockNumber > 1 ? `Block ${block.blockNumber - 1}` : "XXXX");
-                return (
-                  <div key={block.blockNumber} className={styles.block}>
-                    <p><strong>Block {block.blockNumber}</strong></p>
-                    <p>Hash: {block.hash}</p>
-                    <p>Last: {prevDisplay}</p>
-                  </div>
-                );
-              })}
+              {chainBlocks.length === 0 ? (
+                <div className={styles.emptyChain}>
+                  <p>Noch keine Blöcke in deiner Blockchain. Mine deinen ersten Block!</p>
+                </div>
+              ) : (
+                blocksToDisplay.map((block, idx) => {
+                  const previous = chainBlocks.find(b => b.blockNumber === (block.blockNumber - 1));
+                  let prevDisplay = previous ? previous.hash.toString() : (block.blockNumber > 1 ? `Block ${block.blockNumber - 1}` : "XXXX");
+                  return (
+                    <div key={block.blockNumber} className={`${styles.block} ${idx === blocksToDisplay.length - 1 ? styles.latestBlock : ''}`}>
+                      <p className={styles.blockHeader}><strong>Block {block.blockNumber}</strong></p>
+                      <div className={styles.blockDetails}>
+                        <p>Hash: <span className={styles.blockHash}>{block.hash}</span></p>
+                        <p>Last: <span className={styles.blockPrev}>{prevDisplay.substring(0, 8)}</span></p>
+                        <p>Nonce: <span className={styles.blockNonce}>{block.nonce}</span></p>
+                      </div>
+                      {idx < blocksToDisplay.length - 1 && (
+                        <div className={styles.blockLink}>
+                          <FaAngleDoubleDown />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
             </div>
-          )}
-          
+          </div>
           {/* Mining interface */}
           {!miningResult ? (
-            <button 
-              className={styles.mineButton} 
-              onClick={simulateMining}
-              disabled={isAnimating}
-            >
-              {isAnimating ? 'Mining läuft...' : 'Block minen'}
-            </button>
+            <div className={styles.miningControls}>
+              <button 
+                className={styles.mineButton} 
+                onClick={simulateMining}
+                disabled={isAnimating}
+              >
+                {isAnimating ? 'Mining läuft...' : 'Block minen'}
+              </button>
+              
+              <div className={styles.difficultyInfo}>
+                <p>Aktuelle Schwierigkeit: <span className={styles.difficultyLevel}>Leicht</span></p>
+                <p>Target: <span className={styles.targetValue}>1</span></p>
+                <p className={styles.difficultyHint}>
+                  <FaInfoCircle className={styles.infoIcon} /> 
+                  Dein Hash muss kleiner als das Target sein
+                </p>
+              </div>
+            </div>
           ) : (
             <div className={`${styles.miningBlock} ${miningResult.found ? styles.foundAnimation : styles.notFoundAnimation}`}>
-              <h2>Mining Block</h2>
+              <h2>{miningResult.found ? 'Block erfolgreich gemint!' : 'Mining fehlgeschlagen'}</h2>
               <div className={styles.hashTarget}>
                 <div className={styles.hashDisplay}>
-                  <strong>Hash:</strong> 
+                  <strong>Dein Hash:</strong> 
                   <span className={`${styles.hash} ${miningResult.found ? styles.validHash : styles.invalidHash}`}>
                     {miningResult.hash}
                   </span>
@@ -225,14 +265,34 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
                 </div>
               </div>
               
-              <p><strong>Nonce:</strong> {miningResult.nonce}</p>
-              <p><strong>Zeitstempel:</strong> {miningResult.timestamp}</p>
-              <p><strong>Transaktionen:</strong> {miningResult.transactions}</p>
-              <p><strong>Merkle-Root:</strong> {miningResult.merkleRoot}</p>
-              <p><strong>Status:</strong> {miningResult.found ? 
-                "Block gefunden! ✅ Du erhältst eine Belohnung!" : 
-                "Block nicht gefunden ❌ Versuche es erneut!"}
-              </p>
+              <div className={styles.miningDetails}>
+                <div className={styles.miningDetailItem}>
+                  <p><strong>Nonce:</strong> {miningResult.nonce}</p>
+                  <p className={styles.nonceExplanation}>
+                    Die "Nonce" ist der Wert, den der Miner bei jedem Versuch ändert
+                  </p>
+                </div>
+                
+                <div className={styles.miningDetailItem}>
+                  <p><strong>Zeitstempel:</strong> {miningResult.timestamp}</p>
+                </div>
+                
+                <div className={styles.miningDetailItem}>
+                  <p><strong>Transaktionen:</strong> {miningResult.transactions}</p>
+                </div>
+                
+                <div className={styles.miningDetailItem}>
+                  <p><strong>Merkle-Root:</strong> {miningResult.merkleRoot}</p>
+                </div>
+              </div>
+              
+              <div className={styles.miningResult}>
+                <p className={styles.miningStatus}>
+                  <strong>Status:</strong> {miningResult.found ? 
+                    "Block gefunden! ✅ Du erhältst eine Belohnung von 50 BTC!" : 
+                    "Block nicht gefunden ❌ Dein Hash ist zu groß - versuche es erneut!"}
+                </p>
+              </div>
               
               <div className={styles.blockButtons}>
                 <button 
@@ -240,8 +300,9 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
                   onClick={simulateMining}
                   disabled={isAnimating}
                 >
-                  {isAnimating ? 'Mining läuft...' : miningResult.found ? 'Nächster Block' : 'Erneut versuchen'}
+                  {isAnimating ? 'Mining läuft...' : miningResult.found ? 'Nächsten Block minen' : 'Erneut versuchen'}
                 </button>
+                
                 {walletInfo.currentBlock >= 5 && (
                   <button className={styles.nextButton} onClick={onNext}>
                     Weiter zum Netzwerk
@@ -250,6 +311,21 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
               </div>
             </div>
           )}
+              {/* Mining animation indicator */}
+              {showMiningProcess && (
+            <div className={styles.miningProcessVisualizer}>
+              <div className={styles.miningAnimation}>
+                <div className={styles.miningIcon}>
+                  <FaHammer className={styles.hammer} />
+                </div>
+                <div className={styles.miningProgress}>
+                  <div className={styles.miningProgressBar}></div>
+                </div>
+                <p>Suche nach gültigem Hash...</p>
+              </div>
+            </div>
+          )}
+          
         </>
       )}
       
