@@ -42,11 +42,11 @@ const Simulation: React.FC = () => {
   };
 
   const CurrentPage = simulationPages[currentPageIndex].component;
-  const currentTitle = simulationPages[currentPageIndex].title;
-
+//const currentTitle = simulationPages[currentPageIndex].title;
+// <h1 className={styles.pageTitle}>{currentTitle}</h1>
   return (
     <div className={styles.simulation}>
-      <h1 className={styles.pageTitle}>{currentTitle}</h1>
+     
       
       <div className={styles.stepContainer}>
         <CurrentPage onNext={goToNextPage} />

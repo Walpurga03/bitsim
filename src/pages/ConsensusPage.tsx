@@ -101,11 +101,6 @@ const ConsensusPage: React.FC<ConsensusPageProps> = () => {
             </div>
           </div>
         </div>
-        
-        <div className={styles.infoBox}>
-          <h3>Wusstest du?</h3>
-          <p>Ein Bitcoin-Block wird durchschnittlich alle 10 Minuten gefunden. Die Schwierigkeit passt sich alle 2016 Blöcke automatisch an, um diesen Rhythmus beizubehalten.</p>
-        </div>
       </div>
     </div>
   );

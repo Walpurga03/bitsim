@@ -572,6 +572,241 @@ p {
   }
 }
 
+// Verbesserte Blockchain-Visualisierung
+.enhancedBlockchainContainer {
+  width: 100%;
+  max-width: 900px;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  border: 1px solid rgba($primary-color, 0.1);
+  
+  h3 {
+    display: flex;
+    align-items: center;
+    color: $primary-color;
+    font-size: 1.3rem;
+    margin-bottom: 1.2rem;
+    text-align: center;
+    justify-content: center;
+  }
+}
+
+// Fortschrittsanzeige bis zur Schwierigkeitsanpassung
+.difficultyProgressContainer {
+  margin: 1rem 0 2rem;
+  position: relative;
+}
+
+.progressLabel {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: rgba($text-color-with, 0.7);
+  
+  .adjustmentTarget {
+    display: flex;
+    align-items: center;
+    color: $primary-color;
+    font-weight: bold;
+  }
+}
+
+.progressBar {
+  width: 100%;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, rgba($primary-color, 0.5), $primary-color);
+  border-radius: 8px;
+  transition: width 0.5s ease-out;
+}
+
+.currentBlockMarker {
+  position: absolute;
+  top: 100%;
+  transform: translateX(-50%);
+  background: #fff;
+  color: #000;
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-top: 5px;
+  white-space: nowrap;
+  font-weight: bold;
+}
+
+.blockchainVisualization {
+  display: flex;
+  overflow-x: auto;
+  padding: 1rem 0.5rem;
+  gap: 1rem;
+  align-items: flex-start;
+  margin: 0.5rem -0.5rem;
+  position: relative;
+  min-height: 180px;
+}
+
+.blockCard {
+  min-width: 180px;
+  background: linear-gradient(145deg, rgba(20, 20, 20, 0.6), rgba(10, 10, 10, 0.8));
+  border-radius: 8px;
+  border: 1px solid rgba($primary-color, 0.2);
+  padding: 0;
+  position: relative;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  &.latestBlockCard {
+    border-color: rgba($primary-color, 0.6);
+    box-shadow: 0 0 15px rgba($primary-color, 0.3);
+    
+    &::after {
+      content: "Letzter Block";
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: $primary-color;
+      color: $text-color-black;
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+  }
+  
+  &.adjustmentBlockCard {
+    border-color: #f39c12;
+    background: linear-gradient(145deg, rgba(20, 20, 20, 0.6), rgba(243, 156, 18, 0.1));
+    box-shadow: 0 0 15px rgba(243, 156, 18, 0.2);
+  }
+  
+  &.afterAdjustmentBlockCard {
+    border-color: #e74c3c;
+    background: linear-gradient(145deg, rgba(20, 20, 20, 0.6), rgba(231, 76, 60, 0.1));
+  }
+}
+
+.blockHeader {
+  background: rgba($primary-color, 0.2);
+  border-radius: 8px 8px 0 0;
+  padding: 0.6rem;
+  font-weight: bold;
+  color: $primary-color;
+  font-size: 0.95rem;
+  border-bottom: 1px solid rgba($primary-color, 0.1);
+  
+  .adjustmentBlockCard & {
+    background: rgba(#f39c12, 0.2);
+    color: #f39c12;
+  }
+  
+  .afterAdjustmentBlockCard & {
+    background: rgba(#e74c3c, 0.2);
+    color: #e74c3c;
+  }
+}
+
+.blockContent {
+  padding: 0.8rem;
+  
+  p {
+    margin: 0.4rem 0;
+    font-size: 0.85rem;
+    display: flex;
+    justify-content: space-between;
+    
+    strong {
+      color: rgba($primary-color, 0.8);
+    }
+  }
+}
+
+.blockConnector {
+  position: absolute;
+  right: -16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 2px;
+  background: rgba($primary-color, 0.4);
+  z-index: 5;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 4px solid transparent;
+    border-left: 7px solid rgba($primary-color, 0.4);
+    border-bottom: 4px solid transparent;
+  }
+}
+
+.adjustmentTag {
+  margin-top: 0.8rem;
+  padding: 0.4rem;
+  background: rgba(#f39c12, 0.15);
+  border: 1px solid rgba(#f39c12, 0.3);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #f39c12;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  animation: pulse 2s infinite;
+}
+
+.newDifficultyTag {
+  margin-top: 0.8rem;
+  padding: 0.4rem;
+  background: rgba(#e74c3c, 0.15);
+  border: 1px solid rgba(#e74c3c, 0.3);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #e74c3c;
+  text-align: center;
+}
+
+// Responsive-Anpassungen für die Blockchain-Visualisierung
+@media (max-width: 768px) {
+  .blockchainVisualization {
+    padding: 0.5rem 0;
+    gap: 0.8rem;
+  }
+  
+  .blockCard {
+    min-width: 150px;
+  }
+  
+  .blockContent p {
+    font-size: 0.75rem;
+  }
+  
+  .currentBlockMarker {
+    font-size: 0.7rem;
+    padding: 1px 6px;
+  }
+}
+
 // Füge eine Animation für nicht gefundene Blöcke hinzu
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
@@ -1461,6 +1696,130 @@ p {
   }
 }
 
+// Vereinfachte Schwierigkeitsanzeige
+.simpleDifficultyDisplay {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin: 1.5rem auto;
+  max-width: 900px;
+  border: 1px solid rgba($primary-color, 0.15);
+  
+  h3 {
+    color: $primary-color;
+    text-align: center;
+    margin-bottom: 1.2rem;
+    font-size: 1.3rem;
+  }
+}
+
+.difficultyValue {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.difficultyLabel {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-right: 0.5rem;
+}
+
+.difficultyNumber {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: $primary-color;
+  margin-right: 0.5rem;
+}
+
+.targetNumber {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.difficultyArrow {
+  font-size: 2rem;
+  color: $primary-color;
+  margin: 0 1rem;
+}
+
+.newDifficulty {
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+.hiddenDifficulty {
+  opacity: 0;
+}
+
+.adjustmentInfo {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.8rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  justify-content: center;
+  
+  .infoIcon {
+    color: $primary-color;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+    
+    strong {
+      color: $primary-color;
+    }
+  }
+}
+
+.adjustmentAlert {
+  background: rgba($primary-color, 0.1);
+  color: $primary-color;
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  justify-content: center;
+  font-weight: bold;
+  animation: pulse 2s infinite;
+}
+
+.simpleExplanation {
+  background: rgba(0, 0, 0, 0.2);
+  border-left: 4px solid $primary-color;
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  margin: 1rem auto 2rem;
+  max-width: 700px;
+  
+  h3 {
+    color: $primary-color;
+    margin-bottom: 0.8rem;
+    font-size: 1.2rem;
+  }
+  
+  p {
+    margin: 0.7rem 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    
+    &:last-child {
+      margin-top: 1rem;
+    }
+    
+    strong {
+      color: $primary-color;
+    }
+  }
+}
+
 // Vereinfachte Network-specific styles
 .networkContainer {
   width: 100%;
@@ -1750,4 +2109,219 @@ p {
   display: flex;
   justify-content: center;
   margin: 1.5rem 0;
+}
+
+// Blockzeit-Visualisierung Stile
+.blockTimeVisualization {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin: 1.5rem auto;
+  max-width: 900px;
+  border: 1px solid rgba($primary-color, 0.15);
+  
+  h3 {
+    color: $primary-color;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.2rem;
+    font-size: 1.3rem;
+    text-align: center;
+    justify-content: center;
+  }
+}
+
+.blockTimeStats {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed rgba($primary-color, 0.2);
+}
+
+.blockTimeStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120px;
+  
+  span {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin-bottom: 0.4rem;
+  }
+  
+  strong {
+    font-size: 1.3rem;
+    color: $primary-color;
+    
+    &.divergentTime {
+      color: #e74c3c;
+      animation: pulse 2s infinite;
+    }
+  }
+}
+
+.blockTimeHistory {
+  position: relative;
+  height: 180px;
+  margin: 1.5rem 0 0.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.historyLabel {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.historyBars {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 150px;
+  position: relative;
+  z-index: 2;
+}
+
+.historyBarContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 40px;
+}
+
+.historyBar {
+  width: 25px;
+  border-radius: 4px 4px 0 0;
+  transition: height 0.5s ease, background-color 0.5s ease;
+}
+
+.historyBarLabel {
+  margin-top: 0.3rem;
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.targetLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50px;
+  height: 2px;
+  background-color: rgba(255, 255, 255, 0.3);
+  z-index: 1;
+}
+
+.targetLineLabel {
+  position: absolute;
+  top: -20px;
+  right: 10px;
+  font-size: 0.8rem;
+  opacity: 0.6;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+// Anpassungsblock-Hervorhebung
+.block.adjustmentBlock {
+  border: 2px solid $primary-color;
+  box-shadow: 0 0 15px rgba($primary-color, 0.4);
+  position: relative;
+  
+  &::before {
+    content: '!';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 25px;
+    height: 25px;
+    background-color: $primary-color;
+    color: $text-color-black;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+}
+
+// Stil für Blöcke nach Schwierigkeitsanpassung
+.block.postAdjustmentBlock {
+  border-color: rgba(#e74c3c, 0.4);
+  background: linear-gradient(145deg, rgba($primary-color, 0.1), rgba(#e74c3c, 0.1));
+}
+
+// Stil für die längere Mining-Zeit nach Anpassung
+.longerMiningTime {
+  color: #e74c3c !important;
+  font-weight: bold !important;
+  position: relative;
+  animation: subtlePulse 2s infinite;
+}
+
+.timeIncreaseIndicator {
+  font-size: 0.8rem;
+  color: #e74c3c;
+  margin-left: 0.5rem;
+  font-style: italic;
+}
+
+@keyframes subtlePulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+.adjustmentMarker {
+  background: rgba($primary-color, 0.2);
+  color: $primary-color;
+  font-size: 0.8rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 0.5rem;
+  font-weight: bold;
+  animation: pulse 2s infinite;
+}
+
+.adjustmentExplanation {
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2));
+  border-left: 4px solid $primary-color;
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  margin: 1rem auto 2rem;
+  max-width: 900px;
+  animation: fadeUp 0.5s ease forwards;
+  
+  h3 {
+    color: $primary-color;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+    font-size: 1.2rem;
+  }
+  
+  p {
+    margin: 0.7rem 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    
+    strong {
+      color: #e74c3c; // Hervorhebung für wichtige Werte
+    }
+    
+    &:last-child {
+      font-size: 0.85rem;
+      opacity: 0.8;
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
 }

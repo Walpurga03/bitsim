@@ -153,10 +153,6 @@ const DifficultyAdjustmentPage: React.FC<DifficultyAdjustmentPageProps> = ({ onN
       <div className={styles.introSection}>
         <h1>Schwierigkeitsanpassung</h1>
         <p>
-          Alle 2016 Blöcke (etwa alle zwei Wochen) passt das Bitcoin-Netzwerk die Mining-Schwierigkeit an.
-          Diese Anpassung stellt sicher, dass die durchschnittliche Zeit zwischen den Blöcken bei etwa 10 Minuten bleibt.
-        </p>
-        <p>
           Wir nähern uns Block 2016, wo die erste Schwierigkeitsanpassung stattfindet.
           Dadurch wird das Mining herausfordernder, und wir brauchen mehr Rechenleistung.
         </p>
