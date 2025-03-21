@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import styles from '../styles/SatoshiPage.module.scss';
+import styles from '../styles/MempoolPage.module.scss';
 import MempoolExplanationPopup from '../components/MempoolExplanationPopup';
 import { mineBlock, DIFFICULTY_LEVELS } from '../utils/miningUtils';
+import { FaInfoCircle, FaCoins, FaServer, FaArrowDown, FaChartLine, FaFire, FaRegClock, FaSortAmountDown, FaCheck, FaBolt } from 'react-icons/fa';
 
 interface Transaction {
   id: string;
@@ -12,6 +13,8 @@ interface Transaction {
   size: number; // in virtuellen Bytes
   timestamp: string;
   selected: boolean;
+  inputs?: number;
+  outputs?: number;
 }
 
 interface MiningResult {
@@ -20,9 +23,9 @@ interface MiningResult {
   target: string;
   timestamp: string;
   transactions: Transaction[];
+  blockNumber: number;
   merkleRoot: string;
   found: boolean;
-  blockNumber: number;
 }
 
 interface MempoolPageProps {
@@ -45,6 +48,8 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
   const [blockSize, setBlockSize] = useState(0); // in virtuellen Bytes
   const MAX_BLOCK_SIZE = 1000; // Simulierter Max-Wert in virtuellen Bytes
   const [isMobile, setIsMobile] = useState(false);
+  const [sortBy, setSortBy] = useState<'fee' | 'feeRate' | 'size' | 'time'>('feeRate');
+  const [showMarketStats, setShowMarketStats] = useState(false);
   
   // Zufällige Adressen für die Simulation
   const addresses = [
@@ -91,12 +96,43 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
         });
       }
       
-      // Sort by fee per byte (higher first)
-      return transactions.sort((a, b) => (b.fee / b.size) - (a.fee / a.size));
+      // Sort initially by fee per byte (higher first)
+      return sortTransactions(transactions, 'feeRate');
     };
     
     setMempool(generateTransactions());
   }, []);
+
+  // Sort transactions based on different criteria
+  const sortTransactions = (txs: Transaction[], sortType: 'fee' | 'feeRate' | 'size' | 'time') => {
+    const sortedTxs = [...txs];
+    
+    switch(sortType) {
+      case 'fee':
+        return sortedTxs.sort((a, b) => b.fee - a.fee);
+      case 'feeRate':
+        return sortedTxs.sort((a, b) => (b.fee / b.size) - (a.fee / a.size));
+      case 'size':
+        return sortedTxs.sort((a, b) => a.size - b.size);
+      case 'time':
+        return sortedTxs.sort((a, b) => 
+          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+        );
+      default:
+        return sortedTxs;
+    }
+  };
+  
+  // Handle sorting change
+  const handleSortChange = (sortType: 'fee' | 'feeRate' | 'size' | 'time') => {
+    setSortBy(sortType);
+    setMempool(sortTransactions([...mempool], sortType));
+  };
+  
+  // Toggle market stats
+  const toggleMarketStats = () => {
+    setShowMarketStats(!showMarketStats);
+  };
   
   // Handle transaction selection
   const toggleTransactionSelection = (txId: string) => {
@@ -118,6 +154,45 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
       
       return updated;
     });
+  };
+
+  // Auto-select best transactions (based on fee/vByte) that fit within block size
+  const selectBestTransactions = () => {
+    // Sort by fee per byte for optimal selection
+    const sortedByFeeRate = [...mempool].sort((a, b) => 
+      (b.fee / b.size) - (a.fee / a.size)
+    );
+    
+    let cumulativeSize = 0;
+    const selected: string[] = [];
+    
+    // Select transactions until we reach block size limit
+    for (const tx of sortedByFeeRate) {
+      if (cumulativeSize + tx.size <= MAX_BLOCK_SIZE) {
+        selected.push(tx.id);
+        cumulativeSize += tx.size;
+      }
+    }
+    
+    // Update selections
+    setMempool(prev => 
+      prev.map(tx => ({
+        ...tx,
+        selected: selected.includes(tx.id)
+      }))
+    );
+    
+    // Update selected transactions and block size
+    const selectedTxs = mempool.filter(tx => selected.includes(tx.id));
+    setSelectedTransactions(selectedTxs);
+    setBlockSize(cumulativeSize);
+  };
+  
+  // Clear all transaction selections
+  const clearSelections = () => {
+    setMempool(prev => prev.map(tx => ({ ...tx, selected: false })));
+    setSelectedTransactions([]);
+    setBlockSize(0);
   };
   
   const simulateMining = () => {
@@ -203,31 +278,118 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
     }, 2000);
   };
 
+  // Calculate mempool statistics
+  const calculateMempoolStats = () => {
+    if (mempool.length === 0) return null;
+    
+    // Calculate average fee rate in sat/vByte
+    const avgFeeRate = mempool.reduce((sum, tx) => sum + tx.fee / tx.size, 0) / mempool.length;
+    
+    // Calculate median fee rate
+    const feeRates = mempool.map(tx => tx.fee / tx.size).sort((a, b) => a - b);
+    const medianFeeRate = feeRates[Math.floor(feeRates.length / 2)];
+    
+    // Calculate total value waiting in mempool
+    const totalValue = mempool.reduce((sum, tx) => sum + tx.amount, 0);
+    
+    // Calculate total fees waiting in mempool
+    const totalFees = mempool.reduce((sum, tx) => sum + tx.fee, 0);
+    
+    return {
+      totalTransactions: mempool.length,
+      avgFeeRate: avgFeeRate.toFixed(8),
+      medianFeeRate: medianFeeRate.toFixed(8),
+      totalValue: totalValue.toFixed(2),
+      totalFees: totalFees.toFixed(8),
+      lowFeeRate: feeRates[0].toFixed(8),
+      highFeeRate: feeRates[feeRates.length - 1].toFixed(8)
+    };
+  };
+
+  // Get statistics for the mempool
+  const mempoolStats = calculateMempoolStats();
+
   return (
     <div className={styles.page}>
       <div className={styles.introSection}>
-        <h1 className={styles.title}>Der Mempool</h1>
+        <h1 className={styles.title}>Der Gebührenmarkt im Mempool</h1>
         <p className={styles.description}>
-          Im Mempool warten unbestätigte Transaktionen darauf, in die Blockchain aufgenommen zu werden. 
-          Als Miner können Sie entscheiden, welche Transaktionen Sie in Ihren Block aufnehmen möchten.
+          Im Mempool warten unbestätigte Transaktionen darauf, von Minern in einen Block aufgenommen zu werden.
+          Als Miner kannst du Transaktionen mit höheren Gebühren priorisieren, um deinen Profit zu maximieren.
         </p>
         <div className={styles.instructionBox}>
-          <p><strong>So geht's:</strong> Klicken Sie auf Transaktionen, um sie auszuwählen. Achten Sie darauf, die Blockgröße nicht zu überschreiten und wählen Sie Transaktionen mit höheren Gebühren für mehr Profit!</p>
+          <p><strong>So funktioniert der Gebührenmarkt:</strong> Nutzer konkurrieren mit Gebühren um den begrenzten Platz in Blöcken. Je höher die Gebühr pro Größe (vByte), desto attraktiver ist eine Transaktion für Miner.</p>
         </div>
       </div>
       
-      {/* Vereinfachte Wallet-Info */}
+      {/* Verbesserte Wallet-Info mit überarbeiteten Styles */}
       <div className={styles.walletsContainer}>
         <div className={styles.walletCard}>
-          <h2>Ihre Miner-Wallet</h2>
+          <h2>Deine Miner-Wallet</h2>
           <div className={styles.walletInfo}>
-            <div className={styles.walletInfoItem}><span>Block:</span> <strong>{walletInfo.currentBlock}</strong></div>
-            <div className={styles.walletInfoItem}><span>Mining-Belohnung:</span> <strong>{walletInfo.currentReward} BTC</strong></div>
-            <div className={styles.walletInfoItem}><span>Gesammelte Gebühren:</span> <strong>{walletInfo.totalFees.toFixed(8)} BTC</strong></div>
+            <div className={styles.walletInfoItem}>
+              <span>Block-Höhe:</span>
+              <strong>{walletInfo.currentBlock}</strong>
+            </div>
+            <div className={styles.walletInfoItem}>
+              <span>Mining-Belohnung:</span>
+              <strong>{walletInfo.currentReward} BTC</strong>
+            </div>
+            <div className={styles.walletInfoItem}>
+              <span>Gesammelte Gebühren:</span>
+              <strong>{walletInfo.totalFees.toFixed(8)} BTC</strong>
+            </div>
           </div>
         </div>
       </div>
       
+      {/* Marktstatistik-Button mit verbessertem Styling */}
+      <button 
+        className={styles.marketStatsButton} 
+        onClick={toggleMarketStats}
+      >
+        <FaChartLine /> {showMarketStats ? 'Marktstatistik ausblenden' : 'Marktstatistik anzeigen'}
+      </button>
+      
+      {/* Marktstatistiken Panel mit neuen Stilen */}
+      {showMarketStats && mempoolStats && (
+        <div className={styles.marketStatsPanel}>
+          <h3>Aktuelle Mempool-Statistiken</h3>
+          <div className={styles.statsGrid}>
+            <div className={styles.statItem}>
+              <div className={styles.statIcon}><FaServer /></div>
+              <span>Transaktionen</span>
+              <strong>{mempoolStats.totalTransactions}</strong>
+            </div>
+            <div className={styles.statItem}>
+              <div className={styles.statIcon}><FaFire /></div>
+              <span>Durchschnitt BTC/vByte</span>
+              <strong>{mempoolStats.avgFeeRate}</strong>
+            </div>
+            <div className={styles.statItem}>
+              <div className={styles.statIcon}><FaArrowDown /></div>
+              <span>Niedrigste Gebühr</span>
+              <strong>{mempoolStats.lowFeeRate}</strong>
+            </div>
+            <div className={styles.statItem}>
+              <div className={styles.statIcon}><FaCoins /></div>
+              <span>Wartende BTC</span>
+              <strong>{mempoolStats.totalValue}</strong>
+            </div>
+          </div>
+          
+          <div className={styles.feeExplanation}>
+            <FaInfoCircle className={styles.feeExplanationIcon} />
+            <p>
+              <strong>Gebührentipp:</strong> Transaktionen mit höheren BTC/vByte-Gebühren werden schneller bestätigt.
+              Nutzer bezahlen bei Engpässen höhere Gebühren, um ihre Transaktion zu priorisieren.
+              Dies schafft einen Marktmechanismus für Blockplatz.
+            </p>
+          </div>
+        </div>
+      )}
+      
+      {/* Rest des Codes bleibt unverändert, verwendet aber die neuen Stile automatisch */}
       {/* Verbesserte Block-Größen-Anzeige */}
       <div className={styles.blockSizeContainer}>
         <h3>Blockgröße: <span className={blockSize > MAX_BLOCK_SIZE ? styles.oversize : ''}>{blockSize} / {MAX_BLOCK_SIZE} vBytes</span></h3>
@@ -241,31 +403,79 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
           />
         </div>
         {blockSize > MAX_BLOCK_SIZE && (
-          <p className={styles.errorMessage}>&#9888; Blockgröße überschritten! Entfernen Sie einige Transaktionen.</p>
+          <p className={styles.errorMessage}>&#9888; Blockgröße überschritten! Entferne einige Transaktionen.</p>
         )}
       </div>
       
-      {/* Optimierte Transaktionsauswahl */}
-      <div className={`${styles.selectionInfo} ${isMobile ? styles.mobileSelectionInfo : ''}`}>
-        <div className={styles.selectionSummary}>
+      {/* Optimierte Transaktionsauswahl mit Schnellauswahl-Buttons */}
+      <div className={`${styles.selectionToolbar} ${isMobile ? styles.mobileSelectionToolbar : ''}`}>
+        <div className={styles.selectionInfo}>
           <h3>Ausgewählte Transaktionen: {selectedTransactions.length}</h3>
           <p>Gesamtgebühren: <strong>{selectedTransactions.reduce((sum, tx) => sum + tx.fee, 0).toFixed(8)} BTC</strong></p>
         </div>
         
-        <button 
-          className={styles.mineButton} 
-          onClick={simulateMining}
-          disabled={isAnimating || selectedTransactions.length === 0 || blockSize > MAX_BLOCK_SIZE}
-        >
-          {isAnimating ? 'Mining läuft...' : 'Block mit ausgewählten Transaktionen minen'}
-        </button>
+        <div className={styles.selectionActions}>
+          <button 
+            className={styles.optimizeButton}
+            onClick={selectBestTransactions}
+            disabled={mempool.length === 0}
+          >
+            <FaBolt /> Automatisch optimieren
+          </button>
+          
+          <button 
+            className={styles.clearButton}
+            onClick={clearSelections}
+            disabled={selectedTransactions.length === 0}
+          >
+            <FaCheck /> Auswahl zurücksetzen
+          </button>
+        </div>
+      </div>
+      
+      {/* Verbesserte Sortieroptionen */}
+      <div className={styles.sortOptionsContainer}>
+        <span className={styles.sortLabel}>Sortieren nach:</span>
+        <div className={styles.sortOptions}>
+          <button 
+            className={`${styles.sortButton} ${sortBy === 'feeRate' ? styles.active : ''}`}
+            onClick={() => handleSortChange('feeRate')}
+          >
+            <FaSortAmountDown /> BTC/vByte
+          </button>
+          <button 
+            className={`${styles.sortButton} ${sortBy === 'fee' ? styles.active : ''}`}
+            onClick={() => handleSortChange('fee')}
+          >
+            <FaSortAmountDown /> Gebühr
+          </button>
+          <button 
+            className={`${styles.sortButton} ${sortBy === 'size' ? styles.active : ''}`}
+            onClick={() => handleSortChange('size')}
+          >
+            <FaSortAmountDown /> Größe
+          </button>
+          <button 
+            className={`${styles.sortButton} ${sortBy === 'time' ? styles.active : ''}`}
+            onClick={() => handleSortChange('time')}
+          >
+            <FaRegClock /> Zeit
+          </button>
+        </div>
       </div>
       
       {/* Vereinfachte Mempool-Transaktionen */}
       <div className={styles.mempoolContainer}>
         <div className={styles.mempoolHeader}>
-          <h3>Verfügbare Transaktionen ({mempool.length})</h3>
-          <div className={styles.sortInfo}>Sortiert nach Gebühren/vByte (höchste zuerst)</div>
+          <h3>Mempool-Transaktionen ({mempool.length})</h3>
+          <div className={styles.sortInfo}>
+            Sortiert nach: {
+              sortBy === 'feeRate' ? 'BTC/vByte (höchste zuerst)' :
+              sortBy === 'fee' ? 'Gebühr (höchste zuerst)' :
+              sortBy === 'size' ? 'Größe (kleinste zuerst)' : 
+              'Zeitpunkt (älteste zuerst)'
+            }
+          </div>
         </div>
         
         <div className={styles.transactionsHeader}>
@@ -288,7 +498,10 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
                 <div className={styles.txAddresses}>{tx.sender.substring(0, 6)}... → {tx.recipient.substring(0, 6)}...</div>
               </span>
               <span className={styles.txColumn}>{tx.amount.toFixed(4)} BTC</span>
-              <span className={styles.txColumn}>{tx.fee.toFixed(6)} BTC</span>
+              <span className={styles.txColumn}>
+                {tx.fee.toFixed(6)} BTC
+                <div className={styles.feeRate}>≈ {(tx.fee / tx.size).toFixed(8)} BTC/vB</div>
+              </span>
               <span className={styles.txColumn}>{tx.size} vB</span>
               <span className={`${styles.txColumn} ${styles.priority}`}>
                 <div 
@@ -312,7 +525,18 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
         </div>
       </div>
       
-      {/* Mining-Ergebnis (behalten) */}
+      {/* Mining-Button */}
+      <div className={styles.miningActions}>
+        <button 
+          className={styles.mineButton} 
+          onClick={simulateMining}
+          disabled={isAnimating || selectedTransactions.length === 0 || blockSize > MAX_BLOCK_SIZE}
+        >
+          {isAnimating ? 'Mining läuft...' : 'Block mit ausgewählten Transaktionen minen'}
+        </button>
+      </div>
+      
+      {/* Mining-Ergebnis */}
       {miningResult && (
         <div className={`${styles.miningBlock} ${miningResult.found ? styles.foundAnimation : styles.notFoundAnimation}`}>
           <h2>Mining Block #{miningResult.blockNumber}</h2>
@@ -336,7 +560,25 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
             </div>
           </div>
           
-          <p><strong>Transaktionen:</strong> {miningResult.transactions.length}</p>
+          <div className={styles.minedTransactionsSummary}>
+            <h3>Geminte Transaktionen</h3>
+            <ul className={styles.minedTransactionsList}>
+              {miningResult.transactions.slice(0, 5).map(tx => (
+                <li key={tx.id} className={styles.minedTransactionItem}>
+                  <span className={styles.minedTxId}>{tx.id.substring(0, 8)}...</span>
+                  <span className={styles.minedTxAmount}>{tx.amount.toFixed(4)} BTC</span>
+                  <span className={styles.minedTxFee}>{tx.fee.toFixed(6)} BTC</span>
+                </li>
+              ))}
+              {miningResult.transactions.length > 5 && (
+                <li className={styles.minedTransactionMore}>
+                  ... und {miningResult.transactions.length - 5} weitere Transaktionen
+                </li>
+              )}
+            </ul>
+          </div>
+          
+          <p><strong>Gesamtzahl Transaktionen:</strong> {miningResult.transactions.length}</p>
           <p><strong>Gebühren:</strong> {miningResult.transactions.reduce((sum, tx) => sum + tx.fee, 0).toFixed(8)} BTC</p>
           <p><strong>Block-Belohnung:</strong> {walletInfo.currentReward} BTC</p>
           <p><strong>Gesamtbelohnung:</strong> {(walletInfo.currentReward + miningResult.transactions.reduce((sum, tx) => sum + tx.fee, 0)).toFixed(8)} BTC</p>
@@ -344,15 +586,31 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
             "Block erfolgreich gemint und zur Blockchain hinzugefügt! ✅" : 
             "Block nicht gefunden ❌ Versuche es erneut!"}
           </p>
+          
+          <div className={styles.blockButtons}>
+            <button 
+              className={styles.mineButton} 
+              onClick={simulateMining}
+              disabled={isAnimating || selectedTransactions.length === 0 || blockSize > MAX_BLOCK_SIZE}
+            >
+              {isAnimating ? 'Mining läuft...' : 'Nächsten Block minen'}
+            </button>
+            
+            <button className={styles.nextButton} onClick={onNext}>
+              Weiter zum Halving
+            </button>
+          </div>
         </div>
       )}
       
       {/* Navigation Button */}
-      <div className={styles.navigationButtons}>
-        <button className={styles.nextButton} onClick={onNext}>
-          Weiter zum Halving
-        </button>
-      </div>
+      {!miningResult && (
+        <div className={styles.navigationButtons}>
+          <button className={styles.nextButton} onClick={onNext}>
+            Weiter zum Halving
+          </button>
+        </div>
+      )}
       
       {/* Popup */}
       {showMempoolPopup && (

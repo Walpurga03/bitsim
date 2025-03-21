@@ -1,0 +1,122 @@
+@use "sass:color";
+@use '../../styles/variables' as *;
+
+$card-border: 1px solid rgba($primary-color, 0.2);
+$card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+$glow: 0 0 15px rgba($primary-color, 0.5);
+
+.walletsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  margin: 1rem 0 2rem;
+  width: 100%;
+  max-width: 900px;
+}
+
+.walletCard {
+  background: linear-gradient(145deg, rgba(12, 12, 12, 0.7), rgba(0, 0, 0, 0.8));
+  backdrop-filter: blur(10px);
+  border: $card-border;
+  box-shadow: $card-shadow;
+  border-radius: 20px;
+  padding: 1.8rem;
+  flex: 1;
+  min-width: 280px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: $glow, $card-shadow;
+  }
+  
+  h2 {
+    margin-bottom: 1rem;
+    font-size: clamp(1.5rem, 3vw, 1.8rem);
+    color: $primary-color;
+    border-bottom: 1px solid rgba($primary-color, 0.3);
+    padding-bottom: 0.8rem;
+    position: relative;
+    
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -1px;
+      width: 30%;
+      height: 2px;
+      background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: 15%));
+    }
+  }
+  
+  p {
+    font-size: clamp(0.85rem, 1.8vw, 1rem);
+    margin: 0.7rem 0;
+    display: flex;
+    align-items: center;
+    
+    strong {
+      color: rgba($primary-color, 0.9);
+      margin-right: 1rem;
+      min-width: 90px;
+      font-weight: 600;
+      background: rgba($primary-color, 0.1);
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.9em;
+    }
+  }
+}
+
+.walletInfo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.walletInfoItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  span {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    margin-bottom: 0.3rem;
+  }
+  
+  strong {
+    font-size: 1.2rem;
+    color: $primary-color;
+  }
+}
+
+// Status für ausstehende Transaktionen
+.walletStatus {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  
+  .outgoingTx {
+    color: #e74c3c;
+    background: rgba(#e74c3c, 0.1);
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    animation: pulse 2s infinite;
+  }
+  
+  .incomingTx {
+    color: #2ecc71;
+    background: rgba(#2ecc71, 0.1);
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    animation: pulse 2s infinite;
+  }
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}

@@ -1,0 +1,952 @@
+@use "sass:color";
+@use './variables' as *;
+@use './common.module.scss';
+
+// Grundlegende Seitenstile
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #1A1A1A, #000000);
+  color: #ffffff;
+  text-align: center;
+}
+
+// Intro-Sektion
+.introSection {
+  margin: 2rem 0;
+  max-width: 800px;
+  animation: fadeUp 0.8s ease-out;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba($primary-color, 0.2);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent, rgba($primary-color, 0.03), transparent);
+    transform: translateY(-100%);
+    animation: lightPass 8s infinite linear;
+    z-index: -1;
+  }
+}
+
+// Anleitungsbox für den Gebührenmarkt
+.instructionBox {
+  background: rgba(0, 0, 0, 0.2);
+  border-left: 4px solid $primary-color;
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  margin-top: 1.5rem;
+  text-align: left;
+  
+  p {
+    margin: 0;
+    line-height: 1.5;
+    
+    strong {
+      color: $primary-color;
+    }
+  }
+}
+
+// Verbesserte Wallet-Info
+.walletsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  margin: 1rem 0 2rem;
+  width: 100%;
+  max-width: 900px;
+}
+
+.walletCard {
+  background: linear-gradient(145deg, rgba(12, 12, 12, 0.7), rgba(0, 0, 0, 0.8));
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba($primary-color, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+  padding: 1.8rem;
+  flex: 1;
+  min-width: 280px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 15px rgba($primary-color, 0.5), 0 8px 32px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  h2 {
+    margin-bottom: 1rem;
+    font-size: clamp(1.5rem, 3vw, 1.8rem);
+    color: $primary-color;
+    border-bottom: 1px solid rgba($primary-color, 0.3);
+    padding-bottom: 0.8rem;
+    position: relative;
+    
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -1px;
+      width: 30%;
+      height: 2px;
+      background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: 15%));
+    }
+  }
+}
+
+.walletInfo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.walletInfoItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  span {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    margin-bottom: 0.3rem;
+  }
+  
+  strong {
+    font-size: 1.2rem;
+    color: $primary-color;
+  }
+}
+
+// Marktstatistik-Button
+.marketStatsButton {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba($primary-color, 0.3);
+  color: $primary-color;
+  padding: 0.7rem 1.5rem;
+  border-radius: 30px;
+  margin: 0.5rem auto 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba($primary-color, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+}
+
+// Marktstatistiken Panel - attraktiveres Design
+.marketStatsPanel {
+  background: linear-gradient(145deg, rgba(20, 20, 20, 0.8), rgba(10, 10, 10, 0.9));
+  border: 1px solid rgba($primary-color, 0.15);
+  border-radius: 16px;
+  padding: 1.8rem;
+  margin: 0 auto 2rem;
+  width: 100%;
+  max-width: 900px;
+  animation: fadeUp 0.5s ease-out;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  
+  h3 {
+    text-align: center;
+    color: $primary-color;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+    position: relative;
+    display: inline-block;
+    
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -8px;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, $primary-color, transparent);
+    }
+  }
+}
+
+// Verbesserte Stat-Grid-Darstellung
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.3rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  border: 1px solid rgba($primary-color, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-3px);
+    border-color: rgba($primary-color, 0.3);
+    background: rgba(0, 0, 0, 0.4);
+  }
+  
+  .statIcon {
+    font-size: 1.5rem;
+    color: $primary-color;
+    margin-bottom: 0.8rem;
+  }
+  
+  span {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 300;
+  }
+  
+  strong {
+    font-size: 1.2rem;
+    color: #ffffff;
+    font-family: $font-mono;
+    word-break: break-all;
+  }
+}
+
+// Verbesserte Gebührenerklärung
+.feeExplanation {
+  background: rgba(0, 0, 0, 0.25);
+  border-left: 3px solid $primary-color;
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  margin-top: 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  text-align: left;
+  
+  .feeExplanationIcon {
+    color: $primary-color;
+    font-size: 1.3rem;
+    margin-top: 0.2rem;
+    flex-shrink: 0;
+  }
+  
+  p {
+    margin: 0;
+    line-height: 1.6;
+    font-size: 0.95rem;
+    
+    strong {
+      color: $primary-color;
+    }
+  }
+}
+
+// Verbesserte Block-Größen-Anzeige
+.blockSizeContainer {
+  width: 100%;
+  max-width: 900px;
+  margin: 1.5rem auto;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  
+  h3 {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    color: $text-color-with;
+    
+    .oversize {
+      color: #e74c3c;
+      animation: pulse 2s infinite;
+    }
+  }
+  
+  .errorMessage {
+    color: #e74c3c;
+    font-weight: 600;
+    margin-top: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+  }
+}
+
+.progressBarContainer {
+  width: 100%;
+  height: 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.progressBar {
+  height: 100%;
+  transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
+  border-radius: 10px;
+  background-image: linear-gradient(45deg, 
+    rgba(255, 255, 255, 0.15) 25%, 
+    transparent 25%, 
+    transparent 50%, 
+    rgba(255, 255, 255, 0.15) 50%, 
+    rgba(255, 255, 255, 0.15) 75%, 
+    transparent 75%, 
+    transparent);
+  background-size: 40px 40px;
+  animation: progressAnimation 2s linear infinite;
+}
+
+@keyframes progressAnimation {
+  0% { background-position: 0 0; }
+  100% { background-position: 40px 0; }
+}
+
+// Optimierte Transaktionsauswahl mit Schnellauswahl-Buttons
+.selectionToolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 12px;
+  padding: 1.2rem 1.5rem;
+  margin: 1rem auto;
+  width: 100%;
+  max-width: 900px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  
+  &.mobileSelectionToolbar {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.selectionInfo {
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: $primary-color;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  p {
+    margin: 0.4rem 0 0;
+    font-size: 0.9rem;
+    
+    strong {
+      color: $primary-color;
+      font-family: $font-mono;
+    }
+  }
+}
+
+.selectionActions {
+  display: flex;
+  gap: 1rem;
+}
+
+.optimizeButton, .clearButton {
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.optimizeButton {
+  background: rgba($primary-color, 0.2);
+  color: $primary-color;
+  border: 1px solid rgba($primary-color, 0.4);
+  
+  &:hover:not(:disabled) {
+    background: rgba($primary-color, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.clearButton {
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  
+  &:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Verbesserte Sortieroptionen
+.sortOptionsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1.5rem auto;
+  flex-wrap: wrap;
+  max-width: 900px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 100px;
+  padding: 0.6rem 1rem;
+  
+  .sortLabel {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    font-weight: 500;
+  }
+}
+
+.sortOptions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sortButton {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: rgba(0, 0, 0, 0.4);
+  }
+  
+  &.active {
+    background: rgba($primary-color, 0.25);
+    border-color: rgba($primary-color, 0.5);
+    color: $primary-color;
+    box-shadow: 0 0 8px rgba($primary-color, 0.3);
+  }
+}
+
+// Verbesserte Mempool-Transaktionsliste
+.mempoolContainer {
+  width: 100%;
+  max-width: 900px;
+  margin: 2rem auto;
+  background: linear-gradient(145deg, rgba(20, 20, 20, 0.8), rgba(10, 10, 10, 0.9));
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba($primary-color, 0.1);
+}
+
+.mempoolHeader {
+  margin-bottom: 1rem;
+  
+  h3 {
+    text-align: center;
+    margin-bottom: 0.6rem;
+    font-size: 1.3rem;
+    color: $primary-color;
+  }
+  
+  .sortInfo {
+    text-align: center;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 1rem;
+  }
+}
+
+.transactionsHeader {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  padding: 0.6rem 1rem;
+  background: rgba($primary-color, 0.12);
+  border-radius: 10px;
+  font-weight: 600;
+  color: $primary-color;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  text-align: left;
+}
+
+.transactionsList {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba($primary-color, 0.3);
+    border-radius: 3px;
+    
+    &:hover {
+      background: rgba($primary-color, 0.5);
+    }
+  }
+}
+
+.transactionRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+  
+  &.selectedTx {
+    background-color: rgba($primary-color, 0.15);
+    border-left: 5px solid $primary-color;
+    position: relative;
+    
+    &::after {
+      content: "✓";
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: $primary-color;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+  }
+}
+
+.txColumn {
+  padding: 0 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.txId {
+  font-family: $font-mono;
+  font-size: 0.9rem;
+  color: $text-color-with;
+  margin-bottom: 0.2rem;
+}
+
+.txAddresses {
+  font-size: 0.75rem;
+  color: rgba($text-color-with, 0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.feeRate {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  margin-top: 0.3rem;
+  font-family: $font-mono;
+  color: $primary-color;
+}
+
+// Verbesserte Prioritätsanzeige
+.priority {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.priorityIndicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px currentColor;
+}
+
+// Leerer Mempool-Zustand
+.emptyMempool {
+  padding: 2rem;
+  text-align: center;
+  
+  p {
+    margin-bottom: 1rem;
+    opacity: 0.7;
+    font-style: italic;
+  }
+}
+
+.reloadButton {
+  background: rgba($primary-color, 0.15);
+  color: $primary-color;
+  border: 1px solid rgba($primary-color, 0.3);
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba($primary-color, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+}
+
+// Mining Button und Bereich
+.miningActions {
+  margin: 2rem 0;
+}
+
+.mineButton {
+  background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: 10%));
+  color: $secondary-color;
+  font-size: 1rem;
+  padding: 1rem 2.5rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg, 
+      transparent, 
+      rgba(255, 255, 255, 0.2), 
+      transparent
+    );
+    transition: left 0.7s ease;
+  }
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-5px);
+    box-shadow: 0 0 15px rgba($primary-color, 0.5), 0 15px 30px rgba(0, 0, 0, 0.3);
+    
+    &::before {
+      left: 100%;
+    }
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(-2px);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+// Mining-Ergebnis
+.miningBlock {
+  background: linear-gradient(145deg, rgba(20, 20, 20, 0.8), rgba(10, 10, 10, 0.9));
+  border-radius: 16px;
+  border: 1px solid rgba($primary-color, 0.2);
+  padding: 1.8rem;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  
+  h2 {
+    color: $primary-color;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    position: relative;
+    display: inline-block;
+    
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -8px;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba($primary-color, 0.7), transparent);
+    }
+  }
+}
+
+// Stil für die Hash/Target-Anzeige
+.hashTarget {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border: 1px solid rgba($primary-color, 0.1);
+}
+
+.hashDisplay {
+  strong {
+    color: $primary-color;
+    margin-right: 0.5rem;
+    font-size: 1.05rem;
+  }
+  
+  .hash {
+    font-family: $font-mono;
+    font-size: 1.1rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.3);
+    word-break: break-all;
+  }
+  
+  .validHash {
+    color: #2ecc71;
+  }
+  
+  .invalidHash {
+    color: #e74c3c;
+  }
+}
+
+.mustBeBelow {
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+.target {
+  font-family: $font-mono;
+  font-size: 1.1rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  background: rgba($primary-color, 0.1);
+  color: $primary-color;
+  display: inline-block;
+  margin-left: 0.5rem;
+}
+
+// Animationen für gefundene/nicht gefundene Blöcke
+.foundAnimation {
+  animation: pulseFound 2s;
+}
+
+.notFoundAnimation {
+  animation: pulseNotFound 2s;
+}
+
+@keyframes pulseFound {
+  0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.4); }
+  70% { box-shadow: 0 0 0 20px rgba(46, 204, 113, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+}
+
+@keyframes pulseNotFound {
+  0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); }
+  70% { box-shadow: 0 0 0 20px rgba(231, 76, 60, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+}
+
+// Geminte Transaktionen Zusammenfassung
+.minedTransactionsSummary {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border: 1px solid rgba($primary-color, 0.1);
+  
+  h3 {
+    color: $primary-color;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    text-align: center;
+  }
+}
+
+.minedTransactionsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.minedTransactionItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  .minedTxId {
+    font-family: $font-mono;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .minedTxAmount {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  
+  .minedTxFee {
+    color: $primary-color;
+    font-weight: 500;
+  }
+}
+
+.minedTransactionMore {
+  text-align: center;
+  padding: 0.8rem;
+  font-style: italic;
+  opacity: 0.7;
+}
+
+// Navigationsbuttons
+.navigationButtons {
+  margin: 2rem 0;
+}
+
+.nextButton {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+  font-size: 1rem;
+  padding: 0.9rem 2.5rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  letter-spacing: 1px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(#3498db, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(-1px);
+  }
+}
+
+// Animationen
+@keyframes lightPass {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+// Responsive Anpassungen
+@media (max-width: 768px) {
+  .transactionsHeader, .transactionRow {
+    grid-template-columns: 2fr 1fr 1fr;
+    
+    & > *:nth-child(4), & > *:nth-child(5) {
+      display: none;
+    }
+  }
+  
+  .marketStatsPanel {
+    padding: 1.2rem;
+  }
+  
+  .statsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .hashTarget {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .sortOptionsContainer {
+    flex-direction: column;
+    padding: 0.8rem;
+    gap: 0.8rem;
+  }
+  
+  .transactionsHeader, .transactionRow {
+    grid-template-columns: 2fr 1fr;
+    
+    & > *:nth-child(3) {
+      display: none;
+    }
+  }
+  
+  .selectionToolbar {
+    padding: 1rem;
+  }
+}

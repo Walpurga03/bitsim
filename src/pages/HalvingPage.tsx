@@ -284,7 +284,7 @@ const HalvingPage: React.FC<HalvingPageProps> = ({ onNext }) => {
       {/* Navigation button to go to next page */}
       <div className={styles.navigationButtons}>
         <button className={styles.nextButton} onClick={onNext}>
-          Weiter zum nächsten Kapitel
+          Weiter
         </button>
       </div>
     </div>

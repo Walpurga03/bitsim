@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from '../styles/SatoshiPage.module.scss'; // Aktualisierter Pfad
 import DifficultyAdjustmentPopup from '../components/DifficultyAdjustmentPopup';
 import { mineBlock, DIFFICULTY_LEVELS } from '../utils/miningUtils';
+import { FaInfoCircle, FaLink, FaExclamationTriangle, FaAngleDown } from 'react-icons/fa';
 
 interface MiningResult {
   hash: string;
@@ -32,9 +33,10 @@ const DifficultyAdjustmentPage: React.FC<DifficultyAdjustmentPageProps> = ({ onN
     currentReward: 50,
   });
   const [isMobile, setIsMobile] = useState(false);
-  const [currentDifficulty, setCurrentDifficulty] = useState(DIFFICULTY_LEVELS.EASY);
+  const [difficultyLevel, setDifficultyLevel] = useState<'normal' | 'harder'>('normal');
+  const [adjustmentMade, setAdjustmentMade] = useState(false);
+  const [targetValue, setTargetValue] = useState('1.0');
   
-  const satoshiAddress = "1SatoshiPioneerXXX";
   
   // Handle responsive view
   useEffect(() => {
@@ -102,7 +104,6 @@ const DifficultyAdjustmentPage: React.FC<DifficultyAdjustmentPageProps> = ({ onN
       
       if (newBlock >= 2016) {
         difficulty = DIFFICULTY_LEVELS.MEDIUM; // After block 2016, use MEDIUM difficulty
-        setCurrentDifficulty(DIFFICULTY_LEVELS.MEDIUM);
       } else {
         difficulty = DIFFICULTY_LEVELS.EASY; // Before block 2016, use EASY difficulty
       }
@@ -139,6 +140,13 @@ const DifficultyAdjustmentPage: React.FC<DifficultyAdjustmentPageProps> = ({ onN
           balance: prev.balance + prev.currentReward,
           currentBlock: newBlock,
         }));
+
+        // NACH erfolgreichem Mining von Block 2016 erst die Difficulty anpassen
+        if (newBlock === 2016) {
+          setTargetValue('0.9');  // Änderung von 0.7 auf 0.9 (10% statt 30%)
+          setAdjustmentMade(true);
+          setDifficultyLevel('harder'); // Setze den neuen Schwierigkeitsgrad
+        }
       }
       
       document.body.removeChild(miningAnimation);
@@ -153,34 +161,68 @@ const DifficultyAdjustmentPage: React.FC<DifficultyAdjustmentPageProps> = ({ onN
       <div className={styles.introSection}>
         <h1>Schwierigkeitsanpassung</h1>
         <p>
-          Wir nähern uns Block 2016, wo die erste Schwierigkeitsanpassung stattfindet.
-          Dadurch wird das Mining herausfordernder, und wir brauchen mehr Rechenleistung.
+          Alle 2016 Blöcke (etwa alle zwei Wochen) passt das Bitcoin-Netzwerk die Mining-Schwierigkeit an.
+          Diese Anpassung stellt sicher, dass die durchschnittliche Zeit zwischen den Blöcken bei etwa 10 Minuten bleibt.
         </p>
       </div>
+      
+      {/* Wallet display area und Mining status wurden entfernt */}
+      
+      {/* Verbesserte Blockchain-Visualisierung */}
+      <div className={styles.enhancedBlockchainContainer}>
+        <h3>
+          <FaLink style={{marginRight: '8px'}} />
+          Aktuelle Blockchain
+        </h3>
+        
+        {/* Verbesserte Fortschrittsanzeige bis zur Schwierigkeitsanpassung */}
+        <div className={styles.difficultyProgressContainer}>
+          <div className={styles.progressLabel}>
+            <span>Block 2000</span>
+            <span className={styles.adjustmentTarget}>
+              <FaExclamationTriangle style={{marginRight: '5px'}} />
+              Block 2016: Schwierigkeitsanpassung
+            </span>
+            <span>Block 2032</span>
+          </div>
+          <div className={styles.progressBar}>
+            <div 
+              className={styles.progressFill}
+              style={{
+                width: `${Math.min(100, ((walletInfo.currentBlock - 2000) / 16) * 100)}%`,
+                background: adjustmentMade ? 
+                  'linear-gradient(90deg, rgba(247, 147, 26, 0.5), #e74c3c)' : 
+                  'linear-gradient(90deg, rgba(247, 147, 26, 0.5), #f7931a)'
+              }}
+            ></div>
+          </div>
+          <div className={styles.currentBlockMarker} style={{
+            left: `${Math.min(100, ((walletInfo.currentBlock - 2000) / 16) * 100)}%`
+          }}>
+            <strong>Block {walletInfo.currentBlock}</strong>
+            {walletInfo.currentBlock === 2016 && 
+              <div className={styles.milestoneFlag}>Meilenstein!</div>
+            }
+          </div>
           
-      {/* Wallet display area */}
-      <div className={styles.walletsContainer}>
-        <div className={styles.walletCard}>
-          <h2>Satoshi's Wallet</h2>
-          <p><strong>Adresse:</strong> {satoshiAddress}</p>
-          <p><strong>Balance:</strong> {walletInfo.balance} BTC</p>
+          {/* Countdown bis zum Adjustment */}
+          {walletInfo.currentBlock < 2016 && (
+            <div className={styles.blockCountdown}>
+              Noch <strong>{2016 - walletInfo.currentBlock}</strong> Blöcke bis zur Schwierigkeitsanpassung
+            </div>
+          )}
+          
+          {/* Hinweis nach dem Adjustment */}
+          {adjustmentMade && (
+            <div className={styles.adjustmentComplete}>
+              <FaAngleDown style={{marginRight: '5px'}} />
+              Schwierigkeitsanpassung erfolgt! Das Target wurde gesenkt.
+            </div>
+          )}
         </div>
-      </div>
-      
-      {/* Mining status */}
-      <div className={styles.miningStatus}>
-        <p><strong>Block:</strong> {walletInfo.currentBlock}</p>
-        <p><strong>Belohnung:</strong> {walletInfo.currentReward} BTC</p>
-        <p><strong>Aktuelle Schwierigkeit:</strong> {
-          Object.entries(DIFFICULTY_LEVELS).find(
-            ([_key, value]) => value === currentDifficulty
-          )?.[0] || 'UNBEKANNT'
-        }</p>
-      </div>
-      
-      {/* Blockchain display at top */}
-      {chainBlocks.length > 0 && (
-        <div className={styles.blockchainDisplay}>
+        
+        {/* Bestehende Blockchain-Visualisierung */}
+        <div className={styles.blockchainVisualization}>
           {blocksToDisplay.map(block => {
             const previous = chainBlocks.find(b => b.blockNumber === (block.blockNumber - 1));
             let prevDisplay = previous ? previous.hash.toString() : `Block ${block.blockNumber - 1}`;
@@ -193,7 +235,18 @@ const DifficultyAdjustmentPage: React.FC<DifficultyAdjustmentPageProps> = ({ onN
             );
           })}
         </div>
-      )}
+      </div>
+      
+      {/* Verbesserte Target-Anzeige */}
+      {!miningResult ? (
+        <div className={styles.targetDisplay}>
+          <h3>Aktuelles Target: <span className={styles.targetValue}>{targetValue}</span></h3>
+          <p className={styles.targetExplanation}>
+            Der Hash deines Blocks muss <strong>kleiner</strong> als das Target sein, um akzeptiert zu werden.
+            {adjustmentMade && <span className={styles.newTarget}> Nach der Anpassung ist das Target niedriger, was das Mining schwieriger macht.</span>}
+          </p>
+        </div>
+      ) : null}
       
       {/* Mining interface */}
       {!miningResult ? (
@@ -206,7 +259,15 @@ const DifficultyAdjustmentPage: React.FC<DifficultyAdjustmentPageProps> = ({ onN
         </button>
       ) : (
         <div className={`${styles.miningBlock} ${miningResult.found ? styles.foundAnimation : styles.notFoundAnimation}`}>
-          <h2>Mining Block</h2>
+          <h2>Mining Block #{miningResult.blockNumber}</h2>
+          
+          {adjustmentMade && miningResult.blockNumber >= 2016 && (
+            <div className={styles.adjustmentAlert}>
+              <FaInfoCircle />
+              <span>Schwierigkeitsanpassung aktiviert! Mining dauert nun länger.</span>
+            </div>
+          )}
+          
           <div className={styles.hashTarget}>
             <div className={styles.hashDisplay}>
               <strong>Hash:</strong> 
@@ -221,13 +282,9 @@ const DifficultyAdjustmentPage: React.FC<DifficultyAdjustmentPageProps> = ({ onN
             
             <div>
               <strong>Target:</strong>
-              <span className={styles.target}>
-                {miningResult.target}
-                <div className={styles.difficultyLabel}>
-                  {Object.entries(DIFFICULTY_LEVELS).find(
-                    ([value]) => Math.abs(parseFloat(value.toString()) - parseFloat(miningResult.target)) < 0.01
-                  )?.[0] || ''}
-                </div>
+              <span className={`${styles.target} ${difficultyLevel === 'harder' ? styles.harderTarget : ''}`}>
+                {/* Zeige das aktualisierte Target basierend auf dem Anpassungsstatus */}
+                {adjustmentMade && miningResult.blockNumber >= 2016 ? '0.9' : '1.0'}
               </span>
             </div>
           </div>
@@ -247,7 +304,7 @@ const DifficultyAdjustmentPage: React.FC<DifficultyAdjustmentPageProps> = ({ onN
               onClick={simulateMining}
               disabled={isAnimating}
             >
-              {isAnimating ? 'Mining läuft...' : miningResult.found ? 'Nächster Block' : 'Erneut versuchen'}
+              {isAnimating ? 'Mining läuft...' : miningResult?.found ? 'Nächster Block' : 'Erneut versuchen'}
             </button>
             {walletInfo.currentBlock >= 2016 && (
               <button className={styles.nextButton} onClick={onNext}>
@@ -255,6 +312,30 @@ const DifficultyAdjustmentPage: React.FC<DifficultyAdjustmentPageProps> = ({ onN
               </button>
             )}
           </div>
+        </div>
+      )}
+      
+      {/* Verbesserte und erweiterte Erklärung */}
+      {adjustmentMade && (
+        <div className={styles.simpleExplanation}>
+          <h3>Was ist passiert?</h3>
+          <p>
+            Bei Block 2016 wurde die Schwierigkeit erhöht.
+            Das bedeutet, dass der Target-Wert von 1.0 auf 0.9 gesenkt wurde.
+          </p>
+          <p>
+            <strong>Warum ist es schwieriger geworden?</strong> Dein Hash muss jetzt 
+            kleiner als 0.9 sein (statt kleiner als 1.0). Diese kleinere Zielgröße 
+            macht es schwieriger, einen gültigen Block zu finden, da weniger mögliche 
+            Hash-Werte akzeptiert werden.
+          </p>
+          <p className={styles.mathExplanation}>
+            <strong>Grund für die Anpassung:</strong> Die ersten 2016 Blöcke wurden etwa 10% schneller 
+            gefunden als die Zielzeit von 10 Minuten pro Block. Deshalb wird das Target 
+            von 1.0 auf 0.9 gesenkt - eine Erhöhung der Schwierigkeit um genau 10%. 
+            Dadurch dauert das Mining länger und die durchschnittliche Blockzeit wird wieder 
+            auf 10 Minuten korrigiert.
+          </p>
         </div>
       )}
       

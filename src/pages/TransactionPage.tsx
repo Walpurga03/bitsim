@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import styles from '../styles/SatoshiPage.module.scss'; // Aktualisierter Pfad
+import styles from '../styles/TransactionPage.module.scss';
+import walletStyles from '../styles/components/WalletCard.module.scss'; // Importiere die Wallet-Stile
 import TransactionExplanationPopup from '../components/TransactionExplanationPopup';
 import CombinedTransactionWalletsPage from './CombinedTransactionWalletsPage';
 import { mineBlock, DIFFICULTY_LEVELS } from '../utils/miningUtils';
+import { FaInfoCircle, FaExchangeAlt, FaArrowRight, FaCheck, FaSpinner } from 'react-icons/fa';
 
 interface MiningResult {
   hash: string;
@@ -35,6 +37,7 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [txIdFromCombined, setTxIdFromCombined] = useState<string>('');
   const [pendingTransactionAmount, setPendingTransactionAmount] = useState<number>(0);
+  const [transactionCompleted, setTransactionCompleted] = useState(false);
   
   const satoshiAddress = "1SatoshiPioneerXXX";
   const hallAddress = "1HallLegendeXXX";
@@ -50,11 +53,11 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
   // Initialize blockchain with blocks after difficulty adjustment
   useEffect(() => {
     setChainBlocks([
-      { blockNumber: 2012, hash: "0.668168", nonce: 2983, target: "0.7", timestamp: "9/29/2009, 12:30:00 AM", transactions: "3 Transaktionen", merkleRoot: "8c4e2f", found: true },
-      { blockNumber: 2013, hash: "0.559457", nonce: 5091, target: "0.7", timestamp: "9/29/2009, 12:45:00 AM", transactions: "2 Transaktionen", merkleRoot: "7b3f1d", found: true },
-      { blockNumber: 2014, hash: "0.607500", nonce: 4762, target: "0.7", timestamp: "9/29/2009, 1:00:00 AM", transactions: "4 Transaktionen", merkleRoot: "6a2e9b", found: true },
-      { blockNumber: 2015, hash: "0.675026", nonce: 3481, target: "0.7", timestamp: "9/29/2009, 1:15:00 AM", transactions: "1 Transaktion", merkleRoot: "5d7c3a", found: true },
-      { blockNumber: 2016, hash: "0.621169", nonce: 6237, target: "0.7", timestamp: "9/29/2009, 1:30:00 AM", transactions: "3 Transaktionen", merkleRoot: "4c6b2d", found: true },
+      { blockNumber: 2012, hash: "0.868168", nonce: 2983, target: "0.9", timestamp: "9/29/2009, 12:30:00 AM", transactions: "3 Transaktionen", merkleRoot: "8c4e2f", found: true },
+      { blockNumber: 2013, hash: "0.859457", nonce: 5091, target: "0.9", timestamp: "9/29/2009, 12:45:00 AM", transactions: "2 Transaktionen", merkleRoot: "7b3f1d", found: true },
+      { blockNumber: 2014, hash: "0.807500", nonce: 4762, target: "0.9", timestamp: "9/29/2009, 1:00:00 AM", transactions: "4 Transaktionen", merkleRoot: "6a2e9b", found: true },
+      { blockNumber: 2015, hash: "0.875026", nonce: 3481, target: "0.9", timestamp: "9/29/2009, 1:15:00 AM", transactions: "1 Transaktion", merkleRoot: "5d7c3a", found: true },
+      { blockNumber: 2016, hash: "0.821169", nonce: 6237, target: "0.9", timestamp: "9/29/2009, 1:30:00 AM", transactions: "3 Transaktionen", merkleRoot: "4c6b2d", found: true },
     ]);
   }, []);
   
@@ -146,6 +149,7 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
           }));
           setTxIdFromCombined('');
           setPendingTransactionAmount(0);
+          setTransactionCompleted(true); // Markiere, dass mindestens eine Transaktion abgeschlossen wurde
         } else {
           setWalletInfo(prev => ({
             ...prev,
@@ -188,77 +192,198 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
           aufgenommen und von allen Nodes im Netzwerk validiert.
         </p>
         <p>
-          In dieser Simulation können Sie Bitcoin von Satoshi's Wallet an Hall's Wallet senden
-          und sehen, wie diese Transaktion in einem Block bestätigt wird.
+          In dieser Simulation sendest du Bitcoin von Satoshis Wallet an Halls Wallet
+          und siehst, wie diese Transaktion in der Blockchain bestätigt wird.
         </p>
       </div>
-          
-      {/* Wallet display area showing both wallets */}
-      <div className={styles.walletsContainer}>
-        <div className={styles.walletCard}>
+      
+      {/* Verbesserte Wallet-Anzeige mit Transaktionsstatus - jetzt mit korrekten Styles */}
+      <div className={walletStyles.walletsContainer}>
+        <div className={walletStyles.walletCard}>
           <h2>Satoshi's Wallet</h2>
           <p><strong>Adresse:</strong> {satoshiAddress}</p>
           <p><strong>Balance:</strong> {walletInfo.balance} BTC</p>
+          <div className={walletStyles.walletStatus}>
+            {pendingTransactionAmount > 0 && <span className={walletStyles.outgoingTx}>-{pendingTransactionAmount} BTC ausstehend</span>}
+          </div>
         </div>
-        <div className={styles.walletCard}>
+        <div className={styles.transactionArrow}>
+          {pendingTransactionAmount > 0 && (
+            <>
+              <div className={styles.pendingAmount}>{pendingTransactionAmount} BTC</div>
+              <FaArrowRight className={styles.arrowIcon} />
+            </>
+          )}
+        </div>
+        <div className={walletStyles.walletCard}>
           <h2>Hall's Wallet</h2>
           <p><strong>Adresse:</strong> {hallAddress}</p>
           <p><strong>Balance:</strong> {walletInfo.hallBalance} BTC</p>
+          <div className={walletStyles.walletStatus}>
+            {pendingTransactionAmount > 0 && <span className={walletStyles.incomingTx}>+{pendingTransactionAmount} BTC ausstehend</span>}
+          </div>
         </div>
       </div>
       
-      {/* Transaction pending information */}
+      {/* Verbesserte Anzeige für ausstehende Transaktionen */}
       {pendingTransactionAmount > 0 && (
         <div className={styles.pendingTransaction}>
-          <h3>Ausstehende Transaktion</h3>
-          <p><strong>Von:</strong> {satoshiAddress}</p>
-          <p><strong>An:</strong> {hallAddress}</p>
-          <p><strong>Betrag:</strong> {pendingTransactionAmount} BTC</p>
-          <p><strong>Transaktions-ID:</strong> {txIdFromCombined}</p>
-          <p><strong>Status:</strong> Wartet auf Bestätigung im nächsten Block</p>
+          <h3><FaSpinner className={styles.spinningIcon} /> Ausstehende Transaktion</h3>
+          <p>
+            <strong>{pendingTransactionAmount} BTC</strong> von <strong>{satoshiAddress}</strong> an <strong>{hallAddress}</strong>
+          </p>
+          <p>Transaktion-ID: <span className={styles.txId}>{txIdFromCombined}</span></p>
+          <p className={styles.pendingNote}>
+            <FaInfoCircle /> Diese Transaktion wartet auf Bestätigung im nächsten Block
+          </p>
         </div>
       )}
       
-      {/* Mining status */}
-      <div className={styles.miningStatus}>
-        <p><strong>Block:</strong> {walletInfo.currentBlock}</p>
-        <p><strong>Belohnung:</strong> {walletInfo.currentReward} BTC</p>
-      </div>
-      
-      {/* Blockchain display at top */}
-      {chainBlocks.length > 0 && (
-        <div className={styles.blockchainDisplay}>
-          {blocksToDisplay.map(block => {
-            const previous = chainBlocks.find(b => b.blockNumber === (block.blockNumber - 1));
-            let prevDisplay = previous ? previous.hash.toString() : `Block ${block.blockNumber - 1}`;
+      {/* Verbesserte Blockchain-Visualisierung mit Target-Anzeige */}
+      <div className={styles.enhancedBlockchainContainer}>
+        <h3>
+          <FaExchangeAlt style={{marginRight: '8px'}} />
+          Blockchain mit Transaktionen
+        </h3>
+        
+        <div className={styles.blockchainInfo}>
+          <div className={styles.blockchainInfoItem}>
+            <span>Aktuelles Target:</span>
+            <strong>0.9</strong>
+          </div>
+          <div className={styles.blockchainInfoItem}>
+            <span>Block Höhe:</span>
+            <strong>{walletInfo.currentBlock}</strong>
+          </div>
+          <div className={styles.blockchainInfoItem}>
+            <span>Block Belohnung:</span>
+            <strong>{walletInfo.currentReward} BTC</strong>
+          </div>
+        </div>
+        
+        <div className={styles.blockchainVisualization}>
+          {blocksToDisplay.map((block, index) => {
+            const isLatestBlock = index === blocksToDisplay.length - 1;
+            const hasPendingTx = isLatestBlock && pendingTransactionAmount > 0;
+            
             return (
-              <div key={block.blockNumber} className={styles.block}>
-                <p><strong>Block {block.blockNumber}</strong></p>
-                <p>Hash: {block.hash}</p>
-                <p>Last: {prevDisplay}</p>
+              <div 
+                key={block.blockNumber} 
+                className={`${styles.blockCard} ${isLatestBlock ? styles.latestBlockCard : ''}`}
+              >
+                <div className={styles.blockHeader}>
+                  Block {block.blockNumber}
+                </div>
+                <div className={styles.blockContent}>
+                  <p><strong>Hash:</strong> {block.hash.substring(0, 8)}</p>
+                  <p><strong>Trans.:</strong> {block.transactions}</p>
+                  <p><strong>Nonce:</strong> {block.nonce}</p>
+                </div>
+                {index < blocksToDisplay.length - 1 && (
+                  <div className={styles.blockConnector}></div>
+                )}
+                
+                {/* Anzeige der ausstehenden Transaktion */}
+                {hasPendingTx && (
+                  <div className={styles.pendingTxIndicator}>
+                    <FaSpinner className={styles.spinningIcon} />
+                    <span>Ausstehende Tx</span>
+                  </div>
+                )}
               </div>
             );
           })}
+          
+          {/* Visueller Indikator für den nächsten Block */}
+          {pendingTransactionAmount > 0 && (
+            <div className={`${styles.blockCard} ${styles.nextBlockCard}`}>
+              <div className={styles.blockHeader}>
+                Nächster Block
+              </div>
+              <div className={styles.blockContent}>
+                <p className={styles.pendingTxNote}>
+                  <FaSpinner className={styles.spinningIcon} />
+                  Warte auf Mining...
+                </p>
+                <div className={styles.pendingTxDetails}>
+                  <span>Transfer: {pendingTransactionAmount} BTC</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
+      
+      {/* Neue Erklärungskomponente */}
+      <div className={styles.transactionExplanation}>
+        <h3>Wie Bitcoin-Transaktionen funktionieren</h3>
+        <div className={styles.transactionSteps}>
+          <div className={styles.txStep}>
+            <div className={styles.txStepNumber}>1</div>
+            <div className={styles.txStepContent}>
+              <h4>Transaktion erstellen</h4>
+              <p>Der Sender erstellt eine Transaktion mit Empfängeradresse und Betrag</p>
+            </div>
+          </div>
+          
+          <div className={styles.txStep}>
+            <div className={styles.txStepNumber}>2</div>
+            <div className={styles.txStepContent}>
+              <h4>Transaktion signieren</h4>
+              <p>Der Sender signiert die Transaktion mit seinem privaten Schlüssel</p>
+            </div>
+          </div>
+          
+          <div className={styles.txStep}>
+            <div className={styles.txStepNumber}>3</div>
+            <div className={styles.txStepContent}>
+              <h4>Ins Netzwerk übertragen</h4>
+              <p>Die Transaktion wird an das Bitcoin-Netzwerk gesendet und im Mempool gespeichert</p>
+            </div>
+          </div>
+          
+          <div className={styles.txStep}>
+            <div className={styles.txStepNumber}>4</div>
+            <div className={styles.txStepContent}>
+              <h4>Von Minern bestätigen</h4>
+              <p>Miner nehmen die Transaktion in einen Block auf und bestätigen sie</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className={styles.transactionTip}>
+          <FaInfoCircle className={styles.tipIcon} />
+          <p>Jede Bitcoin-Transaktion ist <strong>irreversibel</strong> und wird in der Blockchain dauerhaft gespeichert. Nach 6 Blockbestätigungen gilt eine Transaktion als sicher bestätigt.</p>
+        </div>
+      </div>
       
       {/* Mining interface */}
       {!miningResult ? (
         <div className={styles.transactionActions}>
-          <button 
-            className={styles.mineButton} 
-            onClick={simulateMining}
-            disabled={isAnimating}
-          >
-            {isAnimating ? 'Mining läuft...' : 'Block minen'}
-          </button>
+          {pendingTransactionAmount > 0 ? (
+            <button 
+              className={styles.mineButton} 
+              onClick={simulateMining}
+              disabled={isAnimating}
+            >
+              {isAnimating ? 'Mining läuft...' : 'Transaktion bestätigen (Mining)'}
+            </button>
+          ) : (
+            <button 
+              className={styles.createTxButton} 
+              onClick={() => setShowCombinedPage(true)}
+            >
+              Neue Transaktion erstellen
+            </button>
+          )}
         </div>
       ) : (
         <div className={`${styles.miningBlock} ${miningResult.found ? styles.foundAnimation : styles.notFoundAnimation}`}>
-          <h2>Mining Block</h2>
+          <h2>Transaktion wird bestätigt</h2>
+          
           <div className={styles.hashTarget}>
             <div className={styles.hashDisplay}>
-              <strong>Hash:</strong> 
+              <strong>Block-Hash:</strong> 
               <span className={`${styles.hash} ${miningResult.found ? styles.validHash : styles.invalidHash}`}>
                 {miningResult.hash}
               </span>
@@ -271,23 +396,34 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
             <div>
               <strong>Target:</strong>
               <span className={styles.target}>
-                {miningResult.target}
-                <div className={styles.difficultyLabel}>
-                  {Object.entries(DIFFICULTY_LEVELS).find(
-                    ([value]) => Math.abs(parseFloat(value.toString()) - parseFloat(miningResult.target)) < 0.01
-                  )?.[0] || ''}
-                </div>
+                0.9
               </span>
             </div>
           </div>
           
-          <p><strong>Nonce:</strong> {miningResult.nonce}</p>
-          <p><strong>Zeitstempel:</strong> {miningResult.timestamp}</p>
-          <p><strong>Transaktionen:</strong> {miningResult.transactions}</p>
-          <p><strong>Merkle-Root:</strong> {miningResult.merkleRoot}</p>
-          <p><strong>Status:</strong> {miningResult.found ? 
-            `Block gefunden! ✅ ${pendingTransactionAmount > 0 ? "Transaktion bestätigt!" : "Du erhältst eine Belohnung!"}` : 
-            "Block nicht gefunden ❌ Versuche es erneut!"}
+          {/* Verbesserte Transaktionsbestätigung */}
+          <div className={styles.transactionConfirmation}>
+            {miningResult.found && pendingTransactionAmount > 0 && (
+              <div className={styles.confirmedTx}>
+                <FaCheck className={styles.confirmedIcon} />
+                <div className={styles.txConfirmDetails}>
+                  <p><strong>{pendingTransactionAmount} BTC</strong> erfolgreich übertragen</p>
+                  <p className={styles.txDetails}>
+                    <span>Von: {satoshiAddress.substring(0, 6)}...{satoshiAddress.substring(satoshiAddress.length-3)}</span>
+                    <span>An: {hallAddress.substring(0, 6)}...{hallAddress.substring(hallAddress.length-3)}</span>
+                  </p>
+                  <p className={styles.txConfirmTime}>
+                    Bestätigt im Block #{miningResult.blockNumber} • {new Date().toLocaleTimeString()}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <p className={styles.miningStatus}>
+            <strong>Status:</strong> {miningResult.found ? 
+              "Block gefunden und Transaktion bestätigt! ✅" : 
+              "Block nicht gefunden. Transaktion noch ausstehend. ❌"}
           </p>
           
           <div className={styles.blockButtons}>
@@ -296,11 +432,25 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
               onClick={simulateMining}
               disabled={isAnimating}
             >
-              {isAnimating ? 'Mining läuft...' : miningResult.found ? 'Nächster Block' : 'Erneut versuchen'}
+              {isAnimating ? 'Mining läuft...' : 
+                miningResult.found ? 'Nächsten Block minen' : 'Erneut versuchen'}
             </button>
-            <button className={styles.nextButton} onClick={onNext}>
-              Zum MemPool
-            </button>
+            
+            {miningResult.found && (
+              <button 
+                className={styles.createTxButton}
+                onClick={() => setShowCombinedPage(true)}
+              >
+                Neue Transaktion erstellen
+              </button>
+            )}
+            
+            {/* Nur anzeigen, wenn mindestens eine Transaktion erfolgreich bestätigt wurde */}
+            {transactionCompleted && pendingTransactionAmount === 0 && (
+              <button className={styles.nextButton} onClick={onNext}>
+                Weiter zum Mempool
+              </button>
+            )}
           </div>
         </div>
       )}

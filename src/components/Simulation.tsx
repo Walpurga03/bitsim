@@ -5,8 +5,9 @@ import BasicMiningPage from '../pages/BasicMiningPage';
 import NodeNetworkPage from '../pages/NodeNetworkPage';
 import DifficultyAdjustmentPage from '../pages/DifficultyAdjustmentPage';
 import { TransactionPage } from '../pages/TransactionPage';
-import HalvingPage from '../pages/HalvingPage';
 import MempoolPage from '../pages/MempoolPage';
+import HalvingPage from '../pages/HalvingPage';
+import EndPage from '../pages/EndPage';
 import styles from '../styles/Simulation.module.scss';
 
 const simulationPages = [
@@ -18,7 +19,7 @@ const simulationPages = [
   { id: 6, title: 'Transaktionen', component: TransactionPage },
   { id: 7, title: 'Mempool & Gebührenmarkt', component: MempoolPage },
   { id: 8, title: 'Block-Belohnung & Halving', component: HalvingPage },
-  // Weitere Seiten können hier hinzugefügt werden.
+  { id: 9, title: 'Abschluss', component: EndPage },
 ];
 
 const Simulation: React.FC = () => {
@@ -28,9 +29,6 @@ const Simulation: React.FC = () => {
     if (currentPageIndex < simulationPages.length - 1) {
       setCurrentPageIndex(currentPageIndex + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      // Hier könnte eine bessere "Simulation abgeschlossen" UI implementiert werden
-      alert('Simulation abgeschlossen!');
     }
   };
 
@@ -41,52 +39,58 @@ const Simulation: React.FC = () => {
     }
   };
 
+  const restartSimulation = () => {
+    setCurrentPageIndex(0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const CurrentPage = simulationPages[currentPageIndex].component;
-//const currentTitle = simulationPages[currentPageIndex].title;
-// <h1 className={styles.pageTitle}>{currentTitle}</h1>
+  const isEndPage = currentPageIndex === simulationPages.length - 1;
+
+  // Wenn wir bei der EndPage sind, ersetzen wir die normale onNext-Funktion durch restartSimulation
+  const pageProps = {
+    onNext: goToNextPage,
+    onRestart: restartSimulation
+  };
+
   return (
     <div className={styles.simulation}>
-     
-      
       <div className={styles.stepContainer}>
-        <CurrentPage onNext={goToNextPage} />
+        <CurrentPage {...pageProps} />
         
-        <div className={styles.navigationControls}>
-          {currentPageIndex > 0 && (
-            <button 
-              className={styles.prevButton} 
-              onClick={goToPrevPage}
-            >
-              ← Zurück
-            </button>
-          )}
-          
-          {currentPageIndex < simulationPages.length - 1 ? (
-            <button 
-              className={styles.nextButton} 
-              onClick={goToNextPage}
-            >
-              Weiter →
-            </button>
-          ) : (
-            <button 
-              className={styles.nextButton} 
-              onClick={goToNextPage}
-            >
-              Ende
-            </button>
-          )}
-        </div>
+        {!isEndPage && (
+          <div className={styles.navigationControls}>
+            {currentPageIndex > 0 && (
+              <button 
+                className={styles.prevButton} 
+                onClick={goToPrevPage}
+              >
+                ← Zurück
+              </button>
+            )}
+            
+            {currentPageIndex < simulationPages.length - 2 && (
+              <button 
+                className={styles.nextButton} 
+                onClick={goToNextPage}
+              >
+                Weiter →
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
-      <div className={styles.progressIndicator}>
-        {simulationPages.map((_, index) => (
-          <div 
-            key={index} 
-            className={`${styles.dot} ${index === currentPageIndex ? styles.active : ''}`}
-          />
-        ))}
-      </div>
+      {!isEndPage && (
+        <div className={styles.progressIndicator}>
+          {simulationPages.slice(0, simulationPages.length - 1).map((_, index) => (
+            <div 
+              key={index} 
+              className={`${styles.dot} ${index === currentPageIndex ? styles.active : ''}`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
