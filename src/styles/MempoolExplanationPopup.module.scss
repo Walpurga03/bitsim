@@ -7,100 +7,106 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(5px);
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
-  padding: 1rem;
+  animation: fadeIn 0.3s;
 }
 
-.content {
-  background: linear-gradient(145deg, rgba(30, 30, 30, 0.95), rgba(10, 10, 10, 0.95));
-  border-radius: 16px;
-  padding: 2rem;
-  max-width: 600px;
-  width: 100%;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba($primary-color, 0.2);
-  position: relative;
-  color: #fff;
-  animation: popIn 0.3s ease-out forwards;
-}
-
-@keyframes popIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-.title {
-  font-size: 1.8rem;
-  color: $primary-color;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  font-weight: 700;
-  position: relative;
-  padding-bottom: 1rem;
-  
-  &::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    transform: translateX(-50%);
-    height: 2px;
-    width: 60px;
-    background: linear-gradient(to right, transparent, $primary-color, transparent);
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 
-.explanationText {
-  font-size: 1rem;
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-  white-space: pre-line;
+.content {
+  background: linear-gradient(135deg, #181818 80%, $primary-color 120%);
+  border-radius: 22px;
+  box-shadow: 0 8px 40px rgba($primary-color, 0.18), 0 2px 8px rgba(0, 0, 0, 0.18);
+  padding: 2.2rem 2rem 1.5rem 2rem;
+  min-width: 320px;
+  max-width: 420px;
+  width: 90vw;
+  color: $text-color-with;
+  position: relative;
+  animation: popupScaleIn 0.4s cubic-bezier(.36, .07, .19, .97);
+  overflow: hidden;
+  text-align: left;
 }
 
-.buttonContainer {
-  display: flex;
-  justify-content: center;
-  margin-top: 1.5rem;
+@keyframes popupScaleIn {
+  0% {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+h2 {
+  color: $primary-color;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  margin: 0 0 1.2rem 0;
+  text-align: center;
+}
+
+p {
+  font-size: 1.08rem;
+  line-height: 1.7;
+  color: rgba($text-color-with, 0.95);
+  margin-bottom: 1.5rem;
+  white-space: pre-line;
+  background: rgba($primary-color, 0.04);
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  box-shadow: 0 2px 8px rgba($primary-color, 0.07);
 }
 
 .closeButton {
   background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: 10%));
-  color: $secondary-color;
+  color: $text-color-black;
   border: none;
   border-radius: 30px;
-  padding: 0.8rem 2rem;
+  padding: 0.8rem 2.2rem;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba($primary-color, 0.13);
+  margin-top: 0.5rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba($primary-color, 0.4);
-  }
-  
-  &:active {
-    transform: translateY(-1px);
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 8px 24px rgba($primary-color, 0.22);
+    background: linear-gradient(135deg, color.adjust($primary-color, $lightness: 10%), $primary-color);
   }
 }
 
+/* Responsive Anpassungen */
 @media (max-width: 600px) {
   .content {
-    padding: 1.5rem;
+    padding: 1.2rem 0.5rem 1rem 0.5rem;
+    min-width: 0;
+    max-width: 98vw;
   }
-  
-  .title {
-    font-size: 1.5rem;
+  h2 {
+    font-size: 1.1rem;
   }
-  
-  .explanationText {
-    font-size: 0.9rem;
+  p {
+    font-size: 0.98rem;
+    padding: 0.7rem 0.7rem;
   }
 }
 
@@ -126,7 +132,9 @@
   width: 150px;
 }
 
-.highFeeTransaction, .mediumFeeTransaction, .lowFeeTransaction {
+.highFeeTransaction,
+.mediumFeeTransaction,
+.lowFeeTransaction {
   height: 20px;
   border-radius: 4px;
 }
@@ -151,7 +159,7 @@
   height: 2px;
   background-color: rgba($primary-color, 0.7);
   position: relative;
-  
+
   &::after {
     content: '';
     position: absolute;

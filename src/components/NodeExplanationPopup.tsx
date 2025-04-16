@@ -28,13 +28,11 @@ const NodeExplanationPopup: React.FC<NodeExplanationPopupProps> = ({ onClose }) 
   return (
     <div className={styles.overlay} onClick={handleOverlayClick}>
       <div className={styles.modal}>
-        <h2 className={styles.title}>Node Validierung Erklärung</h2>
+        <h2 className={styles.title}>Netzwerk-Visualisierung</h2>
         <div className={styles.content}>
           <p>
-            Nachdem ein Block gefunden wurde, prüft ein Node den Mining Block.
-            Der Node kontrolliert, ob der Block den Netzwerkrichtlinien entspricht.
-            Ist dies der Fall, wird der Block an die Blockchain angehängt und mit anderen Nodes synchronisiert.
-            Außerdem wird der Hash des letzten Blocks als Vorläufer-Blockhash im neuen Block hinterlegt.
+            Hier siehst du, wie ein neu geminter Block von einem Miner an alle verbundenen Nodes im Netzwerk weitergegeben wird.
+            Die gelben Punkte zeigen Miner, die blauen Punkte Full Nodes. Sobald ein Block verbreitet ist, haben alle verbundenen Nodes die aktuelle Blockchain-Version.
           </p>
         </div>
         <div className={styles.actions}>

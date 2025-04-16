@@ -432,30 +432,8 @@ const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({ onNext }) => {
             <p>Klicke auf "Block minen & verbreiten", um zu sehen, wie ein neuer Block im Netzwerk verteilt wird.</p>
           )}
         </div>
-        
-        <div className={styles.networkLegend}>
-          <div className={styles.legendItem}>
-            <div className={`${styles.legendIcon} ${styles.minerNode}`}>
-              <FaServer size={12} />
-            </div>
-            <span>Miner ({networkStats.miners})</span>
-          </div>
-          <div className={styles.legendItem}>
-            <div className={`${styles.legendIcon} ${styles.fullNode}`}>
-              <FaDesktop size={12} />
-            </div>
-            <span>Full Node ({networkStats.fullNodes})</span>
-          </div>
-          <div className={styles.legendItem}>
-            <div className={`${styles.legendIcon} ${styles.hasLatestBlock}`}>
-              <FaCheck size={12} />
-            </div>
-            <span>Hat neuesten Block</span>
-          </div>
-        </div>
-      </div>
-      
-      {/* Simplified mining interface */}
+
+           {/* Simplified mining interface */}
       {!miningResult ? (
         <div className={styles.networkAction}>
           <button 
@@ -516,6 +494,37 @@ const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({ onNext }) => {
           </div>
         </div>
       )}
+
+        {/* Neue Info-Box für Netzwerk-Konsens */}
+        <div className={styles.infoBox}>
+          <h3>Warum ist die Block-Verbreitung so wichtig?</h3>
+          <p>
+            Damit alle Teilnehmer dieselbe Version der Blockchain haben, müssen neue Blöcke schnell und zuverlässig im gesamten Netzwerk verteilt werden.
+            Nur so kann Konsens erreicht und verhindert werden, dass jemand unbemerkt eine alternative Kette aufbaut.
+          </p>
+        </div>
+        
+        <div className={styles.networkLegend}>
+          <div className={styles.legendItem}>
+            <div className={`${styles.legendIcon} ${styles.minerNode}`}>
+              <FaServer size={12} />
+            </div>
+            <span>Miner ({networkStats.miners})</span>
+          </div>
+          <div className={styles.legendItem}>
+            <div className={`${styles.legendIcon} ${styles.fullNode}`}>
+              <FaDesktop size={12} />
+            </div>
+            <span>Full Node ({networkStats.fullNodes})</span>
+          </div>
+          <div className={styles.legendItem}>
+            <div className={`${styles.legendIcon} ${styles.hasLatestBlock}`}>
+              <FaCheck size={12} />
+            </div>
+            <span>Hat neuesten Block</span>
+          </div>
+        </div>
+      </div>
       
       {/* Popups */}
       {showNodePopup && (

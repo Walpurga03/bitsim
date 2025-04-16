@@ -168,69 +168,125 @@ p {
 }
 
 .consensusExplanation {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 20px;
+  background: rgba($primary-color, 0.07);
+  border-radius: 24px;
   padding: 2.5rem 2rem;
   margin: 3rem 0;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.02);
+  box-shadow: 0 8px 32px rgba($primary-color, 0.08), 0 2px 8px rgba(0,0,0,0.10);
+  border: 1.5px solid rgba($primary-color, 0.15);
+  position: relative;
+  overflow: hidden;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  animation: fadeInUp 0.8s;
   
+  &::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba($primary-color, 0.10) 0%, transparent 80%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
   h2 {
     text-align: center;
-    font-size: 1.8rem;
-    margin-bottom: 2rem;
+    font-size: 2rem;
+    margin-bottom: 2.2rem;
     color: $primary-color;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    position: relative;
+    z-index: 1;
   }
 }
 
 .processList {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2.2rem;
+  position: relative;
+  z-index: 1;
+  margin: 0 auto;
+  max-width: 650px;
+  padding-left: 1.5rem;
+  border-left: 3px solid rgba($primary-color, 0.18);
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: -1.5px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, $primary-color 0%, rgba($primary-color,0.1) 100%);
+    border-radius: 2px;
+    z-index: 0;
+  }
 }
 
 .processStep {
   display: flex;
   align-items: flex-start;
-  gap: 1.5rem;
-  opacity: 0;
-  animation: fadeInUp 0.5s forwards;
-  
-  @for $i from 1 through 4 {
-    &:nth-child(#{$i}) {
-      animation-delay: $i * 0.15s;
-    }
+  gap: 1.2rem;
+  background: rgba(255,255,255,0.04);
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba($primary-color, 0.05);
+  padding: 1.2rem 1.5rem;
+  position: relative;
+  transition: box-shadow 0.2s;
+  border: 1px solid rgba($primary-color, 0.10);
+
+  &:hover {
+    box-shadow: 0 6px 24px rgba($primary-color, 0.13);
+    background: rgba($primary-color, 0.10);
+    border-color: rgba($primary-color, 0.18);
   }
 }
 
 .stepNumber {
-  background-color: rgba($primary-color, 0.2);
-  color: $primary-color;
-  border: 2px solid $primary-color;
-  width: 40px;
-  height: 40px;
+  background: $primary-color;
+  color: #fff;
+  border: 2.5px solid #fff;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: bold;
+  box-shadow: 0 0 0 4px rgba($primary-color, 0.13);
   flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  margin-left: -2.2rem;
+  margin-right: 0.5rem;
 }
 
 .stepContent {
   flex: 1;
-  
+  z-index: 1;
+
   h4 {
     margin: 0 0 0.3rem 0;
-    font-size: 1.2rem;
-    color: rgba($primary-color, 0.9);
+    font-size: 1.15rem;
+    color: $primary-color;
+    font-weight: 600;
+    letter-spacing: 0.01em;
   }
-  
   p {
     margin: 0;
     line-height: 1.5;
-    opacity: 0.9;
+    opacity: 0.92;
+    font-size: 1rem;
+    color: #fff;
+    font-weight: 400;
   }
 }
 
@@ -283,6 +339,40 @@ p {
   
   .consensusExplanation {
     padding: 1.5rem 1rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .consensusExplanation {
+    padding: 1.5rem 0.5rem;
+  }
+  .processList {
+    padding-left: 1rem;
+  }
+  .stepNumber {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+    margin-left: -1.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .consensusExplanation {
+    padding: 1rem 0.2rem;
+  }
+  .processList {
+    gap: 1.2rem;
+    padding-left: 0.5rem;
+  }
+  .stepNumber {
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
+    margin-left: -1rem;
+  }
+  .processStep {
+    padding: 0.7rem 0.7rem;
   }
 }
 

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../styles/SatoshiPage.module.scss'; // Aktualisierter Pfad
-import DifficultyAdjustmentPopup from '../components/DifficultyAdjustmentPopup';
 import { mineBlock, DIFFICULTY_LEVELS } from '../utils/miningUtils';
 import { FaInfoCircle, FaLink, FaExclamationTriangle, FaAngleDown } from 'react-icons/fa';
 
@@ -21,10 +20,6 @@ interface DifficultyAdjustmentPageProps {
 
 const DifficultyAdjustmentPage: React.FC<DifficultyAdjustmentPageProps> = ({ onNext }) => {
   const [miningResult, setMiningResult] = useState<MiningResult | null>(null);
-  // Initialisieren Sie das Popup gleich geöffnet
-  const [showDifficultyPopup, setShowDifficultyPopup] = useState(true);
-  // Entfernen Sie die automatische Anzeige per useEffect
-  // const [difficultyExplanationShown, setDifficultyExplanationShown] = useState(false);
   const [chainBlocks, setChainBlocks] = useState<MiningResult[]>([]);
   const [isAnimating, setIsAnimating] = useState(false);
   const [walletInfo, setWalletInfo] = useState({
@@ -337,11 +332,6 @@ const DifficultyAdjustmentPage: React.FC<DifficultyAdjustmentPageProps> = ({ onN
             auf 10 Minuten korrigiert.
           </p>
         </div>
-      )}
-      
-      {/* Popups */}
-      {showDifficultyPopup && (
-        <DifficultyAdjustmentPopup onClose={() => setShowDifficultyPopup(false)} />
       )}
     </div>
   );

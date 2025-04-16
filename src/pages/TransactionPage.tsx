@@ -4,7 +4,7 @@ import walletStyles from '../styles/components/WalletCard.module.scss'; // Impor
 import TransactionExplanationPopup from '../components/TransactionExplanationPopup';
 import CombinedTransactionWalletsPage from './CombinedTransactionWalletsPage';
 import { mineBlock, DIFFICULTY_LEVELS } from '../utils/miningUtils';
-import { FaInfoCircle, FaExchangeAlt, FaArrowRight, FaCheck, FaSpinner } from 'react-icons/fa';
+import { FaInfoCircle, FaArrowRight, FaCheck, FaSpinner } from 'react-icons/fa';
 
 interface MiningResult {
   hash: string;
@@ -34,21 +34,12 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
     currentBlock: 2016,
     currentReward: 50,
   });
-  const [isMobile, setIsMobile] = useState(false);
   const [txIdFromCombined, setTxIdFromCombined] = useState<string>('');
   const [pendingTransactionAmount, setPendingTransactionAmount] = useState<number>(0);
   const [transactionCompleted, setTransactionCompleted] = useState(false);
   
   const satoshiAddress = "1SatoshiPioneerXXX";
   const hallAddress = "1HallLegendeXXX";
-  
-  // Handle responsive view
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 800);
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
   
   // Initialize blockchain with blocks after difficulty adjustment
   useEffect(() => {
@@ -163,21 +154,22 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
     }, 1000);
   };
   
-  // Determine which blocks to display based on screen size
-  const blocksToDisplay = isMobile ? chainBlocks.slice(-2) : chainBlocks;
-  
   // Handle navigation to combined page
   if (showCombinedPage) {
     return (
       <CombinedTransactionWalletsPage 
         satoshiBalance={walletInfo.balance} 
         onBack={(txId?: string, amount?: number) => {
+          // Wenn eine Transaktion durchgeführt wurde, aktualisiere den Hall-Saldo
           if (txId && amount) {
             setTxIdFromCombined(txId);
             setPendingTransactionAmount(amount);
+            // Hall-Balance bleibt erhalten, da sie erst nach Mining aktualisiert wird
           }
           setShowCombinedPage(false);
         }}
+        // Übergib den aktuellen Hall-Saldo als Prop
+        hallBalance={walletInfo.hallBalance}
       />
     );
   }
@@ -238,127 +230,9 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
           </p>
         </div>
       )}
-      
-      {/* Verbesserte Blockchain-Visualisierung mit Target-Anzeige */}
-      <div className={styles.enhancedBlockchainContainer}>
-        <h3>
-          <FaExchangeAlt style={{marginRight: '8px'}} />
-          Blockchain mit Transaktionen
-        </h3>
-        
-        <div className={styles.blockchainInfo}>
-          <div className={styles.blockchainInfoItem}>
-            <span>Aktuelles Target:</span>
-            <strong>0.9</strong>
-          </div>
-          <div className={styles.blockchainInfoItem}>
-            <span>Block Höhe:</span>
-            <strong>{walletInfo.currentBlock}</strong>
-          </div>
-          <div className={styles.blockchainInfoItem}>
-            <span>Block Belohnung:</span>
-            <strong>{walletInfo.currentReward} BTC</strong>
-          </div>
-        </div>
-        
-        <div className={styles.blockchainVisualization}>
-          {blocksToDisplay.map((block, index) => {
-            const isLatestBlock = index === blocksToDisplay.length - 1;
-            const hasPendingTx = isLatestBlock && pendingTransactionAmount > 0;
-            
-            return (
-              <div 
-                key={block.blockNumber} 
-                className={`${styles.blockCard} ${isLatestBlock ? styles.latestBlockCard : ''}`}
-              >
-                <div className={styles.blockHeader}>
-                  Block {block.blockNumber}
-                </div>
-                <div className={styles.blockContent}>
-                  <p><strong>Hash:</strong> {block.hash.substring(0, 8)}</p>
-                  <p><strong>Trans.:</strong> {block.transactions}</p>
-                  <p><strong>Nonce:</strong> {block.nonce}</p>
-                </div>
-                {index < blocksToDisplay.length - 1 && (
-                  <div className={styles.blockConnector}></div>
-                )}
-                
-                {/* Anzeige der ausstehenden Transaktion */}
-                {hasPendingTx && (
-                  <div className={styles.pendingTxIndicator}>
-                    <FaSpinner className={styles.spinningIcon} />
-                    <span>Ausstehende Tx</span>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-          
-          {/* Visueller Indikator für den nächsten Block */}
-          {pendingTransactionAmount > 0 && (
-            <div className={`${styles.blockCard} ${styles.nextBlockCard}`}>
-              <div className={styles.blockHeader}>
-                Nächster Block
-              </div>
-              <div className={styles.blockContent}>
-                <p className={styles.pendingTxNote}>
-                  <FaSpinner className={styles.spinningIcon} />
-                  Warte auf Mining...
-                </p>
-                <div className={styles.pendingTxDetails}>
-                  <span>Transfer: {pendingTransactionAmount} BTC</span>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-      
-      {/* Neue Erklärungskomponente */}
-      <div className={styles.transactionExplanation}>
-        <h3>Wie Bitcoin-Transaktionen funktionieren</h3>
-        <div className={styles.transactionSteps}>
-          <div className={styles.txStep}>
-            <div className={styles.txStepNumber}>1</div>
-            <div className={styles.txStepContent}>
-              <h4>Transaktion erstellen</h4>
-              <p>Der Sender erstellt eine Transaktion mit Empfängeradresse und Betrag</p>
-            </div>
-          </div>
-          
-          <div className={styles.txStep}>
-            <div className={styles.txStepNumber}>2</div>
-            <div className={styles.txStepContent}>
-              <h4>Transaktion signieren</h4>
-              <p>Der Sender signiert die Transaktion mit seinem privaten Schlüssel</p>
-            </div>
-          </div>
-          
-          <div className={styles.txStep}>
-            <div className={styles.txStepNumber}>3</div>
-            <div className={styles.txStepContent}>
-              <h4>Ins Netzwerk übertragen</h4>
-              <p>Die Transaktion wird an das Bitcoin-Netzwerk gesendet und im Mempool gespeichert</p>
-            </div>
-          </div>
-          
-          <div className={styles.txStep}>
-            <div className={styles.txStepNumber}>4</div>
-            <div className={styles.txStepContent}>
-              <h4>Von Minern bestätigen</h4>
-              <p>Miner nehmen die Transaktion in einen Block auf und bestätigen sie</p>
-            </div>
-          </div>
-        </div>
-        
-        <div className={styles.transactionTip}>
-          <FaInfoCircle className={styles.tipIcon} />
-          <p>Jede Bitcoin-Transaktion ist <strong>irreversibel</strong> und wird in der Blockchain dauerhaft gespeichert. Nach 6 Blockbestätigungen gilt eine Transaktion als sicher bestätigt.</p>
-        </div>
-      </div>
-      
-      {/* Mining interface */}
-      {!miningResult ? (
+
+        {/* Mining interface */}
+        {!miningResult ? (
         <div className={styles.transactionActions}>
           {pendingTransactionAmount > 0 ? (
             <button 
@@ -454,6 +328,7 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
           </div>
         </div>
       )}
+      
       
       {/* Popups */}
       {showTransactionPopup && (

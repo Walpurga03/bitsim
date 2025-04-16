@@ -2326,3 +2326,40 @@ p {
   }
 }
 
+// Moderner Stil für die Erfolgsmeldung
+.miningSuccess {
+  margin: 2rem auto 0 auto;
+  padding: 1.2rem 2rem;
+  background: linear-gradient(90deg, rgba($primary-color, 0.12), rgba($primary-color, 0.22));
+  color: $primary-color;
+  border-radius: 16px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  box-shadow: 0 4px 18px rgba($primary-color, 0.08);
+  text-align: center;
+  max-width: 500px;
+  animation: fadeIn 0.7s;
+}
+
+// Moderner Stil für die neue Info-Box
+.infoBox {
+  background: linear-gradient(145deg, rgba($primary-color, 0.1), rgba($primary-color, 0.05));
+  border-left: 4px solid $primary-color;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  
+  h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: $primary-color;
+    font-size: 1.3rem;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+}
+

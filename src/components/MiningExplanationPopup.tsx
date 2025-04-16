@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import styles from '../styles/MiningExplanationPopup.module.scss';
+import { FaHammer } from 'react-icons/fa';
 
 interface MiningExplanationPopupProps {
   onClose: () => void;
@@ -37,6 +38,17 @@ const MiningExplanationPopup: React.FC<MiningExplanationPopupProps> = ({ onClose
       <div className={styles.modal}>
         <div className={styles.header}>
           <h2>Proof-of-Work Erklärung</h2>
+        </div>
+        <div className={styles.miningVisual}>
+          <div className={styles.miningIcon}>
+            <FaHammer className={styles.miningHammer} />
+          </div>
+          <div className={styles.miningProgressBarContainer}>
+            <div className={styles.miningProgressBar}></div>
+          </div>
+          <div className={styles.miningText}>
+            Mining läuft... Zufälliger Hash wird gesucht
+          </div>
         </div>
         <div className={styles.content}>
           <p>

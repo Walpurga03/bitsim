@@ -20,21 +20,55 @@ const SatoshiIntroPage: React.FC<SatoshiIntroPageProps> = () => {
       title: 'Genesis-Block',
       date: '3. Januar 2009',
       icon: <FaBitcoin />,
-      content: 'Der allererste Block (Genesis-Block) wird von Satoshi geschürft. In diesem Block ist die Nachricht "Chancellor on brink of second bailout for banks" eingebettet - ein Hinweis auf die Finanzkrise und ein Statement für die Notwendigkeit eines alternativen Geldsystems.'
+      content:( <>
+        Der allererste Block (Genesis-Block) wird von Satoshi geschürft. In diesem Block ist die Nachricht "Chancellor on brink of second bailout for banks" eingebettet - ein Hinweis auf die Finanzkrise und ein Statement für die Notwendigkeit eines alternativen Geldsystems.<br />
+        <a
+          href="https://mempool.space/de/block/0"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: "#F7931A", textDecoration: "underline" }}
+        >
+          <strong>Block:</strong> 0<br />
+        </a>
+      </>) 
     },
     {
       id: 'transaction',
       title: 'Erste Transaktion',
       date: '12. Januar 2009',
       icon: <FaCalendarAlt />,
-      content: 'Die erste Bitcoin-Transaktion findet statt: Satoshi sendet 10 BTC an Hal Finney, einen frühen Unterstützer des Projekts. Finney twitterte den inzwischen berühmten Satz: "Running Bitcoin" während er die Software testete.'
+      content: (
+        <>
+          Die erste Bitcoin-Transaktion findet statt: Satoshi sendet 10 BTC an Hal Finney, einen frühen Unterstützer des Projekts. Finney twitterte den inzwischen berühmten Satz: "Running Bitcoin" während er die Software testete.<br />
+          <a
+            href="https://mempool.space/de/block/170"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: "#F7931A", textDecoration: "underline" }}
+          >
+            <strong>Block:</strong> 170<br />
+          </a>
+        </>
+      )
     },
     {
       id: 'pizza',
       title: 'Pizza Tag',
       date: '22. Mai 2010',
       icon: <FaPizzaSlice />,
-      content: 'Laszlo Hanyecz tätigte die erste reale Transaktion mit Bitcoin: Er kaufte zwei Pizzen für 10.000 BTC (heute mehrere hundert Millionen Euro wert). Dieser Tag markiert den Beginn der praktischen Nutzung von Bitcoin als Tauschmittel und wird jährlich als "Bitcoin Pizza Day" gefeiert.'
+      content: (
+        <>
+          Laszlo Hanyecz tätigte die erste reale Transaktion mit Bitcoin: Er kaufte zwei Pizzen für 10.000 BTC (heute mehrere hundert Millionen Euro wert). Dieser Tag markiert den Beginn der praktischen Nutzung von Bitcoin als Tauschmittel und wird jährlich als "Bitcoin Pizza Day" gefeiert.<br />
+          <a
+            href="https://mempool.space/de/block/57043"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: "#F7931A", textDecoration: "underline" }}
+          >
+            <strong>Block:</strong> 57043<br />
+          </a>
+        </>
+      )
     },
     {
       id: 'erbe',
@@ -51,8 +85,9 @@ const SatoshiIntroPage: React.FC<SatoshiIntroPageProps> = () => {
         <h1 className={styles.title}>Satoshi Nakamoto</h1>
         
         <p className={styles.description}>
-          Satoshi Nakamoto ist der pseudonyme Schöpfer von Bitcoin und Autor des originalen Whitepapers. 
-          Trotz intensiver Nachforschungen konnte seine wahre Identität bis heute nicht enthüllt werden.
+          Satoshi Nakamoto ist das Pseudonym des Bitcoin-Erfinders und Autors des legendären Whitepapers. 
+          Wer hinter dem Namen steckt, ist bis heute ein Rätsel – doch seine Idee hat die Welt verändert.
+          In dieser Etappe lernst du die wichtigsten Meilensteine der Bitcoin-Entstehung kennen.
         </p>
         
         <div className={styles.address}>
@@ -105,7 +140,9 @@ const SatoshiIntroPage: React.FC<SatoshiIntroPageProps> = () => {
               className={`${styles.timelineItem} ${activeTab === item.id ? styles.active : ''}`}
             >
               <div className={styles.timelineDate}>{item.date}</div>
-              <div className={styles.timelineText}>{item.content}</div>
+              <div className={styles.timelineText}>
+                {typeof item.content === "string" ? item.content : item.content}
+              </div>
             </div>
           ))}
         </div>

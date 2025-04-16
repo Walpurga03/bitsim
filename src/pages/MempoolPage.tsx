@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from '../styles/MempoolPage.module.scss';
 import MempoolExplanationPopup from '../components/MempoolExplanationPopup';
 import { mineBlock, DIFFICULTY_LEVELS } from '../utils/miningUtils';
-import { FaInfoCircle, FaCoins, FaServer, FaArrowDown, FaChartLine, FaFire, FaRegClock, FaSortAmountDown, FaCheck, FaBolt } from 'react-icons/fa';
+import { FaSortAmountDown, FaCheck, FaBolt } from 'react-icons/fa';
 
 interface Transaction {
   id: string;
@@ -49,7 +49,6 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
   const MAX_BLOCK_SIZE = 1000; // Simulierter Max-Wert in virtuellen Bytes
   const [isMobile, setIsMobile] = useState(false);
   const [sortBy, setSortBy] = useState<'fee' | 'feeRate' | 'size' | 'time'>('feeRate');
-  const [showMarketStats, setShowMarketStats] = useState(false);
   
   // Zufällige Adressen für die Simulation
   const addresses = [
@@ -127,11 +126,6 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
   const handleSortChange = (sortType: 'fee' | 'feeRate' | 'size' | 'time') => {
     setSortBy(sortType);
     setMempool(sortTransactions([...mempool], sortType));
-  };
-  
-  // Toggle market stats
-  const toggleMarketStats = () => {
-    setShowMarketStats(!showMarketStats);
   };
   
   // Handle transaction selection
@@ -278,116 +272,13 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
     }, 2000);
   };
 
-  // Calculate mempool statistics
-  const calculateMempoolStats = () => {
-    if (mempool.length === 0) return null;
-    
-    // Calculate average fee rate in sat/vByte
-    const avgFeeRate = mempool.reduce((sum, tx) => sum + tx.fee / tx.size, 0) / mempool.length;
-    
-    // Calculate median fee rate
-    const feeRates = mempool.map(tx => tx.fee / tx.size).sort((a, b) => a - b);
-    const medianFeeRate = feeRates[Math.floor(feeRates.length / 2)];
-    
-    // Calculate total value waiting in mempool
-    const totalValue = mempool.reduce((sum, tx) => sum + tx.amount, 0);
-    
-    // Calculate total fees waiting in mempool
-    const totalFees = mempool.reduce((sum, tx) => sum + tx.fee, 0);
-    
-    return {
-      totalTransactions: mempool.length,
-      avgFeeRate: avgFeeRate.toFixed(8),
-      medianFeeRate: medianFeeRate.toFixed(8),
-      totalValue: totalValue.toFixed(2),
-      totalFees: totalFees.toFixed(8),
-      lowFeeRate: feeRates[0].toFixed(8),
-      highFeeRate: feeRates[feeRates.length - 1].toFixed(8)
-    };
-  };
 
-  // Get statistics for the mempool
-  const mempoolStats = calculateMempoolStats();
 
   return (
     <div className={styles.page}>
       <div className={styles.introSection}>
-        <h1 className={styles.title}>Der Gebührenmarkt im Mempool</h1>
-        <p className={styles.description}>
-          Im Mempool warten unbestätigte Transaktionen darauf, von Minern in einen Block aufgenommen zu werden.
-          Als Miner kannst du Transaktionen mit höheren Gebühren priorisieren, um deinen Profit zu maximieren.
-        </p>
-        <div className={styles.instructionBox}>
-          <p><strong>So funktioniert der Gebührenmarkt:</strong> Nutzer konkurrieren mit Gebühren um den begrenzten Platz in Blöcken. Je höher die Gebühr pro Größe (vByte), desto attraktiver ist eine Transaktion für Miner.</p>
-        </div>
+        <h1>Mempool & Gebührenmarkt</h1>
       </div>
-      
-      {/* Verbesserte Wallet-Info mit überarbeiteten Styles */}
-      <div className={styles.walletsContainer}>
-        <div className={styles.walletCard}>
-          <h2>Deine Miner-Wallet</h2>
-          <div className={styles.walletInfo}>
-            <div className={styles.walletInfoItem}>
-              <span>Block-Höhe:</span>
-              <strong>{walletInfo.currentBlock}</strong>
-            </div>
-            <div className={styles.walletInfoItem}>
-              <span>Mining-Belohnung:</span>
-              <strong>{walletInfo.currentReward} BTC</strong>
-            </div>
-            <div className={styles.walletInfoItem}>
-              <span>Gesammelte Gebühren:</span>
-              <strong>{walletInfo.totalFees.toFixed(8)} BTC</strong>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Marktstatistik-Button mit verbessertem Styling */}
-      <button 
-        className={styles.marketStatsButton} 
-        onClick={toggleMarketStats}
-      >
-        <FaChartLine /> {showMarketStats ? 'Marktstatistik ausblenden' : 'Marktstatistik anzeigen'}
-      </button>
-      
-      {/* Marktstatistiken Panel mit neuen Stilen */}
-      {showMarketStats && mempoolStats && (
-        <div className={styles.marketStatsPanel}>
-          <h3>Aktuelle Mempool-Statistiken</h3>
-          <div className={styles.statsGrid}>
-            <div className={styles.statItem}>
-              <div className={styles.statIcon}><FaServer /></div>
-              <span>Transaktionen</span>
-              <strong>{mempoolStats.totalTransactions}</strong>
-            </div>
-            <div className={styles.statItem}>
-              <div className={styles.statIcon}><FaFire /></div>
-              <span>Durchschnitt BTC/vByte</span>
-              <strong>{mempoolStats.avgFeeRate}</strong>
-            </div>
-            <div className={styles.statItem}>
-              <div className={styles.statIcon}><FaArrowDown /></div>
-              <span>Niedrigste Gebühr</span>
-              <strong>{mempoolStats.lowFeeRate}</strong>
-            </div>
-            <div className={styles.statItem}>
-              <div className={styles.statIcon}><FaCoins /></div>
-              <span>Wartende BTC</span>
-              <strong>{mempoolStats.totalValue}</strong>
-            </div>
-          </div>
-          
-          <div className={styles.feeExplanation}>
-            <FaInfoCircle className={styles.feeExplanationIcon} />
-            <p>
-              <strong>Gebührentipp:</strong> Transaktionen mit höheren BTC/vByte-Gebühren werden schneller bestätigt.
-              Nutzer bezahlen bei Engpässen höhere Gebühren, um ihre Transaktion zu priorisieren.
-              Dies schafft einen Marktmechanismus für Blockplatz.
-            </p>
-          </div>
-        </div>
-      )}
       
       {/* Rest des Codes bleibt unverändert, verwendet aber die neuen Stile automatisch */}
       {/* Verbesserte Block-Größen-Anzeige */}
@@ -454,12 +345,6 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
             onClick={() => handleSortChange('size')}
           >
             <FaSortAmountDown /> Größe
-          </button>
-          <button 
-            className={`${styles.sortButton} ${sortBy === 'time' ? styles.active : ''}`}
-            onClick={() => handleSortChange('time')}
-          >
-            <FaRegClock /> Zeit
           </button>
         </div>
       </div>

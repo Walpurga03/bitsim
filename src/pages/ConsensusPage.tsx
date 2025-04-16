@@ -9,7 +9,7 @@ const ConsensusPage: React.FC<ConsensusPageProps> = () => {
     {
       title: "Dezentralisierung",
       icon: <FaNetworkWired />,
-      description: "Kein zentraler Verwalter - stattdessen teilen Tausende Computer (Nodes) die Verantwortung für das Netzwerk."
+      description: "Kein zentraler Verwalter – stattdessen teilen Tausende Computer (Nodes) die Verantwortung für das Netzwerk."
     },
     {
       title: "Proof-of-Work",
@@ -29,7 +29,7 @@ const ConsensusPage: React.FC<ConsensusPageProps> = () => {
     {
       title: "Offener Zugang",
       icon: <FaUserAlt />,
-      description: "Jeder kann am Netzwerk teilnehmen - ohne Erlaubnis oder Registrierung."
+      description: "Jeder kann am Netzwerk teilnehmen – ohne Erlaubnis oder Registrierung."
     },
     {
       title: "Kryptographische Sicherheit",
@@ -42,31 +42,22 @@ const ConsensusPage: React.FC<ConsensusPageProps> = () => {
     <div className={styles.page}>
       <div className={styles.container}>
         <h1 className={styles.title}>Spielregeln des Netzwerks</h1>
-        
         <p className={styles.introText}>
-          Bitcoin funktioniert ohne zentrale Autorität - aber wie einigt man sich ohne Chef? 
-          Die Antwort liegt im <span className={styles.highlight}>Konsens-Mechanismus</span>, 
+          Bitcoin funktioniert ohne zentrale Autorität – aber wie einigt man sich ohne Chef?
+          Die Antwort liegt im <span className={styles.highlight}>Konsens-Mechanismus</span>,
           einem Regelwerk, das alle Teilnehmer befolgen.
         </p>
-        
         <div className={styles.principlesGrid}>
           {consensusPrinciples.map((principle, index) => (
-            <div 
-              key={index}
-              className={styles.principleCard}
-            >
-              <div className={styles.cardIcon}>
-                {principle.icon}
-              </div>
+            <div key={index} className={styles.principleCard}>
+              <div className={styles.cardIcon}>{principle.icon}</div>
               <h3>{principle.title}</h3>
               <p>{principle.description}</p>
             </div>
           ))}
         </div>
-        
         <div className={styles.consensusExplanation}>
           <h2>Wie funktioniert der Konsens?</h2>
-          
           <div className={styles.processList}>
             <div className={styles.processStep}>
               <div className={styles.stepNumber}>1</div>
@@ -75,7 +66,6 @@ const ConsensusPage: React.FC<ConsensusPageProps> = () => {
                 <p>Wenn du Bitcoin sendest, wird diese Transaktion an alle Teilnehmer verbreitet.</p>
               </div>
             </div>
-            
             <div className={styles.processStep}>
               <div className={styles.stepNumber}>2</div>
               <div className={styles.stepContent}>
@@ -83,7 +73,6 @@ const ConsensusPage: React.FC<ConsensusPageProps> = () => {
                 <p>Miner gruppieren Transaktionen und versuchen durch Rechenarbeit, einen gültigen Block zu finden.</p>
               </div>
             </div>
-            
             <div className={styles.processStep}>
               <div className={styles.stepNumber}>3</div>
               <div className={styles.stepContent}>
@@ -91,7 +80,6 @@ const ConsensusPage: React.FC<ConsensusPageProps> = () => {
                 <p>Jeder Teilnehmer prüft selbständig, ob neue Blöcke den Regeln entsprechen.</p>
               </div>
             </div>
-            
             <div className={styles.processStep}>
               <div className={styles.stepNumber}>4</div>
               <div className={styles.stepContent}>

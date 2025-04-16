@@ -55,7 +55,8 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
   // Move to next page when we reach certain blocks
   useEffect(() => {
     if (walletInfo.currentBlock >= 5) {
-      // Can automatically move to next page or show button
+      // Zeige einen Erfolgshinweis oder aktiviere den Weiter-Button
+      setShowMiningProcess(false);
     }
   }, [walletInfo.currentBlock]);
   
@@ -309,6 +310,12 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
                   </button>
                 )}
               </div>
+              {/* Erfolgsmeldung nach 5 Blöcken */}
+              {walletInfo.currentBlock >= 5 && (
+                <div className={styles.miningSuccess}>
+                  🎉 Du hast 5 Blöcke erfolgreich gemint! Entdecke jetzt, wie das Netzwerk funktioniert.
+                </div>
+              )}
             </div>
           )}
               {/* Mining animation indicator */}

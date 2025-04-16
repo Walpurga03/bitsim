@@ -5,11 +5,13 @@ import { FaArrowRight, FaWallet, FaCoins, FaArrowLeft, FaCheckCircle, FaExclamat
 interface CombinedTransactionWalletsPageProps {
   satoshiBalance: number;
   onBack: (txId?: string, amount?: number) => void;
+  hallBalance?: number; // NEU: optionaler Prop für Hall's aktuellen Saldo
 }
 
 const CombinedTransactionWalletsPage: React.FC<CombinedTransactionWalletsPageProps> = ({ 
   satoshiBalance, 
-  onBack 
+  onBack,
+  hallBalance = 0 // Default auf 0, falls nicht übergeben
 }) => {
   const [amount, setAmount] = useState<string>('');
   const [transferComplete, setTransferComplete] = useState(false);
@@ -297,7 +299,7 @@ const CombinedTransactionWalletsPage: React.FC<CombinedTransactionWalletsPagePro
             <div className={styles.balanceDisplay}>
               <FaCoins className={styles.coinsIcon} />
               <span className={styles.balanceAmount}>
-                0 BTC
+                {hallBalance} BTC
               </span>
             </div>
             {transferComplete && (
