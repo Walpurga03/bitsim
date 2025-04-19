@@ -62,8 +62,8 @@ const ConsensusPage: React.FC<ConsensusPageProps> = () => {
             <div className={styles.processStep}>
               <div className={styles.stepNumber}>1</div>
               <div className={styles.stepContent}>
-                <h4>Transaktionen werden gesammelt</h4>
-                <p>Wenn du Bitcoin sendest, wird diese Transaktion an alle Teilnehmer verbreitet.</p>
+                <h4>Transaktionen werden im Mempool gesammelt</h4>
+                <p>Wenn du Bitcoin sendest, wird diese Transaktion an alle Teilnehmer verbreitet und vorübergehend im "Mempool" (Memory Pool) gespeichert, bis ein Miner sie in einen Block aufnimmt.</p>
               </div>
             </div>
             <div className={styles.processStep}>

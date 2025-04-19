@@ -128,7 +128,7 @@ p {
     transition: transform 0.4s ease;
   }
   
-  &:hover, &.active {
+  &:hover {
     transform: translateY(-8px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     border-color: rgba($primary-color, 0.3);
@@ -290,27 +290,6 @@ p {
   }
 }
 
-.infoBox {
-  background: linear-gradient(145deg, rgba($primary-color, 0.1), rgba($primary-color, 0.05));
-  border-left: 4px solid $primary-color;
-  border-radius: 10px;
-  padding: 1.5rem;
-  margin: 2rem 0;
-  
-  h3 {
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-    color: $primary-color;
-    font-size: 1.3rem;
-  }
-  
-  p {
-    margin: 0;
-    font-size: 1rem;
-    line-height: 1.5;
-  }
-}
-
 // Responsive improvements
 @media (max-width: 1024px) and (min-width: 769px) {
   .principlesGrid {
@@ -412,25 +391,6 @@ p {
       animation-delay: 0.1s + ($i * 0.1s);
     }
   }
-}
-
-.nextButton {
-  background-color: #F7931A;
-  color: #000000;
-  padding: 1rem 2rem;
-  border: none;
-  border-radius: 50px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  opacity: 0;
-  animation: fadeInSlide 1s forwards;
-  animation-delay: 1.5s;
-}
-
-.nextButton:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 
 @keyframes fadeIn {

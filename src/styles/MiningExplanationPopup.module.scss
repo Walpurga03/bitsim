@@ -4,12 +4,15 @@
 .overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.75);
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(5px);
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
   animation: fadeIn 0.3s;
+  padding: 1rem;
+  overflow-y: auto; // Ermöglicht Scrollen des gesamten Overlays
 }
 
 @keyframes fadeIn {
@@ -21,14 +24,32 @@
   background: linear-gradient(135deg, #181818 80%, $primary-color 120%);
   border-radius: 22px;
   box-shadow: 0 8px 40px rgba($primary-color, 0.18), 0 2px 8px rgba(0,0,0,0.18);
-  padding: 2.5rem 2rem 2rem 2rem;
-  min-width: 320px;
-  max-width: 420px;
-  width: 90vw;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  width: 100%;
+  max-width: min(90vw, 600px);
+  max-height: 90vh; // Maximale Höhe begrenzen
   color: $text-color-with;
   position: relative;
   animation: popupScaleIn 0.4s cubic-bezier(.36,.07,.19,.97);
   overflow: hidden;
+  display: flex; // Flex-Container für bessere Strukturierung des Inhalts
+  flex-direction: column; // Spaltenweise anordnen
+  margin: auto; // Zentrieren im Overlay
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+      circle at 100% 0%,
+      rgba($primary-color, 0.12),
+      transparent 50%
+    );
+    z-index: 0;
+  }
 }
 
 @keyframes popupScaleIn {
@@ -38,31 +59,47 @@
 
 .header {
   text-align: center;
-  margin-bottom: 1.2rem;
+  margin-bottom: clamp(1rem, 3vw, 1.5rem);
+  position: relative;
+  z-index: 1;
+  
   h2 {
     color: $primary-color;
-    font-size: 1.5rem;
+    font-size: clamp(1.2rem, 5vw, 1.8rem);
     font-weight: 700;
     letter-spacing: 0.01em;
     margin: 0;
+    text-shadow: 0 0 10px rgba($primary-color, 0.3);
   }
+}
+
+// Scrollbare Inhaltscontainer
+.scrollContainer {
+  flex: 1;
+  overflow-y: auto; // Ermöglicht Scrollen nur des Inhaltsbereichs
+  padding-right: 5px; // Platz für Scrollbalken
+  margin-right: -5px; // Kompensiert den padding-right
+  -webkit-overflow-scrolling: touch; // Verbessert das Scrollen auf iOS
 }
 
 .content {
   text-align: left;
-  font-size: 1.08rem;
+  font-size: clamp(0.95rem, 2.2vw, 1.08rem);
   line-height: 1.7;
   margin-bottom: 1.5rem;
   color: rgba($text-color-with, 0.95);
   position: relative;
   z-index: 1;
-  padding-bottom: 1rem;
+  padding: 0 clamp(0rem, 2vw, 1rem);
 }
 
 .buttonContainer {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
+  margin-top: 1rem;
+  position: relative;
+  z-index: 1;
 }
 
 .closeButton {
@@ -76,7 +113,6 @@
   cursor: pointer;
   transition: all 0.2s;
   box-shadow: 0 4px 16px rgba($primary-color, 0.13);
-  margin-top: 0.5rem;
 
   &:hover {
     transform: translateY(-2px) scale(1.04);
@@ -90,12 +126,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 1.5rem 0 1rem 0;
+  margin: clamp(1rem, 4vw, 1.5rem) 0;
+  position: relative;
+  z-index: 1;
 }
 
 .miningIcon {
-  width: 64px;
-  height: 64px;
+  width: clamp(48px, 10vw, 70px);
+  height: clamp(48px, 10vw, 70px);
   border-radius: 50%;
   background: linear-gradient(135deg, $primary-color 60%, #fff 120%);
   display: flex;
@@ -167,19 +205,38 @@
 /* Responsive Anpassungen */
 @media (max-width: 600px) {
   .modal {
-    padding: 1.2rem 0.5rem 1rem 0.5rem;
-    min-width: 0;
+    padding: 1.2rem 1rem 1rem 1rem;
     max-width: 98vw;
+    max-height: 85vh; // Etwas kleiner auf mobilen Geräten
+    margin: 0.5rem auto; // Vertikaler Abstand vom Rand
   }
+  
+  .overlay {
+    align-items: flex-start; // Besser für lange Inhalte auf mobilen Geräten
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+  
   .header h2 {
     font-size: 1.1rem;
   }
+  
   .content {
     font-size: 0.98rem;
+    padding-right: 0.5rem;
   }
+  
   .miningIcon {
     width: 48px;
     height: 48px;
+    margin-bottom: 0.8rem;
+  }
+  
+  .miningHammer {
     font-size: 1.5rem;
+  }
+  
+  .buttonContainer {
+    justify-content: center; // Zentriert auf mobilen Geräten
   }
 }
