@@ -1,521 +1,412 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../styles/MempoolPage.module.scss';
-import MempoolExplanationPopup from '../components/MempoolExplanationPopup';
-import { mineBlock, DIFFICULTY_LEVELS } from '../utils/miningUtils';
-import { FaSortAmountDown, FaCheck, FaBolt } from 'react-icons/fa';
+import { FaFileInvoiceDollar, FaMagic, FaDatabase, FaAngleRight } from 'react-icons/fa';
 
+// Interface für eine unbestätigte Transaktion im Mempool
 interface Transaction {
   id: string;
-  sender: string;
-  recipient: string;
   amount: number;
   fee: number;
-  size: number; // in virtuellen Bytes
-  timestamp: string;
-  selected: boolean;
-  inputs?: number;
-  outputs?: number;
+  feeRate: number; // Gebühr pro vByte
+  size: number; // Größe in vBytes
+  from: string;
+  to: string;
+  priority: 'low' | 'medium' | 'high';
+  timeInPool: number; // Zeit in Minuten
 }
 
-interface MiningResult {
-  hash: string;
-  nonce: number;
-  target: string;
-  timestamp: string;
-  transactions: Transaction[];
-  blockNumber: number;
-  merkleRoot: string;
-  found: boolean;
-}
-
+// Props für die MempoolPage Komponente
 interface MempoolPageProps {
   onNext: () => void;
 }
 
 const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
-  const [miningResult, setMiningResult] = useState<MiningResult | null>(null);
-  const [showMempoolPopup, setShowMempoolPopup] = useState(true); // Auto-open popup
-  const [mempool, setMempool] = useState<Transaction[]>([]);
+  // State Variablen
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [selectedTransactions, setSelectedTransactions] = useState<Transaction[]>([]);
-  const [chainBlocks, setChainBlocks] = useState<MiningResult[]>([]);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [walletInfo, setWalletInfo] = useState({
-    balance: 2020 * 50, // Starting after difficulty adjustment
-    currentBlock: 2020,
-    currentReward: 50,
-    totalFees: 0,
-  });
-  const [blockSize, setBlockSize] = useState(0); // in virtuellen Bytes
-  const MAX_BLOCK_SIZE = 1000; // Simulierter Max-Wert in virtuellen Bytes
-  const [isMobile, setIsMobile] = useState(false);
-  const [sortBy, setSortBy] = useState<'fee' | 'feeRate' | 'size' | 'time'>('feeRate');
+  const [blockSize, setBlockSize] = useState(0); // Aktuelle Block-Größe in vBytes
+  const [isBlockFull, setIsBlockFull] = useState(false);
+  const [isMining, setIsMining] = useState(false);
+  const [totalFees, setTotalFees] = useState(0);
+  const [sortCriteria, setSortCriteria] = useState<'feeRate' | 'amount' | 'time'>('feeRate');
+  const [blockMined, setBlockMined] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Konstanten
+  const MAX_BLOCK_SIZE = 1000; // 1000 vBytes als Beispiel für die Simulation
   
-  // Zufällige Adressen für die Simulation
+  // Adressen für die Simulation
   const addresses = [
-    "1SatoshiXXXXXX", "1AliceXXXXXXX", "1BobXXXXXXXXX", "1CharlieXXXXX", 
-    "1DaveXXXXXXXX", "1EveXXXXXXXXX", "1FrankXXXXXXX", "1GraceXXXXXXX", 
-    "1HenryXXXXXXX", "1IvanXXXXXXXX"
+    "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2",
+    "3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy",
+    "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq",
+    "bc1q9h0nnxn52ee5fgmjht9p2vzwgvncwtvyc4ausm"
   ];
 
-  // Handle responsive view
+  // Beim ersten Laden den Mempool initialisieren
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 800);
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-  
-  // Generate random transactions for the mempool
-  useEffect(() => {
-    const generateTransactions = () => {
-      const count = Math.floor(Math.random() * 15) + 10; // 10-25 transactions
-      const transactions: Transaction[] = [];
-      
-      for (let i = 0; i < count; i++) {
-        // Get random sender and recipient, ensuring they're different
-        const senderIndex = Math.floor(Math.random() * addresses.length);
-        let recipientIndex;
-        do {
-          recipientIndex = Math.floor(Math.random() * addresses.length);
-        } while (recipientIndex === senderIndex);
-        
-        // Random timestamp within the last hour
-        const date = new Date();
-        date.setMinutes(date.getMinutes() - Math.floor(Math.random() * 60));
-        
-        transactions.push({
-          id: `tx-${Math.random().toString(16).slice(2, 10)}`,
-          sender: addresses[senderIndex],
-          recipient: addresses[recipientIndex],
-          amount: parseFloat((Math.random() * 10 + 0.1).toFixed(8)), // 0.1-10 BTC
-          fee: parseFloat((Math.random() * 0.09 + 0.01).toFixed(8)), // 0.01-0.1 BTC fee
-          size: Math.floor(Math.random() * 200) + 50, // 50-250 virtual bytes
-          timestamp: date.toLocaleTimeString(),
-          selected: false,
-        });
-      }
-      
-      // Sort initially by fee per byte (higher first)
-      return sortTransactions(transactions, 'feeRate');
-    };
-    
-    setMempool(generateTransactions());
+    generateTransactions();
   }, []);
 
-  // Sort transactions based on different criteria
-  const sortTransactions = (txs: Transaction[], sortType: 'fee' | 'feeRate' | 'size' | 'time') => {
-    const sortedTxs = [...txs];
+  // Beobachte die ausgewählten Transaktionen und aktualisiere die Blockgröße
+  useEffect(() => {
+    const totalSize = selectedTransactions.reduce((sum, tx) => sum + tx.size, 0);
+    setBlockSize(totalSize);
     
-    switch(sortType) {
-      case 'fee':
-        return sortedTxs.sort((a, b) => b.fee - a.fee);
-      case 'feeRate':
-        return sortedTxs.sort((a, b) => (b.fee / b.size) - (a.fee / a.size));
-      case 'size':
-        return sortedTxs.sort((a, b) => a.size - b.size);
-      case 'time':
-        return sortedTxs.sort((a, b) => 
-          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
-        );
-      default:
-        return sortedTxs;
+    // Berechne die Gesamtgebühren
+    const fees = selectedTransactions.reduce((sum, tx) => sum + tx.fee, 0);
+    setTotalFees(fees);
+    
+    // Überprüfe, ob der Block voll ist
+    setIsBlockFull(totalSize > MAX_BLOCK_SIZE);
+    
+    // Zeige einen Fehler, wenn der Block zu groß ist
+    if (totalSize > MAX_BLOCK_SIZE) {
+      setErrorMessage(`Block überschreitet das Größenlimit von ${MAX_BLOCK_SIZE} vBytes!`);
+    } else {
+      setErrorMessage(null);
     }
-  };
-  
-  // Handle sorting change
-  const handleSortChange = (sortType: 'fee' | 'feeRate' | 'size' | 'time') => {
-    setSortBy(sortType);
-    setMempool(sortTransactions([...mempool], sortType));
-  };
-  
-  // Handle transaction selection
-  const toggleTransactionSelection = (txId: string) => {
-    setMempool(prev => {
-      const updated = prev.map(tx => {
-        if (tx.id === txId) {
-          // Toggle selection
-          return { ...tx, selected: !tx.selected };
-        }
-        return tx;
-      });
-      
-      // Update selected transactions and block size
-      const selected = updated.filter(tx => tx.selected);
-      setSelectedTransactions(selected);
-      
-      const newBlockSize = selected.reduce((sum, tx) => sum + tx.size, 0);
-      setBlockSize(newBlockSize);
-      
-      return updated;
+  }, [selectedTransactions]);
+
+  // Sortiere Transaktionen nach verschiedenen Kriterien
+  const sortTransactions = (txs: Transaction[], criteria: 'feeRate' | 'amount' | 'time') => {
+    return [...txs].sort((a, b) => {
+      if (criteria === 'feeRate') return b.feeRate - a.feeRate;
+      if (criteria === 'amount') return b.amount - a.amount;
+      return a.timeInPool - b.timeInPool;
     });
   };
 
-  // Auto-select best transactions (based on fee/vByte) that fit within block size
-  const selectBestTransactions = () => {
-    // Sort by fee per byte for optimal selection
-    const sortedByFeeRate = [...mempool].sort((a, b) => 
-      (b.fee / b.size) - (a.fee / a.size)
-    );
+  // Generiere zufällige Transaktionen für den Mempool
+  const generateTransactions = () => {
+    const newTransactions: Transaction[] = [];
+    const count = Math.floor(Math.random() * 20) + 10; // 10-30 Transaktionen
     
-    let cumulativeSize = 0;
-    const selected: string[] = [];
+    for (let i = 0; i < count; i++) {
+      const size = Math.floor(Math.random() * 200) + 100; // 100-300 vBytes
+      const amount = parseFloat((Math.random() * 10).toFixed(8)); // 0-10 BTC
+      
+      // Höhere Gebühren für "wichtigere" Transaktionen
+      let feeRate: number, priority: 'low' | 'medium' | 'high';
+      const rand = Math.random();
+      
+      if (rand < 0.3) {
+        // 30% Low priority
+        feeRate = parseFloat((Math.random() * 2 + 1).toFixed(2)); // 1-3 sat/vByte
+        priority = 'low';
+      } else if (rand < 0.7) {
+        // 40% Medium priority
+        feeRate = parseFloat((Math.random() * 5 + 3).toFixed(2)); // 3-8 sat/vByte
+        priority = 'medium';
+      } else {
+        // 30% High priority
+        feeRate = parseFloat((Math.random() * 15 + 8).toFixed(2)); // 8-23 sat/vByte
+        priority = 'high';
+      }
+      
+      const fee = parseFloat((feeRate * size / 100000000).toFixed(8)); // Umrechnung in BTC
+      
+      // Zufällige Adressen auswählen
+      const fromIndex = Math.floor(Math.random() * addresses.length);
+      let toIndex = fromIndex;
+      while (toIndex === fromIndex) {
+        toIndex = Math.floor(Math.random() * addresses.length);
+      }
+      
+      // Transaktion erstellen
+      newTransactions.push({
+        id: `tx${Math.random().toString(16).slice(2, 10)}`,
+        amount,
+        fee,
+        feeRate,
+        size,
+        from: addresses[fromIndex],
+        to: addresses[toIndex],
+        priority,
+        timeInPool: Math.floor(Math.random() * 60)
+      });
+    }
     
-    // Select transactions until we reach block size limit
-    for (const tx of sortedByFeeRate) {
-      if (cumulativeSize + tx.size <= MAX_BLOCK_SIZE) {
-        selected.push(tx.id);
-        cumulativeSize += tx.size;
+    // Sortiere nach Gebührenrate
+    const sorted = sortTransactions(newTransactions, sortCriteria);
+    setTransactions(sorted);
+    setTransactions(sorted);
+    setSelectedTransactions([]);
+    setBlockMined(false);
+  };
+
+  // Handle Sortierungswechsel
+  const handleSortChange = (criteria: 'feeRate' | 'amount' | 'time') => {
+    setSortCriteria(criteria);
+    setTransactions(sortTransactions(transactions, criteria));
+  };
+
+  // Toggle Transaktion auswählen/abwählen
+  const toggleTransaction = (tx: Transaction) => {
+    // Wenn die Transaktion bereits ausgewählt ist, entferne sie
+    if (selectedTransactions.some(t => t.id === tx.id)) {
+      setSelectedTransactions(prev => prev.filter(t => t.id !== tx.id));
+    } else {
+      // Sonst füge sie hinzu
+      setSelectedTransactions(prev => [...prev, tx]);
+    }
+  };
+
+  // Automatische Auswahl der Transaktionen mit höchsten Gebühren
+  const autoSelectTransactions = () => {
+    // Sortiere Transaktionen nach Gebührenrate
+    const sortedByFee = [...transactions].sort((a, b) => b.feeRate - a.feeRate);
+    
+    let totalSize = 0;
+    const selected: Transaction[] = [];
+    
+    // Füge Transaktionen hinzu, bis wir das Block-Limit erreichen
+    for (const tx of sortedByFee) {
+      if (totalSize + tx.size <= MAX_BLOCK_SIZE) {
+        selected.push(tx);
+        totalSize += tx.size;
       }
     }
     
-    // Update selections
-    setMempool(prev => 
-      prev.map(tx => ({
-        ...tx,
-        selected: selected.includes(tx.id)
-      }))
-    );
-    
-    // Update selected transactions and block size
-    const selectedTxs = mempool.filter(tx => selected.includes(tx.id));
-    setSelectedTransactions(selectedTxs);
-    setBlockSize(cumulativeSize);
+    setSelectedTransactions(selected);
   };
-  
-  // Clear all transaction selections
-  const clearSelections = () => {
-    setMempool(prev => prev.map(tx => ({ ...tx, selected: false })));
-    setSelectedTransactions([]);
-    setBlockSize(0);
-  };
-  
-  const simulateMining = () => {
-    if (isAnimating || selectedTransactions.length === 0) return;
+
+  // Block minen
+  const mineBlock = () => {
+    // Nicht minen, wenn der Block zu groß ist
+    if (isBlockFull) {
+      return;
+    }
     
-    setIsAnimating(true);
+    // Mining-Status auf true setzen
+    setIsMining(true);
     
-    // Mining animation
-    const miningAnimation = document.createElement('div');
-    miningAnimation.className = styles.miningAnimation;
-    document.body.appendChild(miningAnimation);
-    
-    // Mining with timeout
+    // Mining-Prozess mit Timeout simulieren
     setTimeout(() => {
-      // Create timestamp
-      const now = new Date();
-      now.setFullYear(now.getFullYear() - 14); // Set a date from the past
-      const timestamp = now.toLocaleString();
+      // Mining abgeschlossen
+      setIsMining(false);
+      setBlockMined(true);
       
-      // Generate merkle root (simulated)
-      const merkleRoot = Math.random().toString(16).substr(2, 8);
-      
-      // Previous block hash
-      const previousHash = chainBlocks.length > 0 
-        ? chainBlocks[chainBlocks.length - 1]?.hash.toString() || "0"
-        : "0";
-      
-      // Block data (simplified for simulation)
-      const blockData = `${previousHash}-${timestamp}-${merkleRoot}`;
-      
-      // Use MEDIUM difficulty after difficulty adjustment
-      const difficulty = DIFFICULTY_LEVELS.MEDIUM;
-      
-      // Perform mining with specified difficulty
-      const result = mineBlock(blockData, difficulty);
-      
-      // Calculate total fees from selected transactions
-      const totalFees = selectedTransactions.reduce((sum, tx) => sum + tx.fee, 0);
-      
-      // Create new block object
-      const newBlock = walletInfo.currentBlock + 1;
-      
-      const newBlockData: MiningResult = {
-        hash: result.hash.toString(),
-        nonce: result.nonce,
-        target: result.target.toString(),
-        timestamp,
-        transactions: selectedTransactions,
-        merkleRoot,
-        found: result.found,
-        blockNumber: newBlock,
-      };
-      
-      setMiningResult(newBlockData);
-      
-      // Only if a block was found (hash < target), update the chain
-      if (result.found) {
-        // Add to blockchain
-        setChainBlocks(prev => {
-          const newChain = [...prev, newBlockData];
-          while (newChain.length > 3) {
-            newChain.shift(); // Keep only the most recent blocks
-          }
-          return newChain;
-        });
-        
-        // Update wallet info with block reward + fees
-        setWalletInfo(prev => ({
-          ...prev,
-          balance: prev.balance + prev.currentReward + totalFees,
-          currentBlock: newBlock,
-          totalFees: prev.totalFees + totalFees,
-        }));
-        
-        // Remove mined transactions from mempool
-        setMempool(prev => prev.filter(tx => !tx.selected));
-        setSelectedTransactions([]);
-        setBlockSize(0);
-      }
-      
-      setIsAnimating(false);
-      document.body.removeChild(miningAnimation);
-    }, 2000);
+      // Geminte Transaktionen aus dem Mempool entfernen
+      const newTransactions = transactions.filter(tx => 
+        !selectedTransactions.some(selected => selected.id === tx.id)
+      );
+      setTransactions(newTransactions);
+    }, 2000); // 2 Sekunden Mining-Zeit für die Simulation
   };
-
-
 
   return (
     <div className={styles.page}>
       <div className={styles.introSection}>
         <h1>Mempool & Gebührenmarkt</h1>
+        <p>
+          <strong>Hinweis:</strong> In dieser Simulation darf ein Block maximal <strong>1000 vBytes</strong> groß sein. 
+          Das entspricht einer stark vereinfachten Blockgröße, damit du das Prinzip besser nachvollziehen kannst. 
+          In der echten Bitcoin-Blockchain sind Blöcke deutlich größer – aktuell bis zu 4 Millionen Weight Units 
+          (entspricht etwa 1 Millionen vBytes bzw. ~1 MB), was viel mehr Transaktionen pro Block ermöglicht.
+        </p>
       </div>
-      
-      {/* Rest des Codes bleibt unverändert, verwendet aber die neuen Stile automatisch */}
-      {/* Verbesserte Block-Größen-Anzeige */}
+
+      {/* Direkt eingebettete Mempool-Erklärung */}
+      <div className={styles.explanationSection}>
+        <h2>Was ist der Mempool?</h2>
+        
+        <div className={styles.section}>
+          <div className={styles.iconContainer}>
+            <FaDatabase className={styles.sectionIcon} />
+          </div>
+          <div>
+            <h3>Was ist der Mempool?</h3>
+            <p>
+              Der Mempool (Memory Pool) ist ein "Wartezimmer" für unbestätigte Bitcoin-Transaktionen. 
+              Wenn jemand eine Transaktion sendet, landet sie zuerst im Mempool und wartet darauf, 
+              von einem Miner in einen Block aufgenommen zu werden.
+            </p>
+          </div>
+        </div>
+        
+        <div className={styles.section}>
+          <div className={styles.iconContainer}>
+            <FaFileInvoiceDollar className={styles.sectionIcon} />
+          </div>
+          <div>
+            <h3>Gebührenmarkt</h3>
+            <p>
+              Jeder Miner kann frei entscheiden, welche Transaktionen er in seinen Block aufnimmt. 
+              Da die Blockgröße begrenzt ist, wählen Miner normalerweise die Transaktionen mit den höchsten Gebühren aus,
+              um ihren Gewinn zu maximieren.
+            </p>
+            <p>
+              So entsteht ein Markt: Bei hoher Nachfrage (viele Transaktionen) steigen die Gebühren.
+              Nutzer, die schnellere Bestätigungen wünschen, bieten höhere Gebühren an.
+            </p>
+          </div>
+        </div>
+        
+        <div className={styles.feeTiers}>
+          <div className={styles.feeTier} style={{backgroundColor: 'rgba(52, 152, 219, 0.1)'}}>
+            <div className={styles.priorityDot} style={{backgroundColor: '#3498db'}}></div>
+            <div>
+              <strong>Niedrige Priorität</strong>
+              <div className={styles.feeDescription}>Günstige Gebühren, längere Wartezeit</div>
+            </div>
+          </div>
+          
+          <div className={styles.feeTier} style={{backgroundColor: 'rgba(243, 156, 18, 0.1)'}}>
+            <div className={styles.priorityDot} style={{backgroundColor: '#f39c12'}}></div>
+            <div>
+              <strong>Mittlere Priorität</strong>
+              <div className={styles.feeDescription}>Ausgewogene Gebühren und Wartezeit</div>
+            </div>
+          </div>
+          
+          <div className={styles.feeTier} style={{backgroundColor: 'rgba(231, 76, 60, 0.1)'}}>
+            <div className={styles.priorityDot} style={{backgroundColor: '#e74c3c'}}></div>
+            <div>
+              <strong>Hohe Priorität</strong>
+              <div className={styles.feeDescription}>Höhere Gebühren, schnellere Bestätigung</div>
+            </div>
+          </div>
+        </div>
+        
+        <div className={styles.instructions}>
+          <h3>Deine Aufgabe</h3>
+          <ul>
+            <li><FaAngleRight className={styles.bulletIcon} /> Wähle Transaktionen aus dem Mempool für deinen Block</li>
+            <li><FaAngleRight className={styles.bulletIcon} /> Achte auf das Größenlimit des Blocks (1000 vBytes)</li>
+            <li><FaAngleRight className={styles.bulletIcon} /> Versuche, die Gebühren zu maximieren</li>
+            <li><FaAngleRight className={styles.bulletIcon} /> Mine deinen Block, um die Transaktionen zu bestätigen</li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Block-Größe Visualisierung */}
       <div className={styles.blockSizeContainer}>
-        <h3>Blockgröße: <span className={blockSize > MAX_BLOCK_SIZE ? styles.oversize : ''}>{blockSize} / {MAX_BLOCK_SIZE} vBytes</span></h3>
+        <h3>Block-Größe: {blockSize} / {MAX_BLOCK_SIZE} vBytes</h3>
         <div className={styles.progressBarContainer}>
           <div 
-            className={styles.progressBar}
+            className={styles.progressBar} 
             style={{ 
               width: `${Math.min(100, (blockSize / MAX_BLOCK_SIZE) * 100)}%`,
-              backgroundColor: blockSize > MAX_BLOCK_SIZE ? '#e74c3c' : blockSize > MAX_BLOCK_SIZE * 0.8 ? '#f39c12' : '#2ecc71'
+              backgroundColor: isBlockFull ? '#e74c3c' : blockSize > MAX_BLOCK_SIZE * 0.8 ? '#f39c12' : '#2ecc71'
             }}
           />
         </div>
-        {blockSize > MAX_BLOCK_SIZE && (
-          <p className={styles.errorMessage}>&#9888; Blockgröße überschritten! Entferne einige Transaktionen.</p>
-        )}
+        {errorMessage && <div className={styles.errorMessage}>{errorMessage}</div>}
       </div>
-      
-      {/* Optimierte Transaktionsauswahl mit Schnellauswahl-Buttons */}
-      <div className={`${styles.selectionToolbar} ${isMobile ? styles.mobileSelectionToolbar : ''}`}>
-        <div className={styles.selectionInfo}>
-          <h3>Ausgewählte Transaktionen: {selectedTransactions.length}</h3>
-          <p>Gesamtgebühren: <strong>{selectedTransactions.reduce((sum, tx) => sum + tx.fee, 0).toFixed(8)} BTC</strong></p>
-        </div>
-        
-        <div className={styles.selectionActions}>
-          <button 
-            className={styles.optimizeButton}
-            onClick={selectBestTransactions}
-            disabled={mempool.length === 0}
-          >
-            <FaBolt /> Automatisch optimieren
-          </button>
-          
-          <button 
-            className={styles.clearButton}
-            onClick={clearSelections}
-            disabled={selectedTransactions.length === 0}
-          >
-            <FaCheck /> Auswahl zurücksetzen
-          </button>
-        </div>
-      </div>
-      
-      {/* Verbesserte Sortieroptionen */}
-      <div className={styles.sortOptionsContainer}>
-        <span className={styles.sortLabel}>Sortieren nach:</span>
-        <div className={styles.sortOptions}>
-          <button 
-            className={`${styles.sortButton} ${sortBy === 'feeRate' ? styles.active : ''}`}
-            onClick={() => handleSortChange('feeRate')}
-          >
-            <FaSortAmountDown /> BTC/vByte
-          </button>
-          <button 
-            className={`${styles.sortButton} ${sortBy === 'fee' ? styles.active : ''}`}
-            onClick={() => handleSortChange('fee')}
-          >
-            <FaSortAmountDown /> Gebühr
-          </button>
-          <button 
-            className={`${styles.sortButton} ${sortBy === 'size' ? styles.active : ''}`}
-            onClick={() => handleSortChange('size')}
-          >
-            <FaSortAmountDown /> Größe
-          </button>
-        </div>
-      </div>
-      
-      {/* Vereinfachte Mempool-Transaktionen */}
+
+
+      {/* Mempool */}
       <div className={styles.mempoolContainer}>
         <div className={styles.mempoolHeader}>
-          <h3>Mempool-Transaktionen ({mempool.length})</h3>
+          <h3>Mempool ({transactions.length} Transaktionen)</h3>
+          
           <div className={styles.sortInfo}>
-            Sortiert nach: {
-              sortBy === 'feeRate' ? 'BTC/vByte (höchste zuerst)' :
-              sortBy === 'fee' ? 'Gebühr (höchste zuerst)' :
-              sortBy === 'size' ? 'Größe (kleinste zuerst)' : 
-              'Zeitpunkt (älteste zuerst)'
-            }
-          </div>
-        </div>
-        
-        <div className={styles.transactionsHeader}>
-          <span className={styles.txColumn}>Transaktion</span>
-          <span className={styles.txColumn}>Betrag</span>
-          <span className={styles.txColumn}>Gebühr</span>
-          <span className={styles.txColumn}>Größe</span>
-          <span className={styles.txColumn}>Priorität</span>
-        </div>
-        
-        <div className={styles.transactionsList}>
-          {mempool.map(tx => (
-            <div 
-              key={tx.id}
-              className={`${styles.transactionRow} ${tx.selected ? styles.selectedTx : ''}`}
-              onClick={() => toggleTransactionSelection(tx.id)}
-            >
-              <span className={styles.txColumn}>
-                <div className={styles.txId}>{tx.id.substring(0, 8)}...</div>
-                <div className={styles.txAddresses}>{tx.sender.substring(0, 6)}... → {tx.recipient.substring(0, 6)}...</div>
-              </span>
-              <span className={styles.txColumn}>{tx.amount.toFixed(4)} BTC</span>
-              <span className={styles.txColumn}>
-                {tx.fee.toFixed(6)} BTC
-                <div className={styles.feeRate}>≈ {(tx.fee / tx.size).toFixed(8)} BTC/vB</div>
-              </span>
-              <span className={styles.txColumn}>{tx.size} vB</span>
-              <span className={`${styles.txColumn} ${styles.priority}`}>
-                <div 
-                  className={styles.priorityIndicator}
-                  style={{
-                    backgroundColor: getPriorityColor(tx.fee / tx.size)
-                  }}
-                ></div>
-                {getPriorityLabel(tx.fee / tx.size)}
-              </span>
-            </div>
-          ))}
-          {mempool.length === 0 && (
-            <div className={styles.emptyMempool}>
-              <p>Alle Transaktionen wurden gemint!</p>
-              <button onClick={() => window.location.reload()} className={styles.reloadButton}>
-                Neue Transaktionen laden
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-      
-      {/* Mining-Button */}
-      <div className={styles.miningActions}>
-        <button 
-          className={styles.mineButton} 
-          onClick={simulateMining}
-          disabled={isAnimating || selectedTransactions.length === 0 || blockSize > MAX_BLOCK_SIZE}
-        >
-          {isAnimating ? 'Mining läuft...' : 'Block mit ausgewählten Transaktionen minen'}
-        </button>
-      </div>
-      
-      {/* Mining-Ergebnis */}
-      {miningResult && (
-        <div className={`${styles.miningBlock} ${miningResult.found ? styles.foundAnimation : styles.notFoundAnimation}`}>
-          <h2>Mining Block #{miningResult.blockNumber}</h2>
-          <div className={styles.hashTarget}>
-            <div className={styles.hashDisplay}>
-              <strong>Hash:</strong> 
-              <span className={`${styles.hash} ${miningResult.found ? styles.validHash : styles.invalidHash}`}>
-                {miningResult.hash}
-              </span>
-            </div>
-            
-            <span className={styles.mustBeBelow}>
-              muss kleiner sein als
-            </span>
-            
-            <div>
-              <strong>Target:</strong>
-              <span className={styles.target}>
-                {miningResult.target}
-              </span>
-            </div>
-          </div>
-          
-          <div className={styles.minedTransactionsSummary}>
-            <h3>Geminte Transaktionen</h3>
-            <ul className={styles.minedTransactionsList}>
-              {miningResult.transactions.slice(0, 5).map(tx => (
-                <li key={tx.id} className={styles.minedTransactionItem}>
-                  <span className={styles.minedTxId}>{tx.id.substring(0, 8)}...</span>
-                  <span className={styles.minedTxAmount}>{tx.amount.toFixed(4)} BTC</span>
-                  <span className={styles.minedTxFee}>{tx.fee.toFixed(6)} BTC</span>
-                </li>
-              ))}
-              {miningResult.transactions.length > 5 && (
-                <li className={styles.minedTransactionMore}>
-                  ... und {miningResult.transactions.length - 5} weitere Transaktionen
-                </li>
-              )}
-            </ul>
-          </div>
-          
-          <p><strong>Gesamtzahl Transaktionen:</strong> {miningResult.transactions.length}</p>
-          <p><strong>Gebühren:</strong> {miningResult.transactions.reduce((sum, tx) => sum + tx.fee, 0).toFixed(8)} BTC</p>
-          <p><strong>Block-Belohnung:</strong> {walletInfo.currentReward} BTC</p>
-          <p><strong>Gesamtbelohnung:</strong> {(walletInfo.currentReward + miningResult.transactions.reduce((sum, tx) => sum + tx.fee, 0)).toFixed(8)} BTC</p>
-          <p><strong>Status:</strong> {miningResult.found ? 
-            "Block erfolgreich gemint und zur Blockchain hinzugefügt! ✅" : 
-            "Block nicht gefunden ❌ Versuche es erneut!"}
-          </p>
-          
-          <div className={styles.blockButtons}>
+            Sortieren nach: 
             <button 
-              className={styles.mineButton} 
-              onClick={simulateMining}
-              disabled={isAnimating || selectedTransactions.length === 0 || blockSize > MAX_BLOCK_SIZE}
+              className={`${styles.sortButton} ${sortCriteria === 'feeRate' ? styles.active : ''}`} 
+              onClick={() => handleSortChange('feeRate')}
             >
-              {isAnimating ? 'Mining läuft...' : 'Nächsten Block minen'}
+              Gebühr/vByte
             </button>
-            
-            <button className={styles.nextButton} onClick={onNext}>
-              Weiter zum Halving
+            <button 
+              className={`${styles.sortButton} ${sortCriteria === 'amount' ? styles.active : ''}`} 
+              onClick={() => handleSortChange('amount')}
+            >
+              Betrag
+            </button>
+            <button 
+              className={`${styles.sortButton} ${sortCriteria === 'time' ? styles.active : ''}`} 
+              onClick={() => handleSortChange('time')}
+            >
+              Wartezeit
             </button>
           </div>
         </div>
-      )}
-      
-      {/* Navigation Button */}
-      {!miningResult && (
-        <div className={styles.navigationButtons}>
+
+        {transactions.length > 0 ? (
+          <>
+            <div className={styles.transactionsHeader}>
+              <div className={styles.txColumn}>Transaktion</div>
+              <div className={styles.txColumn}>Betrag</div>
+              <div className={styles.txColumn}>Gebühr</div>
+              <div className={styles.txColumn}>Gebühr/vByte</div>
+              <div className={styles.txColumn}>Größe</div>
+            </div>
+            
+            <div className={styles.transactionsList}>
+              {transactions.map(tx => (
+                <div 
+                  key={tx.id} 
+                  className={`${styles.transactionRow} ${selectedTransactions.some(t => t.id === tx.id) ? styles.selectedTx : ''}`}
+                  onClick={() => toggleTransaction(tx)}
+                >
+                  <div className={styles.txColumn}>
+                    <div className={styles.txId}>{tx.id}</div>
+                    <div className={styles.txAddresses}>
+                      {tx.from.substring(0, 6)}... → {tx.to.substring(0, 6)}...
+                    </div>
+                    <div className={styles.priority}>
+                      <div 
+                        className={styles.priorityIndicator} 
+                        style={{ 
+                          backgroundColor: tx.priority === 'high' ? '#e74c3c' : 
+                                          tx.priority === 'medium' ? '#f39c12' : '#3498db' 
+                        }}
+                      />
+                      <span>{tx.priority === 'high' ? 'Hoch' : tx.priority === 'medium' ? 'Mittel' : 'Niedrig'}</span>
+                    </div>
+                  </div>
+                  <div className={styles.txColumn}>{tx.amount.toFixed(8)} BTC</div>
+                  <div className={styles.txColumn}>{tx.fee.toFixed(8)} BTC</div>
+                  <div className={styles.txColumn}>{tx.feeRate.toFixed(2)} sat/vB</div>
+                  <div className={styles.txColumn}>{tx.size} vB</div>
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className={styles.emptyState}>
+            Keine Transaktionen im Mempool
+          </div>
+        )}
+      </div>
+
+      {/* Zusammenfassung der Auswahl */}
+      <div className={styles.selectionSummary}>
+        <h3>Ausgewählte Transaktionen</h3>
+        <p>
+          <strong>{selectedTransactions.length}</strong> Transaktionen mit <strong>{blockSize} vBytes</strong> ausgewählt
+        </p>
+        <p>
+          Gebühren gesamt: <strong>{totalFees.toFixed(8)} BTC</strong>
+        </p>
+        
+        <div className={styles.actionButtons}>
+          <button 
+            className={styles.autoSelectButton} 
+            onClick={autoSelectTransactions}
+            disabled={transactions.length === 0 || isMining}
+          >
+            <FaMagic /> Optimale Auswahl (höchste Gebühren)
+          </button>
+          <button 
+            className={styles.mineButton} 
+            onClick={mineBlock}
+            disabled={selectedTransactions.length === 0 || isBlockFull || isMining}
+          >
+            {isMining ? "Mining..." : "Mine Block"}
+          </button>
+        </div>
+        
+        {blockMined && (
           <button className={styles.nextButton} onClick={onNext}>
             Weiter zum Halving
           </button>
-        </div>
-      )}
-      
-      {/* Popup */}
-      {showMempoolPopup && (
-        <MempoolExplanationPopup onClose={() => setShowMempoolPopup(false)} />
-      )}
+        )}
+      </div>
     </div>
   );
-  
-  // Hilfsfunktionen zur visuellen Darstellung der Priorität
-  function getPriorityColor(feeRate: number): string {
-    if (feeRate > 0.0005) return '#2ecc71'; // Hoch - Grün
-    if (feeRate > 0.0002) return '#f39c12'; // Mittel - Orange
-    return '#e74c3c'; // Niedrig - Rot
-  }
-  
-  function getPriorityLabel(feeRate: number): string {
-    if (feeRate > 0.0005) return 'Hoch';
-    if (feeRate > 0.0002) return 'Mittel';
-    return 'Niedrig';
-  }
 };
 
 export default MempoolPage;

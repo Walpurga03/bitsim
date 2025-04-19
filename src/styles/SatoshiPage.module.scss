@@ -2363,3 +2363,514 @@ p {
   }
 }
 
+// Halving visualization styles
+.halvingVisualization {
+  max-width: 900px;
+  margin: 2rem auto;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: $card-shadow;
+  border: 1px solid rgba($primary-color, 0.15);
+  
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    color: $primary-color;
+    font-size: 1.3rem;
+    margin-top: 0;
+    margin-bottom: 1.2rem;
+    
+    .chartIcon {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+.emissionCurve {
+  position: relative;
+  margin: 2.5rem 0 1rem 0;
+}
+
+.emissionLine {
+  height: 3px;
+  background: linear-gradient(90deg, 
+    $primary-color 0%, 
+    $primary-color 25%, 
+    rgba($primary-color, 0.7) 50%, 
+    rgba($primary-color, 0.4) 75%, 
+    rgba($primary-color, 0.2) 100%
+  );
+  position: relative;
+  margin-top: 1rem;
+  border-radius: 2px;
+}
+
+.emissionPhases {
+  display: flex;
+  width: 100%;
+}
+
+.emissionPhase {
+  flex: 1;
+  text-align: center;
+  padding: 0 0.5rem;
+  position: relative;
+  border-right: 1px dashed rgba($primary-color, 0.3);
+  
+  &:last-child {
+    border-right: none;
+  }
+  
+  .phaseReward {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: $primary-color;
+    margin-bottom: 0.3rem;
+  }
+  
+  .phaseBlocks {
+    font-size: 0.8rem;
+    opacity: 0.7;
+  }
+  
+  &.pastPhase {
+    opacity: 0.6;
+  }
+  
+  &.currentPhase {
+    .phaseReward {
+      color: #fff;
+      background: $primary-color;
+      padding: 0.2rem 0.8rem;
+      border-radius: 12px;
+      display: inline-block;
+    }
+    
+    .phaseBlocks {
+      opacity: 0.9;
+      font-weight: 500;
+    }
+  }
+}
+
+.currentBlockMarker {
+  position: absolute;
+  top: 100%;
+  transform: translateX(-50%);
+  background: #fff;
+  color: #000;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 10px;
+  margin-top: 1rem;
+  white-space: nowrap;
+  font-weight: bold;
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-bottom-color: #fff;
+  }
+}
+
+.halvingCountdown {
+  margin-top: 2.5rem;
+  padding: 0.8rem;
+  background: rgba($primary-color, 0.15);
+  border-radius: 8px;
+  text-align: center;
+  font-size: 1.1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+  
+  .warningIcon {
+    color: $primary-color;
+  }
+}
+
+// Improved reward comparison
+.rewardComparison {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin: 2.5rem 0;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.oldReward, .newReward {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  padding: 1.5rem;
+  min-width: 200px;
+  text-align: center;
+  box-shadow: $card-shadow;
+  border: 1px solid rgba($primary-color, 0.1);
+  
+  h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: $primary-color;
+    font-size: 1.2rem;
+  }
+  
+  .rewardAmount {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .rewardCoins {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .rewardCoin {
+    width: 30px;
+    height: 30px;
+    background: $primary-color;
+    color: $text-color-black;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+  
+  .epochLabel {
+    font-size: 0.9rem;
+    padding: 0.3rem 1rem;
+    background: rgba($primary-color, 0.1);
+    border-radius: 12px;
+    display: inline-block;
+  }
+}
+
+.oldReward {
+  border-color: rgba($primary-color, 0.2);
+}
+
+.newReward {
+  border-color: rgba($primary-color, 0.5);
+  position: relative;
+  
+  &::before {
+    content: 'AKTUELLE BELOHNUNG';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: $primary-color;
+    color: $text-color-black;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 8px;
+    font-weight: bold;
+  }
+}
+
+.rewardArrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  .halvingIcon {
+    background: $primary-color;
+    color: $text-color-black;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 10px rgba($primary-color, 0.5);
+  }
+  
+  @media (max-width: 768px) {
+    transform: rotate(90deg);
+    margin: 1rem 0;
+  }
+}
+
+// Halving block highlight
+.halvingBlock {
+  border: 2px solid $primary-color !important;
+  box-shadow: 0 0 15px rgba($primary-color, 0.4) !important;
+  
+  .halvingIndicator {
+    margin-top: 0.5rem;
+    padding: 0.3rem 0.5rem;
+    background: rgba($primary-color, 0.2);
+    color: $primary-color;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    animation: pulse 1.5s infinite;
+  }
+}
+
+// Economic Impact Section
+.economicImpact {
+  max-width: 900px;
+  margin: 2.5rem auto;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: $card-shadow;
+  border-left: 4px solid $primary-color;
+  
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    color: $primary-color;
+    font-size: 1.3rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    
+    .infoIcon {
+      font-size: 1.1rem;
+    }
+  }
+  
+  p {
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  
+  .impactPoints {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    
+    .impactPoint {
+      background: rgba($primary-color, 0.05);
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 0.9rem;
+      
+      strong {
+        color: $primary-color;
+        display: block;
+        margin-bottom: 0.3rem;
+      }
+    }
+  }
+}
+
+// Halving-spezifische Stile
+.halvingEventIndicator {
+  margin: 1.5rem auto;
+  padding: 1rem;
+  max-width: 400px;
+  animation: popIn 0.5s ease-out;
+}
+
+.halvingFlash {
+  background: linear-gradient(135deg, rgba($primary-color, 0.3), rgba($primary-color, 0.1));
+  border: 2px solid $primary-color;
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 0 30px rgba($primary-color, 0.6);
+  animation: pulse 1.5s infinite;
+  
+  h3 {
+    color: $primary-color;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 2px;
+  }
+}
+
+.rewardChange {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  font-size: 1.2rem;
+  
+  .oldRewardValue {
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+  
+  .newRewardValue {
+    color: $primary-color;
+    font-weight: bold;
+    font-size: 1.4rem;
+  }
+  
+  .rewardArrowIcon {
+    color: $primary-color;
+  }
+}
+
+.halvingCountdown {
+  background: rgba($primary-color, 0.1);
+  border-radius: 12px;
+  padding: 1.2rem;
+  margin: 1.5rem 0;
+  text-align: center;
+  
+  .countdownLabel {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: rgba($text-color-with, 0.8);
+  }
+  
+  .countdownValue {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: $primary-color;
+    margin-bottom: 0.8rem;
+  }
+  
+  .progressBarContainer {
+    width: 100%;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  
+  .progressBar {
+    height: 100%;
+    background: linear-gradient(90deg, $primary-color, color.adjust($primary-color, $lightness: 15%));
+    border-radius: 5px;
+    transition: width 0.5s ease-out;
+  }
+}
+
+.halvingPulse {
+  animation: halvingPulse 2s infinite !important;
+  background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $saturation: 100%, $lightness: -20%)) !important;
+  color: $text-color-black !important;
+  border-color: transparent !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.5px !important;
+}
+
+@keyframes halvingPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba($primary-color, 0.7);
+    transform: scale(1);
+  }
+  
+  50% {
+    box-shadow: 0 0 0 15px rgba($primary-color, 0);
+    transform: scale(1.05);
+  }
+  
+  100% {
+    box-shadow: 0 0 0 0 rgba($primary-color, 0);
+    transform: scale(1);
+  }
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  
+  75% {
+    transform: scale(1.1);
+  }
+  
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Verbesserte responsive Anpassungen für Halving-Page
+@media (max-width: 768px) {
+  .rewardComparison {
+    flex-direction: column;
+    gap: 2rem;
+    
+    .rewardArrow {
+      transform: rotate(90deg);
+    }
+  }
+  
+  .halvingVisualization {
+    padding: 1rem;
+  }
+  
+  .emissionCurve {
+    overflow-x: auto;
+  }
+  
+  .emissionPhases {
+    min-width: 600px;
+  }
+  
+  .halvingStats {
+    flex-wrap: wrap;
+    
+    .statCard {
+      min-width: 45%;
+      margin-bottom: 1rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .halvingEventIndicator {
+    padding: 0.5rem;
+  }
+  
+  .halvingFlash {
+    padding: 1rem;
+    
+    h3 {
+      font-size: 1.5rem;
+    }
+  }
+  
+  .rewardChange {
+    font-size: 1rem;
+    
+    .newRewardValue {
+      font-size: 1.2rem;
+    }
+  }
+  
+  .halvingCountdown {
+    padding: 1rem;
+    
+    .countdownValue {
+      font-size: 1.5rem;
+    }
+  }
+  
+  .halvingStats .statCard {
+    min-width: 100%;
+  }
+}
+

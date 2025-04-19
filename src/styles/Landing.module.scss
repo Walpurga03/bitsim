@@ -13,7 +13,20 @@
   }
 }
 
-/* Neue, modernere Landing Page */
+/* Pulse-Animation für Hinweise */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba($primary-color, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba($primary-color, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba($primary-color, 0);
+  }
+}
+
+/* Haupt-Layout */
 .landing {
   display: flex;
   flex-direction: column;
@@ -41,6 +54,7 @@
   }
 }
 
+/* Header-Bereich */
 .heroSection {
   margin-bottom: 3rem;
   animation: fadeInSlide 0.8s ease-out;
@@ -73,6 +87,7 @@
   letter-spacing: 0.01em;
 }
 
+/* Inhaltsbereich */
 .contentSection {
   max-width: 1200px;
   width: 100%;
@@ -90,53 +105,54 @@
   margin-right: auto;
 }
 
+/* Feature-Karten */
 .featuresGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
-  margin: 3rem 0;
+  margin: 2rem 0;
+  width: 100%;
+  max-width: 1200px;
 }
 
 .featureCard {
   background: rgba(255, 255, 255, 0.03);
-  border-radius: 16px;
+  border-radius: 12px;
   padding: 1.8rem;
-  transition: all 0.3s ease;
   border: 1px solid rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    border-color: rgba($primary-color, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    border-color: rgba($primary-color, 0.2);
+    background: rgba($primary-color, 0.03);
+  }
+  
+  .featureIcon {
+    font-size: 2.5rem;
+    margin-bottom: 1.2rem;
   }
   
   h3 {
-    margin: 1rem 0;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
     color: $primary-color;
   }
   
   p {
     font-size: 1rem;
-    opacity: 0.8;
+    line-height: 1.6;
+    opacity: 0.85;
   }
 }
 
-.featureIcon {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.note {
-  font-size: clamp(0.875rem, 1.5vw, 1rem);
-  opacity: 0.6;
-  font-style: italic;
-  margin: 1.5rem 0;
-  max-width: 700px;
-  word-wrap: break-word;
-}
-
+/* Info-Hinweis */
 .infoHintContainer {
   width: 100%;
   max-width: 800px;
@@ -154,13 +170,11 @@
   align-items: center;
   gap: 1rem;
   text-align: left;
+  animation: pulse 3s infinite;
   
   strong {
     color: $primary-color;
   }
-  
-  // Animation für den Hinweis
-  animation: pulse 3s infinite;
   
   .infoIcon {
     color: $primary-color;
@@ -172,6 +186,17 @@
   }
 }
 
+/* Fußnotentext */
+.note {
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
+  opacity: 0.6;
+  font-style: italic;
+  margin: 1.5rem 0;
+  max-width: 700px;
+  word-wrap: break-word;
+}
+
+/* Start-Button */
 .startButton {
   font-size: clamp(1rem, 2vw, 1.25rem);
   padding: clamp(0.9rem, 2vw, 1.1rem) clamp(2rem, 4vw, 3rem);
@@ -211,20 +236,34 @@
   }
 }
 
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba($primary-color, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 8px rgba($primary-color, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba($primary-color, 0);
+/* Responsive Anpassungen - konsolidiert */
+@media (min-width: 769px) and (max-width: 1024px) {
+  /* Kleine Desktop-Regeln */
+  .featuresGrid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* Verbesserte Responsive-Anpassungen */
+@media (min-width: 481px) and (max-width: 768px) {
+  /* Tablet-Regeln */
+  .featuresGrid {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .featureCard {
+    padding: 1.5rem;
+    
+    h3 {
+      font-size: 1.2rem;
+    }
+  }
+}
+
 @media (max-width: 480px) {
+  /* Handy-Regeln */
   .landing {
     padding: 1rem 1.5rem;
   }
@@ -255,20 +294,5 @@
     padding: 0.8rem 1rem;
     flex-direction: column;
     text-align: center;
-  }
-}
-
-@media (min-width: 481px) and (max-width: 768px) {
-  .featuresGrid {
-    grid-template-columns: 1fr;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-  .featuresGrid {
-    grid-template-columns: repeat(2, 1fr);
   }
 }

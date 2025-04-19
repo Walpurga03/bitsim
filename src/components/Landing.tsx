@@ -35,22 +35,27 @@ const Landing: React.FC = () => {
           Willkommen in der interaktiven Bitcoin-Welt! Hier lernst du spielerisch, wie Bitcoin funktioniert – alle wichtigen Fachbegriffe werden dir dabei einfach und verständlich erklärt.
         </p>
         <p className={styles.description}>
-          Du wirst selbst Blocks minen, Transaktionen durchführen und lernen, wie das Netzwerk ohne zentrale Kontrolle arbeitet.
+          Du wirst selbst Blocks Minen, Transaktionen durchführen und lernen, wie das Netzwerk ohne zentrale Kontrolle arbeitet.
         </p>
         <div className={styles.featuresGrid}>
           <div className={styles.featureCard}>
             <div className={styles.featureIcon}>🔍</div>
             <h3>Mining verstehen</h3>
-            <p>Finde heraus, wie Computer Rechenrätsel lösen, um neue Bitcoin zu erzeugen</p>
+            <p>Entdecke, wie Computer Rechenrätsel lösen, um neue Bitcoin zu generieren</p>
+          </div>
+          <div className={styles.featureCard}>
+            <div className={styles.featureIcon}>⛓️</div>
+            <h3>Blockchain analysieren</h3>
+            <p>Beobachte, wie Transaktionen unveränderlich für die Ewigkeit gespeichert werden</p>
           </div>
           <div className={styles.featureCard}>
             <div className={styles.featureIcon}>🔄</div>
             <h3>Transaktionen senden</h3>
-            <p>Erlebe, wie Bitcoin-Zahlungen funktionieren und bestätigt werden</p>
+            <p>Erlebe, wie Bitcoin-Zahlungen funktionieren und im Netzwerk bestätigt werden</p>
           </div>
           <div className={styles.featureCard}>
             <div className={styles.featureIcon}>📊</div>
-            <h3>Mempool erkunden</h3>
+            <h3>Mempool verwalten</h3>
             <p>Wähle als Miner die lukrativsten Transaktionen für deinen Block aus</p>
           </div>
         </div>
@@ -60,7 +65,7 @@ const Landing: React.FC = () => {
           <FaInfoCircle size={20} className={styles.infoIcon} />
           <p>
             <strong>Tipp:</strong> Klicke auf den <strong>INFO-Button</strong> rechts oben, um tiefergehende 
-            technische Erklärungen zu allen Bitcoin-Begriffen zu erhalten!
+            technische Erklärungen zu vielen Bitcoin-Begriffen zu erhalten!
           </p>
         </div>
       </div>
