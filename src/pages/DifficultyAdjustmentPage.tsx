@@ -154,7 +154,7 @@ const DifficultyAdjustmentPage: React.FC<DifficultyAdjustmentPageProps> = ({ onN
   return (
     <div className={styles.page}>
       <div className={styles.introSection}>
-        <h1>Schwierigkeitsanpassung</h1>
+        <h1>Difficulty Adjustment (Schwierigkeitsanpassung)</h1>
         <p>
           Alle 2016 Blöcke (etwa alle zwei Wochen) passt das Bitcoin-Netzwerk die Mining-Schwierigkeit an.
           Diese Anpassung stellt sicher, dass die durchschnittliche Zeit zwischen den Blöcken bei etwa 10 Minuten bleibt.
@@ -173,12 +173,10 @@ const DifficultyAdjustmentPage: React.FC<DifficultyAdjustmentPageProps> = ({ onN
         {/* Verbesserte Fortschrittsanzeige bis zur Schwierigkeitsanpassung */}
         <div className={styles.difficultyProgressContainer}>
           <div className={styles.progressLabel}>
-            <span>Block 2000</span>
             <span className={styles.adjustmentTarget}>
               <FaExclamationTriangle style={{marginRight: '5px'}} />
               Block 2016: Schwierigkeitsanpassung
             </span>
-            <span>Block 2032</span>
           </div>
           <div className={styles.progressBar}>
             <div 
@@ -190,14 +188,6 @@ const DifficultyAdjustmentPage: React.FC<DifficultyAdjustmentPageProps> = ({ onN
                   'linear-gradient(90deg, rgba(247, 147, 26, 0.5), #f7931a)'
               }}
             ></div>
-          </div>
-          <div className={styles.currentBlockMarker} style={{
-            left: `${Math.min(100, ((walletInfo.currentBlock - 2000) / 16) * 100)}%`
-          }}>
-            <strong>Block {walletInfo.currentBlock}</strong>
-            {walletInfo.currentBlock === 2016 && 
-              <div className={styles.milestoneFlag}>Meilenstein!</div>
-            }
           </div>
           
           {/* Countdown bis zum Adjustment */}

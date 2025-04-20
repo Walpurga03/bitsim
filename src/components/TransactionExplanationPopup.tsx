@@ -1,17 +1,12 @@
 import React from 'react';
 import styles from "../styles/TransactionExplanationPopup.module.scss";
+import { FaExchangeAlt } from 'react-icons/fa';
 
 interface TransactionExplanationPopupProps {
   onClose: () => void;
 }
 
 const TransactionExplanationPopup: React.FC<TransactionExplanationPopupProps> = ({ onClose }) => {
-  const explanationText = `Transaktion und Kryptographie:
-Eine Transaktion zwischen Satoshi und Hall wird durch asymmetrische Kryptographie abgesichert.
-- Der Private Key wird geheim gehalten und zur Signierung der Transaktion verwendet.
-- Der Public Key ist für jeden sichtbar und ermöglicht es, die Signatur zu überprüfen.
-Eine gültige Signatur garantiert, dass die Transaktion authentisch ist und nicht manipuliert wurde.`;
-
   // Schließe das Popup bei Klick außerhalb des Inhalts
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
@@ -31,9 +26,25 @@ Eine gültige Signatur garantiert, dass die Transaktion authentisch ist und nich
   return (
     <div className={styles.overlay} onClick={handleOverlayClick}>
       <div className={styles.content}>
-        <h2>Transaktion erklären</h2>
-        <p>{explanationText}</p>
-        <button className={styles.closeButton} onClick={onClose}>Schließen</button>
+        <div className={styles.headerIcon}>
+          <FaExchangeAlt />
+        </div>
+        <h2>Bitcoin-Transaktionen</h2>
+        
+        <div className={styles.textContent}>
+          <p>
+            Bitcoin-Transaktionen ermöglichen den direkten Austausch von Werten ohne Zwischenhändler wie Banken. 
+            Sie werden durch digitale Signaturen gesichert, die mit dem privaten Schlüssel des Absenders erstellt werden. 
+            Dieser private Schlüssel ist der Eigentumsnachweis für die Bitcoins.
+          </p>
+          <p>
+            Nach der Übertragung bestätigen Miner die Transaktion, indem sie sie in Blöcke aufnehmen. Diese werden anschließend 
+            in der Blockchain verankert und damit praktisch unveränderbar. Dies verhindert Doppelausgaben und gewährleistet 
+            die Sicherheit des Netzwerks.
+          </p>
+        </div>
+        
+        <button className={styles.closeButton} onClick={onClose}>Verstanden</button>
       </div>
     </div>
   );

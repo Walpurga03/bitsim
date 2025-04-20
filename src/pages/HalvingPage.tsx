@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../styles/SatoshiPage.module.scss';
-import { FaInfoCircle, FaExclamationTriangle,FaMinus } from 'react-icons/fa';
+import { FaInfoCircle, FaExclamationTriangle, FaMinus } from 'react-icons/fa';
 
 interface HalvingPageProps {
   onNext: () => void;
@@ -12,8 +12,102 @@ interface HalvingEvent {
   rewardBefore: number;
   rewardAfter: number;
   status: 'past' | 'current' | 'future';
-  priceImpact?: string;
+  keyEvents?: string;
+  circulatingSupply: string;
 }
+
+// Hilfsfunktion zum Extrahieren des Prozentsatzes
+const extractPercentage = (supplyText: string): number => {
+  const match = supplyText.match(/\((\d+(?:\,\d+)?)%\)/);
+  if (match && match[1]) {
+    return parseFloat(match[1].replace(',', '.'));
+  }
+  return 0;
+};
+
+// Moderne Supply-Visualisierung mit Farbverlauf und Glaseffekt
+const ModernSupplyGauge: React.FC<{percentage: number}> = ({ percentage }) => {
+  const size = 150;
+  const strokeWidth = 8;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (percentage / 100) * circumference;
+  
+  return (
+    <div className={styles.modernSupplyContainer}>
+      <div className={styles.gaugeWrapper}>
+        {/* Hintergrund-Glow-Effekt */}
+        <div className={styles.backgroundGlow}></div>
+        
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+          {/* Hintergrund-Track mit Glanzeffekt */}
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="transparent"
+            stroke="url(#trackGradient)"
+            strokeWidth={strokeWidth}
+            className={styles.trackCircle}
+          />
+          
+          {/* Progress-Kreis mit Farbverlauf */}
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="transparent"
+            stroke="url(#progressGradient)"
+            strokeWidth={strokeWidth}
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+            transform={`rotate(-90 ${size / 2} ${size / 2})`}
+            className={styles.progressCircle}
+          />
+          
+          {/* Farbverläufe definieren */}
+          <defs>
+            <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#ffcc33" />
+              <stop offset="100%" stopColor="#f7931a" />
+            </linearGradient>
+            
+            <linearGradient id="trackGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#2a2a2a" />
+              <stop offset="100%" stopColor="#1a1a1a" />
+            </linearGradient>
+            
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feColorMatrix in="blur" type="matrix" values="0 0 0 0 1 0 0 0 0.6 0 0 0 0 0.1 0 0 0 0.8 0" result="glow" />
+              <feMerge>
+                <feMergeNode in="glow" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+        </svg>
+        
+        <div className={styles.gaugeCenter}>
+          <div className={styles.percentageValue}>{percentage}%</div>
+          <div className={styles.percentageLabel}>Bitcoin im Umlauf</div>
+        </div>
+      </div>
+      
+      <div className={styles.gaugeInfo}>
+        <div className={styles.gaugeInfoItem}>
+          <div className={styles.gaugeInfoTitle}>Aktueller Bestand</div>
+          <div className={styles.gaugeInfoValue}>{((percentage * 21) / 100).toFixed(2)} Mio BTC</div>
+        </div>
+        <div className={styles.gaugeInfoItem}>
+          <div className={styles.gaugeInfoTitle}>Maximum</div>
+          <div className={styles.gaugeInfoValue}>21 Mio BTC</div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const HalvingPage: React.FC<HalvingPageProps> = ({ onNext }) => {
   const [halvingExplanationShown, setHalvingExplanationShown] = useState(false);
@@ -28,7 +122,7 @@ const HalvingPage: React.FC<HalvingPageProps> = ({ onNext }) => {
       rewardBefore: 50,
       rewardAfter: 50,
       status: 'past',
-      priceImpact: 'Genesis-Block'
+      circulatingSupply: '0 von 21 Millionen BTC (0%)'
     },
     {
       blockHeight: 210000,
@@ -36,7 +130,7 @@ const HalvingPage: React.FC<HalvingPageProps> = ({ onNext }) => {
       rewardBefore: 50,
       rewardAfter: 25,
       status: 'past',
-      priceImpact: '~$12 → $1,000+ (innerhalb eines Jahres)'
+      circulatingSupply: '10,5 von 21 Millionen BTC (50%)'
     },
     {
       blockHeight: 420000,
@@ -44,25 +138,33 @@ const HalvingPage: React.FC<HalvingPageProps> = ({ onNext }) => {
       rewardBefore: 25,
       rewardAfter: 12.5,
       status: 'past',
-      priceImpact: '~$650 → $20,000 (innerhalb von 17 Monaten)'
+      circulatingSupply: '15,75 von 21 Millionen BTC (75%)'
     },
     {
       blockHeight: 630000,
       date: "11.05.2020",
       rewardBefore: 12.5,
       rewardAfter: 6.25,
-      status: 'current',
-      priceImpact: '~$8,600 → $69,000 (innerhalb von 18 Monaten)'
+      status: 'past',
+      circulatingSupply: '18,375 von 21 Millionen BTC (87,5%)'
     },
     {
       blockHeight: 840000,
-      date: "~April 2024",
+      date: "20.04.2024",
       rewardBefore: 6.25,
       rewardAfter: 3.125,
-      status: 'future'
+      status: 'current',
+      circulatingSupply: '19,69 von 21 Millionen BTC (93,75%)'
+    },
+    {
+      blockHeight: 1050000,
+      date: "~März 2028",
+      rewardBefore: 3.125,
+      rewardAfter: 1.5625,
+      status: 'future',
+      circulatingSupply: '20,34 von 21 Millionen BTC (96,875%)'
     }
   ];
-
 
   // Show halving explanation when the component mounts
   useEffect(() => {
@@ -106,6 +208,14 @@ const HalvingPage: React.FC<HalvingPageProps> = ({ onNext }) => {
             >
               <div className={styles.timelineDate}>{event.date}</div>
               <h3>Block #{formatNumber(event.blockHeight)}</h3>
+
+              <div className={styles.supplyContainer}>
+                <div className={styles.supplyInfo}>
+                  <strong>Bitcoin im Umlauf:</strong> {event.circulatingSupply}
+                </div>
+                <ModernSupplyGauge percentage={extractPercentage(event.circulatingSupply)} />
+              </div>
+
               <div className={styles.rewardComparison}>
                 <div className={styles.oldReward}>
                   <h3>Belohnung davor</h3>
@@ -134,12 +244,6 @@ const HalvingPage: React.FC<HalvingPageProps> = ({ onNext }) => {
                 </div>
               </div>
 
-              {event.priceImpact && (
-                <div className={styles.priceImpact}>
-                  <h3>Preisauswirkung</h3>
-                  <p>{event.priceImpact}</p>
-                </div>
-              )}
 
               {event.status === 'future' && (
                 <div className={styles.expectationBox}>
@@ -151,7 +255,6 @@ const HalvingPage: React.FC<HalvingPageProps> = ({ onNext }) => {
           ))}
         </div>
       </div>
-
 
       {/* Economic Impact Section */}
       <div className={styles.economicImpact}>
@@ -173,7 +276,6 @@ const HalvingPage: React.FC<HalvingPageProps> = ({ onNext }) => {
           </div>
         </div>
       </div>
-
 
       {/* Navigation button to go to next page */}
       <div className={styles.navigationButtons}>

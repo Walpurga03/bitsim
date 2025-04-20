@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from '../styles/SatoshiPage.module.scss';
-import NodeExplanationPopup from '../components/NodeExplanationPopup';
 import { mineBlock, DIFFICULTY_LEVELS } from '../utils/miningUtils';
 import { FaServer, FaDesktop, FaCheck } from 'react-icons/fa';
 
@@ -29,10 +28,8 @@ interface NodeNetworkPageProps {
   onNext: () => void;
 }
 
-const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({ onNext }) => {
+const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({}) => {
   const [miningResult, setMiningResult] = useState<MiningResult | null>(null);
-  const [showNodePopup, setShowNodePopup] = useState(true);
-  const [nodeExplanationShown, setNodeExplanationShown] = useState(false);
   const [chainBlocks, setChainBlocks] = useState<MiningResult[]>([]);
   const [isAnimating, setIsAnimating] = useState(false);
   const [walletInfo, setWalletInfo] = useState({
@@ -168,18 +165,12 @@ const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({ onNext }) => {
       .sort((a, b) => a.distance - b.distance)    // Sortiere nach Distanz
       .slice(0, 6);  // Begrenze die Anzahl potenzieller Nachbarn
   };
-
-  // Show node explanation when the component mounts
-  useEffect(() => {
-    if (!nodeExplanationShown) {
-      setShowNodePopup(true);
-    }
-    
-    generateNodes();
-  }, [nodeExplanationShown]);
   
-  // Initialize blockchain with initial blocks
+  // Initialize blockchain and nodes on first render
   useEffect(() => {
+    generateNodes();
+    
+    // Initialize blockchain with initial blocks
     setChainBlocks([
       { blockNumber: 1, hash: "0.175026", nonce: 2481, target: "1", timestamp: "9/1/2009, 12:00:00 AM", transactions: "Genesis Block", merkleRoot: "4a5e1e", found: true },
       { blockNumber: 2, hash: "0.21169", nonce: 1237, target: "1", timestamp: "9/1/2009, 12:15:00 AM", transactions: "1 Transaktion", merkleRoot: "9d0c1e", found: true },
@@ -228,6 +219,12 @@ const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({ onNext }) => {
       // Perform mining with specified difficulty
       const result = mineBlock(blockData, difficulty);
       
+      // FIX: Explizit prüfen, ob der Hash tatsächlich kleiner als das Target ist
+      // Dies korrigiert mögliche Rundungsfehler beim Vergleich
+      const hashValue = parseFloat(result.hash.toString());
+      const targetValue = parseFloat(result.target.toString());
+      const isActuallyValid = hashValue < targetValue;
+      
       // Create new block object
       const newBlock = walletInfo.currentBlock + 1;
       
@@ -238,14 +235,14 @@ const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({ onNext }) => {
         timestamp,
         transactions,
         merkleRoot,
-        found: result.found,
+        found: isActuallyValid, // Wir verwenden unseren korrigierten Vergleich
         blockNumber: newBlock,
       };
       
       setMiningResult(newBlockData);
       
       // Only if a block was found (hash < target), update the chain
-      if (result.found) {
+      if (isActuallyValid) {
         setChainBlocks(prev => {
           const newChain = [...prev, newBlockData];
           while (newChain.length > 5) {
@@ -483,14 +480,6 @@ const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({ onNext }) => {
             >
               {isAnimating ? 'Mining läuft...' : miningResult.found ? 'Nächsten Block minen' : 'Erneut versuchen'}
             </button>
-            
-            <button 
-              className={styles.nextButton} 
-              onClick={onNext}
-              disabled={propagatingBlock}
-            >
-              Weiter
-            </button>
           </div>
         </div>
       )}
@@ -525,14 +514,6 @@ const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({ onNext }) => {
           </div>
         </div>
       </div>
-      
-      {/* Popups */}
-      {showNodePopup && (
-        <NodeExplanationPopup onClose={() => {
-          setShowNodePopup(false);
-          setNodeExplanationShown(true);
-        }} />
-      )}
     </div>
   );
 };

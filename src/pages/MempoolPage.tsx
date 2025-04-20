@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../styles/MempoolPage.module.scss';
-import { FaFileInvoiceDollar, FaMagic, FaDatabase, FaAngleRight } from 'react-icons/fa';
+import { FaFileInvoiceDollar, FaMagic, FaDatabase, FaAngleRight, FaRedo } from 'react-icons/fa';
 
 // Interface für eine unbestätigte Transaktion im Mempool
 interface Transaction {
@@ -31,6 +31,7 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
   const [sortCriteria, setSortCriteria] = useState<'feeRate' | 'amount' | 'time'>('feeRate');
   const [blockMined, setBlockMined] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [miningResult, setMiningResult] = useState<string | null>(null);
 
   // Konstanten
   const MAX_BLOCK_SIZE = 1000; // 1000 vBytes als Beispiel für die Simulation
@@ -180,6 +181,7 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
     
     // Mining-Status auf true setzen
     setIsMining(true);
+    setMiningResult(null); // Reset des vorherigen Ergebnisses
     
     // Mining-Prozess mit Timeout simulieren
     setTimeout(() => {
@@ -192,7 +194,24 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
         !selectedTransactions.some(selected => selected.id === tx.id)
       );
       setTransactions(newTransactions);
+      
+      // Erstelle einen ausführlichen Ergebnistext
+      setMiningResult(`Block erfolgreich gemined! ${selectedTransactions.length} Transaktionen wurden bestätigt 
+        und aus dem Mempool entfernt. Du hast ${totalFees.toFixed(8)} BTC an Gebühren gesammelt.`);
     }, 2000); // 2 Sekunden Mining-Zeit für die Simulation
+  };
+
+  // Reset-Funktion hinzufügen
+  const resetMining = () => {
+    // Mining-Zustände zurücksetzen
+    setBlockMined(false);
+    setMiningResult(null);
+    setSelectedTransactions([]);
+    setBlockSize(0);
+    setTotalFees(0);
+    
+    // Neue Transaktionen generieren
+    generateTransactions();
   };
 
   return (
@@ -216,7 +235,6 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
             <FaDatabase className={styles.sectionIcon} />
           </div>
           <div>
-            <h3>Was ist der Mempool?</h3>
             <p>
               Der Mempool (Memory Pool) ist ein "Wartezimmer" für unbestätigte Bitcoin-Transaktionen. 
               Wenn jemand eine Transaktion sendet, landet sie zuerst im Mempool und wartet darauf, 
@@ -236,8 +254,17 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
               Da die Blockgröße begrenzt ist, wählen Miner normalerweise die Transaktionen mit den höchsten Gebühren aus,
               um ihren Gewinn zu maximieren.
             </p>
+          </div>
+        </div>
+
+        <div className={styles.section}>
+          <div className={styles.iconContainer}>
+            <FaFileInvoiceDollar className={styles.sectionIcon} />
+          </div>
+          <div>
+            <h3> So entsteht ein Markt</h3>
             <p>
-              So entsteht ein Markt: Bei hoher Nachfrage (viele Transaktionen) steigen die Gebühren.
+              Bei hoher Nachfrage (viele Transaktionen) steigen die Gebühren.
               Nutzer, die schnellere Bestätigungen wünschen, bieten höhere Gebühren an.
             </p>
           </div>
@@ -383,26 +410,42 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
         </p>
         
         <div className={styles.actionButtons}>
-          <button 
-            className={styles.autoSelectButton} 
-            onClick={autoSelectTransactions}
-            disabled={transactions.length === 0 || isMining}
-          >
-            <FaMagic /> Optimale Auswahl (höchste Gebühren)
-          </button>
+          {/* Optimale-Auswahl-Button nur anzeigen, wenn noch kein Block gemined wurde */}
+          {!blockMined && !miningResult && (
+            <button 
+              className={styles.autoSelectButton} 
+              onClick={autoSelectTransactions}
+              disabled={transactions.length === 0 || isMining}
+            >
+              <FaMagic /> Optimale Auswahl (höchste Gebühren)
+            </button>
+          )}
+          
           <button 
             className={styles.mineButton} 
             onClick={mineBlock}
-            disabled={selectedTransactions.length === 0 || isBlockFull || isMining}
+            disabled={selectedTransactions.length === 0 || isBlockFull || isMining || blockMined}
           >
-            {isMining ? "Mining..." : "Mine Block"}
+            {isMining ? "Mining..." : blockMined ? "Block gemined" : "Mine Block"}
           </button>
         </div>
         
+        {/* Mining-Ergebnis anzeigen */}
+        {miningResult && (
+          <div className={styles.miningResult}>
+            <p>{miningResult}</p>
+          </div>
+        )}
+        
         {blockMined && (
-          <button className={styles.nextButton} onClick={onNext}>
-            Weiter zum Halving
-          </button>
+          <div className={styles.postMiningActions}>
+            <button className={styles.nextButton} onClick={resetMining}>
+              <FaRedo /> Neue Transaktionen laden
+            </button>
+            <button className={styles.nextButton} onClick={onNext}>
+              Weiter zum Halving
+            </button>
+          </div>
         )}
       </div>
     </div>

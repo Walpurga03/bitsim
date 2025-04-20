@@ -408,8 +408,8 @@
 }
 
 .signButton {
-  background: linear-gradient(135deg, #3498db, #2980b9);
-  color: white;
+  background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: 10%));
+  color: rgb(20, 19, 19);
   padding: 0.8rem 1.5rem;
   border-radius: 30px;
   font-weight: 600;

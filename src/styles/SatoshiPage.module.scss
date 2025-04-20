@@ -601,7 +601,7 @@ p {
 
 .progressLabel {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   margin-bottom: 0.5rem;
   font-size: 0.9rem;
   color: rgba($text-color-with, 0.7);
@@ -2570,20 +2570,6 @@ p {
 .newReward {
   border-color: rgba($primary-color, 0.5);
   position: relative;
-  
-  &::before {
-    content: 'AKTUELLE BELOHNUNG';
-    position: absolute;
-    top: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: $primary-color;
-    color: $text-color-black;
-    font-size: 0.7rem;
-    padding: 0.2rem 0.6rem;
-    border-radius: 8px;
-    font-weight: bold;
-  }
 }
 
 .rewardArrow {
@@ -2871,6 +2857,293 @@ p {
   
   .halvingStats .statCard {
     min-width: 100%;
+  }
+}
+
+// Supply Info styles
+.supplyInfo {
+  background: rgba($primary-color, 0.1);
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  margin: 0.8rem 0;
+  font-size: 0.95rem;
+  color: $primary-color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  strong {
+    margin-right: 0.5rem;
+  }
+}
+
+// Styling für den Supply-Container und Kreisdiagramm
+.supplyContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: 1.5rem 0;
+}
+
+.modernSupplyContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.1),
+              inset 0 -2px 1px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 380px;
+}
+
+.gaugeWrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  
+  svg {
+    filter: drop-shadow(0 0 10px rgba(247, 147, 26, 0.2));
+    transition: all 0.5s ease;
+    
+    &:hover {
+      filter: drop-shadow(0 0 15px rgba(247, 147, 26, 0.35));
+    }
+  }
+  
+  .trackCircle {
+    opacity: 0.3;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  }
+  
+  .progressCircle {
+    filter: url(#glow);
+    transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    
+    &:hover {
+      filter: url(#glow) brightness(1.2);
+    }
+  }
+}
+
+.backgroundGlow {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(247, 147, 26, 0.1) 0%,
+    rgba(247, 147, 26, 0.05) 30%,
+    transparent 70%
+  );
+  animation: pulseGlow 3s infinite alternate;
+}
+
+@keyframes pulseGlow {
+  0% { opacity: 0.4; transform: scale(0.96); }
+  100% { opacity: 0.7; transform: scale(1.04); }
+}
+
+.gaugeCenter {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
+  .percentageValue {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #f7931a;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    background: linear-gradient(135deg, #ffcc33, #f7931a);
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  
+  .percentageLabel {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 0.2rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.gaugeInfo {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1.2rem;
+  
+  .gaugeInfoItem {
+    text-align: center;
+    flex: 1;
+    
+    &:first-child {
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  }
+  
+  .gaugeInfoTitle {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 0.3rem;
+  }
+  
+  .gaugeInfoValue {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    
+    &:last-child {
+      color: rgba(247, 147, 26, 0.9);
+    }
+  }
+}
+
+.supplyCircleContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0.5rem;
+  
+  svg {
+    filter: drop-shadow(0 0 8px rgba($primary-color, 0.2));
+    transition: transform 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+}
+
+.supplyCircleLabel {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+}
+
+// Moderne Gestaltung der Key Events Box
+.keyEventsBox {
+  background: linear-gradient(145deg, rgba(20, 20, 20, 0.7), rgba(15, 15, 15, 0.9));
+  border-radius: 16px;
+  margin: 2rem 0;
+  padding: 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba($primary-color, 0.15);
+  overflow: hidden;
+  transform: translateY(0);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35), 0 5px 12px rgba($primary-color, 0.1);
+  }
+  
+  h3 {
+    margin: 0;
+    padding: 1.2rem 1.8rem;
+    color: #fff;
+    font-size: 1.2rem;
+    background: rgba($primary-color, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    border-bottom: 1px solid rgba($primary-color, 0.1);
+    
+    .keyEventsIcon {
+      color: $primary-color;
+      background: rgba($primary-color, 0.2);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px rgba($primary-color, 0.3);
+    }
+  }
+  
+  .keyEventContent {
+    padding: 1.5rem 1.8rem;
+    position: relative;
+    
+    .timelinePulse {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: $primary-color;
+      
+      &::before, &::after {
+        content: '';
+        position: absolute;
+        left: -4px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: $primary-color;
+      }
+      
+      &::before {
+        top: 0;
+        animation: pulsePoint 2s infinite;
+      }
+      
+      &::after {
+        bottom: 0;
+      }
+    }
+    
+    p {
+      margin: 0;
+      padding-left: 1.5rem;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      position: relative;
+      z-index: 1;
+    }
+  }
+}
+
+@keyframes pulsePoint {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.5; }
+}
+
+@media (max-width: 768px) {
+  .keyEventsBox {
+    h3 {
+      padding: 1rem 1.3rem;
+      font-size: 1.1rem;
+      
+      .keyEventsIcon {
+        width: 28px;
+        height: 28px;
+      }
+    }
+    
+    .keyEventContent {
+      padding: 1.2rem 1.3rem;
+      
+      p {
+        padding-left: 1.2rem;
+        font-size: 0.95rem;
+      }
+    }
   }
 }
 

@@ -690,34 +690,16 @@
 
 // Mining-Ergebnis
 .miningResult {
-  width: 100%;
-  max-width: 800px;
-  margin: 1.5rem auto;
-  padding: 1.5rem;
-  background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(46, 204, 113, 0.05));
-  border-radius: 16px;
-  border-left: 4px solid #2ecc71;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  animation: slideDown 0.5s ease-out;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: rgba(39, 174, 96, 0.1);
+  border-left: 4px solid #27ae60;
+  border-radius: 4px;
   
-  .resultHeader {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    font-size: 1.2rem;
-    color: #2ecc71;
-    margin-bottom: 1rem;
-    font-weight: 600;
-  }
-  
-  .successIcon {
-    font-size: 1.5rem;
-  }
-  
-  .resultDetails {
-    p {
-      margin: 0.5rem 0;
-    }
+  p {
+    margin: 0;
+    font-size: 1rem;
+    color: #fff;
   }
 }
 
@@ -983,6 +965,36 @@
   }
 }
 
+// Post-Mining Actions
+.postMiningActions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.resetButton {
+  background: linear-gradient(135deg, #34495e, #2c3e50);
+  color: #fff;
+  font-size: 1rem;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+  }
+}
+
 // Animationen
 @keyframes lightPass {
   0% { transform: translateY(-100%); }
@@ -1061,6 +1073,15 @@
   
   .actionButtons {
     flex-direction: column;
+    
+    button {
+      width: 100%;
+    }
+  }
+  
+  .postMiningActions {
+    flex-direction: column;
+    width: 100%;
     
     button {
       width: 100%;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../styles/CombinedTransactionWalletsPage.module.scss';
-import { FaArrowRight, FaWallet, FaCoins, FaArrowLeft, FaCheckCircle, FaExclamationCircle, FaBitcoin, FaLock } from 'react-icons/fa';
+import { FaArrowRight, FaWallet, FaCoins, FaCheckCircle, FaExclamationCircle, FaBitcoin, FaLock } from 'react-icons/fa';
 
 interface CombinedTransactionWalletsPageProps {
   satoshiBalance: number;
@@ -105,13 +105,6 @@ const CombinedTransactionWalletsPage: React.FC<CombinedTransactionWalletsPagePro
   return (
     <div className={styles.page}>
       <div className={styles.introSection}>
-        <button 
-          className={styles.backButton} 
-          onClick={() => onBack()}
-        >
-          <FaArrowLeft /> Zurück
-        </button>
-
         <h1>Bitcoin Transaktion erstellen</h1>
         <p>
           Sende Bitcoin von Satoshi's Wallet an Hall's Wallet.

@@ -270,20 +270,29 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
                 <div className={styles.miningDetailItem}>
                   <p><strong>Nonce:</strong> {miningResult.nonce}</p>
                   <p className={styles.nonceExplanation}>
-                    Die "Nonce" ist der Wert, den der Miner bei jedem Versuch ändert
+                    Die "Nonce" ist der Wert, den der Miner bei jedem Versuch ändert, um einen gültigen Hash zu finden
                   </p>
                 </div>
                 
                 <div className={styles.miningDetailItem}>
                   <p><strong>Zeitstempel:</strong> {miningResult.timestamp}</p>
+                  <p className={styles.nonceExplanation}>
+                    Der Zeitstempel vermerkt, wann der Block erstellt wurde und sorgt für eine chronologische Reihenfolge
+                  </p>
                 </div>
                 
                 <div className={styles.miningDetailItem}>
                   <p><strong>Transaktionen:</strong> {miningResult.transactions}</p>
+                  <p className={styles.nonceExplanation}>
+                    Die im Block enthaltenen Bitcoin-Transaktionen, die durch das Mining bestätigt werden
+                  </p>
                 </div>
                 
                 <div className={styles.miningDetailItem}>
                   <p><strong>Merkle-Root:</strong> {miningResult.merkleRoot}</p>
+                  <p className={styles.nonceExplanation}>
+                    Ein Hash-Wert, der alle Transaktionen des Blocks effizient zusammenfasst und ihre Integrität sicherstellt
+                  </p>
                 </div>
               </div>
               
