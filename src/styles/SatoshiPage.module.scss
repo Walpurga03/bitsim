@@ -2962,10 +2962,8 @@ p {
   .percentageValue {
     font-size: 2rem;
     font-weight: 700;
-    color: #f7931a;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-    background: linear-gradient(135deg, #ffcc33, #f7931a);
-    -webkit-text-fill-color: transparent;
+    color: $primary-color;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     letter-spacing: -0.5px;
   }
   

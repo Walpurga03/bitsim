@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../styles/SatoshiPage.module.scss';
-import { FaInfoCircle, FaExclamationTriangle, FaMinus } from 'react-icons/fa';
+import { FaInfoCircle, FaMinus } from 'react-icons/fa';
 
 interface HalvingPageProps {
   onNext: () => void;
@@ -243,14 +243,6 @@ const HalvingPage: React.FC<HalvingPageProps> = ({ onNext }) => {
                   </div>
                 </div>
               </div>
-
-
-              {event.status === 'future' && (
-                <div className={styles.expectationBox}>
-                  <FaExclamationTriangle className={styles.warningIcon} />
-                  <p>Dieses Halving steht noch bevor und wird die Blockbelohnung auf {event.rewardAfter} BTC reduzieren.</p>
-                </div>
-              )}
             </div>
           ))}
         </div>
