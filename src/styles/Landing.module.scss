@@ -1,230 +1,228 @@
 @use "sass:color";
-@use '../styles/variables' as *;
+@use './variables' as v;
 
-/* Keyframe für Fadeup-Animationen */
-@keyframes fadeInSlide {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+
+
+// Professionelles Base-Styling
+.landingContainer {
+  position: relative;
+  background: radial-gradient(circle at 50% 50%, #131c2e, v.$bg-dark);
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: v.$font-primary;
 }
 
-/* Pulse-Animation für Hinweise */
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba($primary-color, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 8px rgba($primary-color, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba($primary-color, 0);
-  }
-}
-
-/* Haupt-Layout */
-.landing {
+// Fortgeschrittener Hero-Bereich
+.heroSection {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start; // Von center zu flex-start ändern
   min-height: 100vh;
-  padding: clamp(1.5rem, 5vw, 3rem);
-  text-align: center;
-  background: radial-gradient(circle at 50% 0%, 
-    rgba($primary-color, 0.15) 0%, 
-    rgba(0, 0, 0, 0) 50%),
-    linear-gradient(135deg, $secondary-color 0%, $text-color-black 100%);
-  color: $text-color-with;
-  position: relative;
-  overflow: hidden;
+  padding: 2rem;
+  isolation: isolate;
   
   &::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    inset: 0;
+    background: radial-gradient(
+      circle at 50% 30%, 
+      rgba(v.$primary-color, 0.1) 0%, 
+      transparent 70%
+    );
     z-index: -1;
   }
 }
 
-/* Header-Bereich */
-.heroSection {
-  margin-bottom: 3rem;
-  animation: fadeInSlide 0.8s ease-out;
-  max-width: 1000px;
+// Hochentwickelte Partikel-Animation
+.particleOverlay {
+  position: absolute;
+  inset: 0;
+  background-image: url('/img/noise.png');
+  opacity: 0.06;
+  filter: contrast(170%) brightness(1000%);
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 0;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at center, 
+      transparent 30%, 
+      v.$bg-dark 100%
+    );
+  }
 }
 
-.title {
-  font-size: clamp(2.5rem, 10vw, 5rem);
-  margin-bottom: 0.5rem;
-  background: linear-gradient(90deg, $primary-color, color.adjust($primary-color, $lightness: 15%));
+// Title-Wrapper-Position anpassen
+.titleWrapper {
+  margin-top: 5rem; // Abstand nach oben hinzufügen
+  width: 100%;
+  z-index: 3;
+  position: relative;
+}
+
+// Bitcoin-Wrapper neu positionieren
+.bitcoinWrapper {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  margin: 4rem auto 0; // Neuer Margin statt margin: 0 auto -10rem;
+  filter: drop-shadow(0 0 40px rgba(v.$primary-color, 0.15));
+  z-index: 2;
+}
+
+// Glass Title anpassen
+.glassTitle {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 2rem 3rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  max-width: 70%;
+  margin: auto; 
+}
+
+// JavaScript Typing-Effekt Styles
+
+.typingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.staticTxt {
+  color: v.$text-color-with;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 600;
+  background: linear-gradient(to bottom, v.$text-color-with, rgba(v.$text-color-with, 0.7));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 0 15px rgba($primary-color, 0.3);
-  max-width: 100%;
-  word-wrap: break-word;
-  line-height: 1.1;
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  margin-left: 5rem;
 }
 
-.subtitle {
-  font-size: clamp(1.3rem, 4vw, 2.2rem);
-  margin-bottom: 2rem;
-  opacity: 0.9;
-  max-width: 800px;
-  word-wrap: break-word;
-  font-weight: 400;
-  color: rgba($text-color-with, 0.9);
-  letter-spacing: 0.01em;
+.typingText {
+  color: v.$primary-color;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 500;
+  min-width: 10ch; // Verhindert Springen beim Textändern
 }
 
-/* Inhaltsbereich */
-.contentSection {
-  max-width: 1200px;
-  width: 100%;
-  animation: fadeInSlide 0.8s ease-out 0.2s both;
+.cursor {
+  color: v.$primary-color;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 300;
+  animation: blink 1s infinite;
 }
 
-.description {
-  font-size: clamp(1.1rem, 2vw, 1.3rem);
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-  max-width: 800px;
-  opacity: 0.85;
-  word-wrap: break-word;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* Feature-Karten */
-.featuresGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-  margin: 2rem 0;
-  width: 100%;
-  max-width: 1200px;
-}
-
-.featureCard {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 12px;
-  padding: 1.8rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-    border-color: rgba($primary-color, 0.2);
-    background: rgba($primary-color, 0.03);
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
   }
-  
-  .featureIcon {
-    font-size: 2.5rem;
-    margin-bottom: 1.2rem;
-  }
-  
-  h3 {
-    font-size: 1.4rem;
-    margin-bottom: 1rem;
-    color: $primary-color;
-  }
-  
-  p {
-    font-size: 1rem;
-    line-height: 1.6;
-    opacity: 0.85;
+  50% {
+    opacity: 0;
   }
 }
 
-/* Info-Hinweis */
+// Info-Hinweis Container
 .infoHintContainer {
+  position: absolute;
+  bottom: 12rem; // Platz über dem Button
+  left: 0;
+  right: 0;
   width: 100%;
-  max-width: 800px;
-  margin: 1rem 0 2rem;
-  animation: fadeInSlide 0.8s ease-out 0.4s both;
+  display: flex;
+  justify-content: center;
+  z-index: 5;
 }
 
 .infoHint {
-  font-size: clamp(0.95rem, 1.8vw, 1.1rem);
-  background-color: rgba($primary-color, 0.08);
-  border: 1px solid rgba($primary-color, 0.2);
-  padding: 1rem 1.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
+  padding: 1rem 1.5rem;
   display: flex;
   align-items: center;
   gap: 1rem;
-  text-align: left;
-  animation: pulse 3s infinite;
-  
-  strong {
-    color: $primary-color;
-  }
-  
-  .infoIcon {
-    color: $primary-color;
-    min-width: 20px;
-  }
+  max-width: 90%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   
   p {
+    font-size: 0.95rem;
+    color: v.$text-color-with;
+    line-height: 1.4;
     margin: 0;
   }
 }
 
-/* Fußnotentext */
-.note {
-  font-size: clamp(0.875rem, 1.5vw, 1rem);
-  opacity: 0.6;
-  font-style: italic;
-  margin: 1.5rem 0;
-  max-width: 700px;
-  word-wrap: break-word;
+.infoIcon {
+  color: v.$primary-color;
+  flex-shrink: 0;
 }
 
-/* Start-Button */
-.startButton {
-  font-size: clamp(1rem, 2vw, 1.25rem);
-  padding: clamp(0.9rem, 2vw, 1.1rem) clamp(2rem, 4vw, 3rem);
-  background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: -10%));
-  color: $text-color-black;
+// Notiz - zentriert (korrigiert)
+.note {
+  position: absolute;
+  bottom: 8rem;
+  width: 80%;
+  max-width: 600px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: rgba(v.$text-color-with, 0.7);
+  font-style: italic;
+  z-index: 5;
+  margin: 0; // Entferne auto margin, es könnte Probleme verursachen
+  white-space: normal; // Stelle sicher, dass der Text umbrochen wird
+}
+
+// Anpassung des CTA-Button-Containers, bleibt bei 3rem
+.ctaWrapper {
+  position: absolute;
+  bottom: 3rem; 
+  left: 0;
+  right: 0;
+  z-index: 5;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+// Moderner CTA-Button mit Animationen
+.ctaButton {
+  background: linear-gradient(to right, v.$primary-color, color.scale(v.$primary-color, $lightness: -10%));
+  color: v.$text-color-with;
   border: none;
-  border-radius: 50px;
+  border-radius: 12px;
+  padding: 0.9rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
-  margin-top: 2rem;
-  transition: all 0.3s ease;
-  font-weight: 700;
-  box-shadow: 0 10px 25px rgba($primary-color, 0.4);
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.8rem;
-  animation: fadeInSlide 0.8s ease-out 0.6s both;
+  gap: 0.7rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 20px rgba(v.$primary-color, 0.4);
   
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 30px rgba($primary-color, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(v.$primary-color, 0.5);
   }
   
   &:active {
     transform: translateY(0);
-    box-shadow: 0 5px 15px rgba($primary-color, 0.4);
   }
   
   .buttonIcon {
@@ -233,66 +231,5 @@
   
   &:hover .buttonIcon {
     transform: translateX(5px);
-  }
-}
-
-/* Responsive Anpassungen - konsolidiert */
-@media (min-width: 769px) and (max-width: 1024px) {
-  /* Kleine Desktop-Regeln */
-  .featuresGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 481px) and (max-width: 768px) {
-  /* Tablet-Regeln */
-  .featuresGrid {
-    grid-template-columns: 1fr;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  .featureCard {
-    padding: 1.5rem;
-    
-    h3 {
-      font-size: 1.2rem;
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  /* Handy-Regeln */
-  .landing {
-    padding: 1rem 1.5rem;
-  }
-  
-  .heroSection {
-    margin-bottom: 2rem;
-  }
-  
-  .title {
-    font-size: 2.5rem;
-  }
-  
-  .subtitle {
-    font-size: 1.2rem;
-  }
-  
-  .featuresGrid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    margin: 2rem 0;
-  }
-  
-  .featureCard {
-    padding: 1.5rem;
-  }
-  
-  .infoHint {
-    padding: 0.8rem 1rem;
-    flex-direction: column;
-    text-align: center;
   }
 }

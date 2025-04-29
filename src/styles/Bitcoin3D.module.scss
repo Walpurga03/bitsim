@@ -1,0 +1,20 @@
+@use './variables' as v;
+
+.bitcoinContainer {
+  position: fixed;
+  top: 0rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 45vw;
+  height: 45vh;
+  z-index: 1;
+}
+
+
+// Optional: Partikel-Overlay für Glanzeffekte
+.glowOverlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(v.$primary-color, 0.15) 0%, transparent 70%);
+  z-index: 0;
+}
