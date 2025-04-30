@@ -15,25 +15,42 @@
 // Fortgeschrittener Hero-Bereich
 .heroSection {
   position: relative;
+  display: grid;
+  grid-template-rows: 20% 45% 15% 10% 10%;
+  grid-template-areas: 
+    "title"
+    "bitcoin"
+    "info"
+    "note"
+    "button";
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.titleWrapper {
+  grid-area: title;
+  align-self: center;
+  justify-self: center;
+  z-index: 5;
+  width: 70%;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  justify-content: flex-start; // Von center zu flex-start ändern
-  min-height: 100vh;
-  padding: 2rem;
-  isolation: isolate;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(
-      circle at 50% 30%, 
-      rgba(v.$primary-color, 0.1) 0%, 
-      transparent 70%
-    );
-    z-index: -1;
-  }
+  background-color: rgba(0, 255, 255, 0);
+}
+
+.bitcoinWrapper {
+  grid-area: bitcoin;
+  position: relative;
+  justify-self: center;
+  align-self: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
 }
 
 // Hochentwickelte Partikel-Animation
@@ -57,36 +74,6 @@
       v.$bg-dark 100%
     );
   }
-}
-
-// Title-Wrapper-Position anpassen
-.titleWrapper {
-  margin-top: 5rem; // Abstand nach oben hinzufügen
-  width: 100%;
-  z-index: 3;
-  position: relative;
-}
-
-// Bitcoin-Wrapper neu positionieren
-.bitcoinWrapper {
-  position: relative;
-  width: 320px;
-  height: 320px;
-  margin: 4rem auto 0; // Neuer Margin statt margin: 0 auto -10rem;
-  filter: drop-shadow(0 0 40px rgba(v.$primary-color, 0.15));
-  z-index: 2;
-}
-
-// Glass Title anpassen
-.glassTitle {
-  background: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 2rem 3rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  max-width: 70%;
-  margin: auto; 
 }
 
 // JavaScript Typing-Effekt Styles
@@ -135,13 +122,12 @@
 
 // Info-Hinweis Container
 .infoHintContainer {
-  position: absolute;
-  bottom: 12rem; // Platz über dem Button
-  left: 0;
-  right: 0;
+  grid-area: info;
+  position: relative;
   width: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
   z-index: 5;
 }
 
@@ -172,29 +158,26 @@
 
 // Notiz - zentriert (korrigiert)
 .note {
-  position: absolute;
-  bottom: 8rem;
+  grid-area: note;
+  position: relative;
   width: 80%;
   max-width: 600px;
+  justify-self: center;
+  align-self: center;
   text-align: center;
-  font-size: 0.85rem;
-  color: rgba(v.$text-color-with, 0.7);
-  font-style: italic;
+  margin: 0 auto;
   z-index: 5;
-  margin: 0; // Entferne auto margin, es könnte Probleme verursachen
-  white-space: normal; // Stelle sicher, dass der Text umbrochen wird
 }
 
 // Anpassung des CTA-Button-Containers, bleibt bei 3rem
 .ctaWrapper {
-  position: absolute;
-  bottom: 3rem; 
-  left: 0;
-  right: 0;
-  z-index: 5;
+  grid-area: button;
+  position: relative;
   width: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
+  z-index: 5;
 }
 
 // Moderner CTA-Button mit Animationen

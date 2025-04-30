@@ -1,3 +1,12 @@
+// Hauptfunktionalitäten der Bitcoin3D-Komponente:
+// 1. Erstellung einer interaktiven 3D-Münze mit THREE.js und react-three-fiber
+// 2. Implementierung von Glanzeffekten und realistischen Materialien
+// 3. Reaktion auf Mausbewegungen für interaktive Rotation
+// 4. Schwebende Animation durch Float-Komponente
+// 5. Post-Processing-Effekte für Bloom (Leuchten) und ChromaticAberration (Farbverschiebung)
+// 6. Environment-Mapping für realistische Reflexionen (sunset-Preset)
+// 7. Optimierte Rendering-Performance durch Suspense und DPI-Anpassung
+
 import React, { useRef, useState, Suspense } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { 
@@ -139,6 +148,10 @@ export default function Bitcoin3D() {
           
           <EnhancedBitcoin mousePosition={mousePosition} />
           <Environment preset="sunset" background={false} />
+           {/* 
+          <Environment preset="city" background={false} /> // Stadtreflexionen
+          <Environment preset="studio" background={false} /> // Neutralere Studiolichter
+          <Environment preset="dawn" background={false} /> // Morgendämmerung */}
           
           <EffectComposer>
             <Bloom 
