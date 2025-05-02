@@ -19,14 +19,14 @@ const Landing = () => {
   const [simulate, setSimulate] = useState(false); // Zustandsvariable für Navigation zur Simulation
   
   // Liste der Bitcoin-Begriffe für die Typing-Animation
-  const words = ['Blockchain', 'Consensus', 'Mining', 'Network', 'Nodes', 
+  const words = ['..........','Blockchain', 'Consensus', 'Mining', 'Network', 'Nodes', 
                 'Difficulty', 'Transactions', 'Mempool', 'Halving'];
   
   // Typing-Effekt-Hook initialisieren mit Geschwindigkeitsparametern
   const { text } = useTypingEffect(words, { 
-    typeSpeed: 100,      // Zeit pro Zeichen beim Tippen (ms)
-    eraseSpeed: 80,      // Zeit pro Zeichen beim Löschen (ms)
-    delayBetween: 2000   // Pause zwischen Wörtern (ms)
+    typeSpeed: 80,      // Zeit pro Zeichen beim Tippen (ms)
+    eraseSpeed: 60,      // Zeit pro Zeichen beim Löschen (ms)
+    delayBetween: 1500   // Pause zwischen Wörtern (ms)
   });
   
   // Funktion zum Wechseln zur Simulationsansicht
@@ -101,7 +101,7 @@ const Landing = () => {
           transition={{ 
             duration: 2,                       // Animationsdauer in Sekunden
             ease: "easeOut",                   // Easing-Funktion (Beschleunigung)
-            delay: 5                           // Verzögerung vor Animationsstart
+            delay: 4                           // Verzögerung vor Animationsstart
           }}
         >
           <h1 className={styles.glassTitle}>   {/* Glasmorphismus-Effekt */}
@@ -112,7 +112,7 @@ const Landing = () => {
           </h1>
         </motion.div>
 
-        {/* Bitcoin 3D-Modell (50% Höhe - Hauptblickfang) */}
+        {/* Bitcoin 3D-Modell (45% Höhe - Hauptblickfang) */}
         <motion.div 
           className={styles.bitcoinWrapper}
           initial={{ opacity: 0 }}
@@ -126,7 +126,7 @@ const Landing = () => {
           <Bitcoin3D />                        {/* 3D-Komponente (separate Datei) */}
         </motion.div>
 
-        {/* Info-Hinweis (10% Höhe) */}
+        {/* Info-Hinweis (15% Höhe) */}
         <motion.div 
           className={styles.infoHintContainer}
           initial={{ opacity: 0, y: 20 }}      // Startet unsichtbar und versetzt
@@ -134,7 +134,7 @@ const Landing = () => {
           transition={{ 
             duration: 1, 
             ease: "easeOut", 
-            delay: 6                           // Erscheint nach Titel
+            delay: 5                           // Erscheint nach Titel
           }}
         >
           <div className={styles.infoHint}>
@@ -153,7 +153,7 @@ const Landing = () => {
           transition={{ 
             duration: 1, 
             ease: "easeOut", 
-            delay: 7                          // Erscheint nach Info-Hinweis
+            delay: 6                          // Erscheint nach Info-Hinweis
           }}
         >
           Diese Simulation dient ausschließlich Lernzwecken und ist vereinfacht dargestellt.
@@ -167,7 +167,7 @@ const Landing = () => {
           transition={{ 
             duration: 1, 
             ease: "easeOut",
-            delay: 8                          // Erscheint als letztes Element
+            delay: 1                          // Erscheint als letztes Element
           }}
         >
           <button 

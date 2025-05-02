@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ConsensusPage from '../pages/ConsensusPage';
-import SatoshiIntroPage from '../pages/SatoshiIntroPage';
+import SatoshiIntroPage from '../pages/Blockchain';
 import BasicMiningPage from '../pages/BasicMiningPage';
 import NodeNetworkPage from '../pages/NodeNetworkPage';
 import DifficultyAdjustmentPage from '../pages/DifficultyAdjustmentPage';
@@ -11,8 +11,8 @@ import EndPage from '../pages/EndPage';
 import styles from '../styles/Simulation.module.scss';
 
 const simulationPages = [
-  { id: 1, title: 'Konsensus-Mechanismus', component: ConsensusPage },
-  { id: 2, title: 'Satoshi Nakamoto: Einführung', component: SatoshiIntroPage },
+  { id: 1, title: 'Satoshi Nakamoto: Einführung', component: SatoshiIntroPage },
+  { id: 2, title: 'Konsensus-Mechanismus', component: ConsensusPage },
   { id: 3, title: 'Mining Grundlagen', component: BasicMiningPage },
   { id: 4, title: 'Das Bitcoin-Netzwerk', component: NodeNetworkPage },
   { id: 5, title: 'Schwierigkeitsanpassung', component: DifficultyAdjustmentPage },
