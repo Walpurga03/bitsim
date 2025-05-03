@@ -168,7 +168,7 @@ const Blockchain: React.FC<BlockchainProps> = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-        >
+          >
           <h1 className={styles.title}>Die Blockchain</h1>
           
           <p className={styles.description}>
