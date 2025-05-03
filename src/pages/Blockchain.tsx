@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from '../styles/Blockchain.module.scss';
-import { FaBitcoin, FaCalendarAlt, FaPizzaSlice, FaCubes, FaArrowRight } from 'react-icons/fa';
+import { FaBitcoin, FaCalendarAlt, FaPizzaSlice, FaCubes } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
 interface BlockchainProps {}
@@ -206,7 +206,6 @@ const Blockchain: React.FC<BlockchainProps> = () => {
                 
                 {index < blockchainEvents.length - 1 && (
                   <div className={styles.blockchainLink}>
-                    <FaArrowRight />
                   </div>
                 )}
               </React.Fragment>
