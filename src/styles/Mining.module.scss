@@ -1,0 +1,923 @@
+@use './variables' as v;
+
+// =============================================================================
+// Global Styles & Container
+// =============================================================================
+
+.pageContainer {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  background-color: v.$bg-dark;
+  color: v.$text-color-with;
+  display: flex;
+  flex-direction: column;
+}
+
+// =============================================================================
+// Mining Section
+// =============================================================================
+
+.miningSection {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: clamp(1rem, 3vw, 2rem);
+  gap: 2rem;
+}
+
+// =============================================================================
+// Intro Section
+// =============================================================================
+
+.introSection {
+  background: linear-gradient(145deg, rgba(20, 30, 50, 0.7), rgba(10, 15, 25, 0.9));
+  border-radius: 20px;
+  border: 1px solid rgba(v.$primary-color, 0.3);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  margin: clamp(2rem, 5vw, 4rem) 0;
+  
+  // Entwicklungs-Hintergrund (später entfernen)
+  background-color: rgba(30, 40, 80, 0.3);
+}
+
+.title {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  color: v.$primary-color;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.description {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+// =============================================================================
+// Enhanced Mining Info Box
+// =============================================================================
+
+.miningInfoBox {
+  background: linear-gradient(145deg, rgba(25, 35, 55, 0.7), rgba(15, 25, 45, 0.9));
+  border-radius: 16px;
+  padding: clamp(1.8rem, 4vw, 2.5rem);
+  border: 1px solid rgba(v.$primary-color, 0.15);
+  max-width: 800px;
+  margin: 0 auto;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2),
+              0 0 40px rgba(v.$primary-color, 0.05);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(v.$primary-color, 0.1) 0%, transparent 70%);
+    opacity: 0.5;
+    z-index: 0;
+  }
+  
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 1.8rem;
+    font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+    color: v.$text-color-with;
+    position: relative;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid rgba(v.$primary-color, 0.2);
+    
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -1px;
+      width: 80px;
+      height: 3px;
+      background: v.$primary-color;
+      border-radius: 3px;
+    }
+  }
+  
+  .infoIcon {
+    color: v.$primary-color;
+    font-size: 1.3em;
+    filter: drop-shadow(0 2px 4px rgba(v.$primary-color, 0.5));
+  }
+}
+
+.infoHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.infoButton {
+  background: transparent;
+  border: none;
+  color: v.$primary-color;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+  display: flex;
+  align-items: center;
+  
+  &:hover {
+    transform: scale(1.1);
+    color: v.$hover-color;
+  }
+}
+
+.miningStepsList {
+  counter-reset: step-counter;
+  padding-left: 0;
+  list-style-type: none;
+  position: relative;
+  z-index: 1;
+  
+  li {
+    margin-bottom: 1.2rem;
+    padding-left: 3.5rem;
+    line-height: 1.5;
+    font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    min-height: 2.5rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    &::before {
+      counter-increment: step-counter;
+      content: counter(step-counter);
+      position: absolute;
+      left: 0;
+      top: -0.3rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      background: linear-gradient(135deg, v.$primary-color, v.$hover-color);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #000;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+    }
+    
+    &:hover::before {
+      transform: scale(1.1);
+    }
+    
+    &::after {
+      content: "";
+      position: absolute;
+      left: 1.25rem;
+      top: 2.2rem;
+      bottom: -1rem;
+      width: 2px;
+      background: linear-gradient(to bottom, rgba(v.$primary-color, 0.5), transparent);
+      z-index: -1;
+    }
+    
+    &:last-child::after {
+      display: none;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    li {
+      padding-left: 3rem;
+      margin-bottom: 1.5rem;
+      
+      &::before {
+        width: 2.2rem;
+        height: 2.2rem;
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+// Enhance with step icons for each step
+.miningStepsList li:nth-child(1)::before { content: "1"; }
+.miningStepsList li:nth-child(2)::before { content: "2"; }
+.miningStepsList li:nth-child(3)::before { content: "3"; }
+.miningStepsList li:nth-child(4)::before { content: "4"; }
+.miningStepsList li:nth-child(5)::before { content: "5"; }
+
+.miningIntro {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.miningStepsPreview {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.stepPreview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  
+  .stepIcon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, v.$primary-color, v.$hover-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+    color: #000;
+  }
+  
+  p {
+    margin: 0;
+  }
+}
+
+.nextButton {
+  padding: clamp(0.7rem, 1.5vw, 0.9rem) clamp(1.5rem, 3vw, 2rem);
+  background: linear-gradient(to right, v.$primary-color, #f8a845);
+  color: #000;
+  font-weight: 700;
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(v.$primary-color, 0.3);
+  align-self: center;
+  margin-top: 1rem;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(v.$primary-color, 0.4);
+  }
+  
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+// =============================================================================
+// Mining Simulation
+// =============================================================================
+
+.miningSimulation {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto;
+  gap: clamp(2rem, 4vw, 3rem);
+  margin: clamp(1rem, 5vw, 3rem) 0;
+  
+  // Entwicklungs-Hintergrund (später entfernen)
+  background-color: rgba(50, 30, 80, 0.3);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border-radius: 20px;
+}
+
+.miningSimulationExplanation {
+  background: linear-gradient(145deg, rgba(25, 35, 55, 0.7), rgba(15, 25, 45, 0.9));
+  border-radius: 16px;
+  padding: clamp(1.5rem, 3vw, 2rem);
+  margin: 1.5rem 0;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15), 0 0 15px rgba(v.$primary-color, 0.1);
+  border: 1px solid rgba(v.$primary-color, 0.15);
+  
+  .explanationHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+    
+    h3 {
+      font-size: clamp(1.1rem, 2.2vw, 1.3rem);
+      margin: 0;
+      color: v.$primary-color;
+    }
+    
+    .infoIcon {
+      color: v.$primary-color;
+      font-size: 1.2rem;
+    }
+  }
+  
+  p {
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+  
+  .miningStepsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+    width: 100%;
+    box-sizing: border-box;
+    
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr; // Eine Spalte auf kleinen Bildschirmen
+      width: 100%; // Volle Breite des Containers
+      padding: 0; // Padding entfernen
+      gap: 0.8rem; // Kleinerer Abstand zwischen den Elementen
+    }
+  }
+  
+  .miningStep {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    border-radius: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    word-break: break-word; // Erlaubt Umbruch bei langen Wörtern
+    
+    @media (max-width: 768px) {
+      padding: 0.8rem;
+      flex-direction: column; // Auf kleineren Bildschirmen Elemente stapeln
+      
+      // Um sicherzustellen, dass Nummern inline mit Text auf mobil bleiben
+      flex-direction: row;
+      align-items: flex-start;
+    }
+    
+    .stepNumber {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: v.$primary-color;
+      color: #000;
+      border-radius: 50%;
+      font-weight: 700;
+      flex-shrink: 0;
+      
+      @media (max-width: 768px) {
+        width: 24px; // Etwas kleiner auf Mobil
+        height: 24px;
+        min-width: 24px; // Verhindert Schrumpfen
+      }
+    }
+    
+    p {
+      margin: 0;
+      font-size: 0.95rem;
+      
+      @media (max-width: 480px) {
+        font-size: 0.9rem; // Etwas kleinere Schrift auf sehr kleinen Geräten
+      }
+    }
+  }
+  
+  .targetExplanation {
+    background: rgba(v.$secondary-color, 0.1);
+    border-left: 3px solid v.$secondary-color;
+    padding: 0.8rem 1rem;
+    border-radius: 0 8px 8px 0;
+    margin-top: 1rem;
+    
+    p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+// =============================================================================
+// Mining Overview Section (Wallet & Blockchain)
+// =============================================================================
+
+.miningOverviewSection {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  
+  @media (max-width: 1100px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.walletsContainer {
+  background: linear-gradient(145deg, rgba(25, 35, 55, 0.7), rgba(15, 25, 45, 0.9));
+  border-radius: 16px;
+  padding: clamp(1.2rem, 2.5vw, 1.8rem);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.walletCard {
+  h2 {
+    font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+    margin-bottom: 1.2rem;
+    color: v.$primary-color;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.8rem;
+  }
+  
+  p {
+    margin: 0.8rem 0;
+    font-size: clamp(0.9rem, 1.8vw, 1rem);
+    
+    strong {
+      margin-right: 0.5rem;
+      color: v.$primary-color;
+    }
+  }
+}
+
+.visualBlockchain {
+  background: linear-gradient(145deg, rgba(25, 35, 55, 0.7), rgba(15, 25, 45, 0.9));
+  border-radius: 16px;
+  padding: clamp(1.2rem, 2.5vw, 1.8rem);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.blockchainTitle {
+  font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+  margin-bottom: 1.2rem;
+  color: v.$primary-color;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.8rem;
+}
+
+.blockchainDisplay {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 0;
+  }
+}
+
+.emptyChain {
+  padding: 2rem;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.block {
+  background: linear-gradient(145deg, rgba(30, 40, 60, 0.6), rgba(25, 35, 55, 0.8));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 1rem;
+  position: relative;
+  
+  @media (min-width: 768px) {
+    width: 150px;
+    margin-bottom: 0;
+    flex: 0 0 auto;
+  }
+  
+  &.latestBlock {
+    box-shadow: 0 0 20px rgba(v.$primary-color, 0.2);
+    border-color: rgba(v.$primary-color, 0.3);
+  }
+}
+
+.blockHeader {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.5rem;
+  border-radius: 8px 8px 0 0;
+  margin: -1rem -1rem 0.8rem -1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.blockDetails {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  
+  p {
+    margin: 0.5rem 0;
+    display: flex;
+    justify-content: space-between;
+    
+    span {
+      font-family: monospace;
+      font-size: 0.9em;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 0.1rem 0.3rem;
+      border-radius: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100px;
+    }
+  }
+}
+
+.blockLink {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 0.5rem;
+  
+  @media (min-width: 768px) {
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+  }
+}
+
+// =============================================================================
+// Mining Action Section (Controls & Results)
+// =============================================================================
+
+.miningActionSection {
+  // Entwicklungs-Hintergrund (später entfernen)
+  background-color: rgba(80, 30, 60, 0.3);
+  padding: 1rem;
+  border-radius: 16px;
+}
+
+.miningControls {
+  background: linear-gradient(145deg, rgba(25, 35, 55, 0.7), rgba(15, 25, 45, 0.9));
+  border-radius: 16px;
+  padding: clamp(1.5rem, 3vw, 2rem);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.mineButton {
+  padding: clamp(0.7rem, 1.5vw, 0.9rem) clamp(1.5rem, 3vw, 2rem);
+  background: linear-gradient(to right, v.$primary-color, #f8a845);
+  color: #000;
+  font-weight: 700;
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(v.$primary-color, 0.3);
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: linear-gradient(to right, #8a8a8a, #aaaaaa);
+    box-shadow: none;
+  }
+}
+
+.difficultyInfo {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 1rem;
+  
+  p {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  .difficultyLevel, .targetValue {
+    color: v.$primary-color;
+    font-weight: 600;
+  }
+  
+  .difficultyHint {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+// Mining Block Result
+.miningBlock {
+  background: linear-gradient(145deg, rgba(25, 35, 55, 0.7), rgba(15, 25, 45, 0.9));
+  border-radius: 16px;
+  padding: clamp(1.5rem, 3vw, 2rem);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  
+  h2 {
+    text-align: center;
+    font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+    margin-bottom: 1.5rem;
+    color: v.$primary-color;
+  }
+  
+  &.foundAnimation {
+    border-color: rgba(0, 255, 0, 0.2);
+  }
+  
+  &.notFoundAnimation {
+    border-color: rgba(255, 0, 0, 0.2);
+  }
+}
+
+// =============================================================================
+// Hash Comparison Styling
+// =============================================================================
+
+.hashComparison {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: clamp(1.2rem, 3vw, 1.8rem);
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.comparisonRow {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  &:last-of-type {
+    border-bottom: none;
+  }
+}
+
+.comparisonLabel {
+  font-weight: 600;
+  color: v.$primary-color;
+  min-width: 160px;
+  margin-bottom: 0.5rem;
+  
+  @media (min-width: 768px) {
+    margin-bottom: 0;
+  }
+}
+
+.comparisonValue {
+  flex-grow: 1;
+  font-family: monospace;
+  word-break: break-all;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.8rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  
+  .targetValue {
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .hashValue {
+    &.successHash {
+      color: #4caf50;
+    }
+    
+    &.failureHash {
+      color: #f44336;
+    }
+  }
+}
+
+.hashExplanation {
+  background: linear-gradient(145deg, 
+                rgba(30, 40, 60, 0.6), 
+                rgba(25, 35, 55, 0.8));
+  border-radius: 10px;
+  padding: 1.2rem;
+  margin: 1.5rem 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  
+  p {
+    margin: 0;
+    line-height: 1.5;
+  }
+  
+  .highlight {
+    font-weight: 700;
+    color: v.$primary-color;
+  }
+  
+  .successIcon, .failureIcon {
+    font-size: 1.5rem;
+    min-width: 24px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .successIcon {
+    color: #4caf50;
+  }
+  
+  .failureIcon {
+    color: #f44336;
+  }
+}
+
+.miningStats {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .statItem {
+    background: rgba(0, 0, 0, 0.15);
+    padding: 0.8rem;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    
+    .statLabel {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 0.3rem;
+    }
+    
+    .statValue {
+      font-weight: 600;
+      color: v.$primary-color;
+    }
+  }
+}
+
+// Anpassungen für die Erfolgs- und Misserfolgsanimation
+.foundAnimation {
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2),
+              0 0 15px rgba(76, 175, 80, 0.2);
+}
+
+.notFoundAnimation {
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2),
+              0 0 15px rgba(244, 67, 54, 0.2);
+}
+
+// =============================================================================
+// Mining Process Visualizer
+// =============================================================================
+
+.miningProcessVisualizer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.miningAnimation {
+  background: linear-gradient(145deg, rgba(30, 40, 60, 0.9), rgba(20, 30, 50, 0.95));
+  border-radius: 20px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 100px rgba(v.$primary-color, 0.1);
+  
+  .miningIcon {
+    font-size: 3rem;
+    color: v.$primary-color;
+  }
+  
+  .hammer {
+    display: block;
+    transform-origin: 90% 90%;
+  }
+  
+  .miningProgress {
+    width: 100%;
+    height: 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    
+    .miningProgressBar {
+      height: 100%;
+      background: linear-gradient(to right, v.$primary-color, #f8a845);
+      border-radius: 10px;
+      width: 0%;
+    }
+  }
+  
+  p {
+    margin: 0;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+// =============================================================================
+// Block Elements Section
+// =============================================================================
+
+.blockElements {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  padding: 1.2rem;
+  margin: 1.5rem 0;
+  
+  h4 {
+    margin: 0 0 1rem 0;
+    color: v.$primary-color;
+    font-size: 1rem;
+  }
+}
+
+.elementsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.blockElement {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  
+  .elementIcon {
+    font-size: 1.2rem;
+    margin-bottom: 0.2rem;
+  }
+  
+  .elementName {
+    font-weight: 600;
+    color: v.$primary-color;
+    margin-bottom: 0.3rem;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+}
