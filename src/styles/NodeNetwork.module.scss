@@ -1,0 +1,482 @@
+@use './variables' as v;
+
+// =============================================================================
+// Hauptseitenlayout
+// =============================================================================
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 4vw, 3rem);
+  padding: clamp(1.5rem, 5vw, 2.5rem);
+  max-width: 1200px;
+  margin: 0 auto;
+  color: v.$text-color-white;
+}
+
+// =============================================================================
+// Intro-Sektion
+// =============================================================================
+
+.introSection {
+  text-align: center;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+  
+  .title {
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: linear-gradient(90deg, v.$primary-color, v.$hover-color);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+  }
+  
+  .description {
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+}
+
+// =============================================================================
+// Node Info Box
+// =============================================================================
+
+.nodeInfoBox {
+  background: linear-gradient(145deg, rgba(25, 35, 55, 0.7), rgba(15, 25, 45, 0.9));
+  border-radius: 16px;
+  padding: clamp(1.5rem, 3vw, 2rem);
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15), 0 0 15px rgba(v.$primary-color, 0.1);
+  border: 1px solid rgba(v.$primary-color, 0.15);
+  
+  h3 {
+    font-size: clamp(1.2rem, 2.2vw, 1.4rem);
+    margin-bottom: 1.2rem;
+    color: v.$primary-color;
+    text-align: center;
+  }
+}
+
+.nodeTypesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  
+  @media (max-width: 580px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.nodeTypeCard {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 1.2rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+  
+  h4 {
+    color: v.$primary-color;
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+}
+
+// =============================================================================
+// Netzwerk-Container
+// =============================================================================
+
+.networkContainer {
+  background: linear-gradient(145deg, rgba(25, 35, 55, 0.7), rgba(15, 25, 45, 0.9));
+  border-radius: 16px;
+  padding: clamp(1.5rem, 3vw, 2rem);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15), 0 0 15px rgba(v.$primary-color, 0.1);
+  border: 1px solid rgba(v.$primary-color, 0.15);
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+  
+  .networkTitle {
+    font-size: clamp(1.2rem, 2.2vw, 1.4rem);
+    margin-bottom: 1rem;
+    color: v.$primary-color;
+    text-align: center;
+  }
+  
+  .networkDescription {
+    text-align: center;
+    margin-bottom: 2rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+}
+
+// =============================================================================
+// Netzwerk-Visualisierung
+// =============================================================================
+
+.networkVisualization {
+  position: relative;
+  height: 250px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.networkNode {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
+  z-index: 2;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  background: #3a4b6b;
+  color: white;
+  opacity: 1;
+  transition: background 0.3s, box-shadow 0.3s, opacity 0.3s;
+
+  &.minerNode {
+    background: v.$primary-color;
+    color: #111;
+  }
+  
+  &.fullNode {
+    background: #3a4b6b;
+    color: white;
+  }
+  
+  &.disconnected {
+    opacity: 0.4;
+    filter: grayscale(1);
+  }
+  
+  &.hasLatestBlock {
+    animation: pulseNode 1.5s infinite ease-in-out;
+    box-shadow: 0 0 0 2px rgba(v.$primary-color, 0.6), 0 0 10px rgba(v.$primary-color, 0.4);
+  }
+  
+  &.propagating {
+    transition: all 0.8s ease;
+  }
+
+  &:not(.hasLatestBlock) {
+    background: #5a6b8b; // Helleres Blau
+    opacity: 0.85;       // Etwas transparenter, aber gut sichtbar
+    filter: brightness(1.15);
+  }
+}
+
+.connectionLine {
+  position: absolute;
+  height: 2px;
+  background: rgba(58, 75, 107, 0.4);
+  transform-origin: left center;
+  z-index: 1;
+  transition: background 0.8s ease;
+  
+  &.activeLine {
+    background: rgba(v.$primary-color, 0.7);
+    animation: pulseLine 1.5s infinite ease-in-out;
+  }
+}
+
+@keyframes pulseNode {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.15); }
+}
+
+@keyframes pulseLine {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+// =============================================================================
+// Propagation Explanation
+// =============================================================================
+
+.propagationExplanation {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  padding: 0.8rem;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  
+  p {
+    margin: 0;
+    
+    strong {
+      color: v.$primary-color;
+    }
+  }
+}
+
+// =============================================================================
+// Network Action
+// =============================================================================
+
+.networkAction {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+.mineButton {
+  background: linear-gradient(135deg, v.$primary-color, v.$hover-color);
+  color: #000;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+// =============================================================================
+// Mining Block Result
+// =============================================================================
+
+.miningBlock {
+  background: linear-gradient(145deg, rgba(25, 35, 55, 0.7), rgba(15, 25, 45, 0.9));
+  border-radius: 16px;
+  padding: clamp(1.5rem, 3vw, 2rem);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  margin: 1.5rem 0;
+  text-align: center;
+  
+  h2 {
+    font-size: 1.3rem;
+    margin-bottom: 1.2rem;
+    color: v.$text-color-white;
+  }
+  
+  &.foundAnimation {
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2),
+                0 0 15px rgba(76, 175, 80, 0.2);
+  }
+  
+  &.notFoundAnimation {
+    border: 1px solid rgba(244, 67, 54, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2),
+                0 0 15px rgba(244, 67, 54, 0.2);
+  }
+}
+
+.hashTarget {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1.2rem;
+  border-radius: 12px;
+  margin-bottom: 1.2rem;
+  font-family: monospace;
+  
+  .hashDisplay, .targetDisplay {
+    margin-bottom: 0.5rem;
+  }
+  
+  .hash, .target {
+    padding: 0.4rem 0.8rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    margin-left: 0.5rem;
+  }
+  
+  .validHash {
+    color: #4caf50;
+  }
+  
+  .invalidHash {
+    color: #f44336;
+  }
+  
+  .mustBeBelow {
+    display: block;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    margin: 0.8rem 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+}
+
+.blockButtons {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+  gap: 1rem;
+}
+
+// =============================================================================
+// Info Box
+// =============================================================================
+
+.infoBox {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  padding: 1.2rem;
+  margin: 1.5rem 0;
+  
+  h3 {
+    color: v.$primary-color;
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
+  }
+  
+  p {
+    margin: 0;
+    line-height: 1.5;
+    font-size: 0.95rem;
+  }
+}
+
+// =============================================================================
+// Network Legend
+// =============================================================================
+
+.networkLegend {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+  
+  .legendItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    .legendIcon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      &.minerNode {
+        background: v.$primary-color;
+        color: #111;
+      }
+      
+      &.fullNode {
+        background: #3a4b6b;
+        color: white;
+      }
+      
+      &.hasLatestBlock {
+        background: rgba(v.$primary-color, 0.3);
+        border: 2px solid v.$primary-color;
+        color: v.$primary-color;
+      }
+    }
+    
+    span {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+// =============================================================================
+// Responsive Anpassungen
+// =============================================================================
+
+@media (max-width: 800px) {
+  .networkVisualization {
+    height: 180px;
+  }
+  .networkNode {
+    width: 18px;
+    height: 18px;
+  }
+  .nodeTypesGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .networkContainer {
+    padding: 1rem;
+  }
+  .infoBox {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .networkLegend {
+    justify-content: center;
+    margin-top: 1rem;
+    gap: 1rem;
+  }
+  
+  .blockButtons {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  
+  .mineButton {
+    width: 100%;
+    max-width: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .networkVisualization {
+    height: 120px;
+  }
+  .networkNode {
+    width: 14px;
+    height: 14px;
+  }
+  .introSection, .nodeInfoBox, .networkContainer {
+    padding: 0.5rem;
+  }
+  .hashTarget {
+    padding: 0.8rem;
+    
+    .hash, .target {
+      font-size: 0.9rem;
+      display: block;
+      margin: 0.5rem 0 0 0;
+      word-break: break-all;
+    }
+  }
+  
+  .networkVisualization {
+    height: 200px;
+  }
+}

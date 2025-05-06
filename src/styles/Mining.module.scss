@@ -10,7 +10,7 @@
   overflow-x: hidden;
   position: relative;
   background-color: v.$bg-dark;
-  color: v.$text-color-with;
+  color: v.$text-color-white;
   display: flex;
   flex-direction: column;
 }
@@ -42,9 +42,8 @@
   flex-direction: column;
   gap: clamp(1.5rem, 3vw, 2.5rem);
   margin: clamp(2rem, 5vw, 4rem) 0;
-  
-  // Entwicklungs-Hintergrund (später entfernen)
-  background-color: rgba(30, 40, 80, 0.3);
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .title {
@@ -77,6 +76,8 @@
               0 0 40px rgba(v.$primary-color, 0.05);
   position: relative;
   overflow: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
   
   &::before {
     content: "";
@@ -96,7 +97,7 @@
     gap: 0.7rem;
     margin-bottom: 1.8rem;
     font-size: clamp(1.2rem, 2.5vw, 1.5rem);
-    color: v.$text-color-with;
+    color: v.$text-color-white;
     position: relative;
     padding-bottom: 0.8rem;
     border-bottom: 1px solid rgba(v.$primary-color, 0.2);
@@ -217,6 +218,13 @@
   }
 }
 
+// Verbesserte Media Queries für die Mining-Schritte
+.miningStepsGrid {
+  @media (max-width: 480px) {
+    gap: 0.6rem;
+  }
+}
+
 // Enhance with step icons for each step
 .miningStepsList li:nth-child(1)::before { content: "1"; }
 .miningStepsList li:nth-child(2)::before { content: "2"; }
@@ -299,12 +307,12 @@
   grid-template-columns: 1fr;
   grid-template-rows: auto auto;
   gap: clamp(2rem, 4vw, 3rem);
-  margin: clamp(1rem, 5vw, 3rem) 0;
-  
-  // Entwicklungs-Hintergrund (später entfernen)
-  background-color: rgba(50, 30, 80, 0.3);
+  margin: clamp(1rem, 5vw, 3rem) auto; // 'auto' für horizontale Zentrierung
   padding: clamp(1.5rem, 3vw, 2.5rem);
   border-radius: 20px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .miningSimulationExplanation {
@@ -425,9 +433,20 @@
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: clamp(1.5rem, 3vw, 2.5rem);
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  
   
   @media (max-width: 1100px) {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 1rem; // Reduziert den Abstand auf sehr kleinen Geräten
+    margin-left: -1rem;
   }
 }
 
@@ -437,6 +456,15 @@
   padding: clamp(1.2rem, 2.5vw, 1.8rem);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.05);
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0 auto;
+  
+  @media (max-width: 800px) {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
 }
 
 .walletCard {
@@ -457,6 +485,22 @@
       color: v.$primary-color;
     }
   }
+  
+  width: 100%;
+  
+  @media (max-width: 800px) {
+    max-width: 360px; // Begrenzt die Breite auf mobilen Geräten
+    margin: 0 auto; // Zentriert den Inhalt
+    
+    p {
+      text-align: center; // Zentriert den Text in der Wallet-Karte
+      margin: 0.8rem 0; // Verbessert den vertikalen Abstand
+    }
+    
+    h2 {
+      text-align: center; // Zentriert die Überschrift
+    }
+  }
 }
 
 .visualBlockchain {
@@ -465,6 +509,9 @@
   padding: clamp(1.2rem, 2.5vw, 1.8rem);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.05);
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0 auto;
 }
 
 .blockchainTitle {
@@ -497,71 +544,134 @@
 }
 
 .block {
-  background: linear-gradient(145deg, rgba(30, 40, 60, 0.6), rgba(25, 35, 55, 0.8));
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(145deg, rgba(25, 35, 55, 0.8), rgba(15, 25, 45, 0.9));
   border-radius: 12px;
-  padding: clamp(1rem, 2vw, 1.5rem);
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin-bottom: 1rem;
+  padding: 1.2rem;
+  margin-bottom: 2.5rem;
   position: relative;
-  
-  @media (min-width: 768px) {
-    width: 150px;
-    margin-bottom: 0;
-    flex: 0 0 auto;
-  }
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(v.$primary-color, 0.15);
   
   &.latestBlock {
-    box-shadow: 0 0 20px rgba(v.$primary-color, 0.2);
-    border-color: rgba(v.$primary-color, 0.3);
+    background: linear-gradient(145deg, rgba(35, 45, 65, 0.8), rgba(25, 35, 55, 0.9));
+    border: 1px solid rgba(v.$primary-color, 0.3);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2), 0 0 15px rgba(v.$primary-color, 0.1);
   }
 }
 
 .blockHeader {
-  background: rgba(0, 0, 0, 0.3);
-  padding: 0.5rem;
-  border-radius: 8px 8px 0 0;
-  margin: -1rem -1rem 0.8rem -1rem;
-  text-align: center;
-  font-size: 0.9rem;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(v.$primary-color, 0.2);
+  font-size: 1.1rem;
+  color: v.$primary-color;
 }
 
 .blockDetails {
-  font-size: 0.8rem;
-  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.blockHashContainer, .blockPrevContainer {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 0.8rem;
+}
+
+.blockHashLabel, .blockPrevLabel {
+  font-weight: 600;
+  margin: 0 0 0.4rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: v.$primary-color;
+}
+
+.chainIcon {
+  font-size: 1.2rem;
+}
+
+.blockHashValue, .blockPrevValue {
+  font-family: monospace;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.6rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  word-break: break-all;
+  margin: 0;
   
-  p {
-    margin: 0.5rem 0;
-    display: flex;
-    justify-content: space-between;
-    
-    span {
-      font-family: monospace;
-      font-size: 0.9em;
-      background: rgba(0, 0, 0, 0.2);
-      padding: 0.1rem 0.3rem;
-      border-radius: 4px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 100px;
-    }
+  @media (max-width: 480px) {
+    font-size: 0.8rem;
+  }
+}
+
+.blockNonceValue {
+  margin: 0;
+  
+  span {
+    font-weight: 600;
+    color: v.$primary-color;
   }
 }
 
 .blockLink {
-  text-align: center;
-  color: rgba(255, 255, 255, 0.5);
-  margin-top: 0.5rem;
-  
-  @media (min-width: 768px) {
-    position: absolute;
-    right: -20px;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 2;
-  }
+  position: relative;
+  height: 2.5rem;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.chainConnection {
+  position: absolute;
+  bottom: -2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  z-index: 1;
+}
+
+.chainLine {
+  height: 1.5rem;
+  width: 2px;
+  background: v.$primary-color;
+}
+
+.chainArrow {
+  color: v.$primary-color;
+  font-size: 1.2rem;
+  margin-top: -0.2rem;
+  animation: pulseArrow 1.5s infinite ease-in-out;
+}
+
+.chainExplanation {
+  position: absolute;
+  background: rgba(v.$primary-color, 0.1);
+  border: 1px solid rgba(v.$primary-color, 0.2);
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  top: 1.8rem;
+  color: v.$primary-color;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+.chainConnection:hover .chainExplanation {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes pulseArrow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
 }
 
 // =============================================================================
@@ -569,10 +679,18 @@
 // =============================================================================
 
 .miningActionSection {
-  // Entwicklungs-Hintergrund (später entfernen)
-  background-color: rgba(80, 30, 60, 0.3);
   padding: 1rem;
   border-radius: 16px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+
+ 
+  @media (max-width: 476px) {
+    margin-left: -0.5rem;
+  }
+ 
 }
 
 .miningControls {
@@ -647,6 +765,16 @@
   padding: clamp(1.5rem, 3vw, 2rem);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.05);
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0 auto;
+  
+  @media (max-width: 480px) {
+    padding: 0rem;
+  }
   
   h2 {
     text-align: center;
@@ -674,6 +802,16 @@
   padding: clamp(1.2rem, 3vw, 1.8rem);
   margin-bottom: 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.05);
+
+  @media (max-width: 480px) {
+    padding: 0.8rem;
+    
+    .comparisonValue {
+      font-size: 0.85rem;
+      overflow-x: auto;
+      max-width: 100%;
+    }
+  }
 }
 
 .comparisonRow {
@@ -714,16 +852,22 @@
   font-size: 0.95rem;
   
   .targetValue {
+    font-family: monospace;
+    font-weight: 600;
+    letter-spacing: 0.5px;
     color: rgba(255, 255, 255, 0.9);
   }
   
   .hashValue {
+    font-family: monospace;
+    letter-spacing: 0.5px;
+
     &.successHash {
-      color: #4caf50;
+      text-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
     }
     
     &.failureHash {
-      color: #f44336;
+      text-shadow: 0 0 8px rgba(244, 67, 54, 0.4);
     }
   }
 }
@@ -824,6 +968,8 @@
   align-items: center;
   z-index: 1000;
   backdrop-filter: blur(5px);
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .miningAnimation {
@@ -838,6 +984,11 @@
   gap: 1.5rem;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 100px rgba(v.$primary-color, 0.1);
   
+  @media (max-width: 480px) {
+    padding: 1.5rem;
+    width: 95%;
+  }
+  
   .miningIcon {
     font-size: 3rem;
     color: v.$primary-color;
@@ -846,6 +997,7 @@
   .hammer {
     display: block;
     transform-origin: 90% 90%;
+    will-change: transform, width;
   }
   
   .miningProgress {
@@ -860,6 +1012,7 @@
       background: linear-gradient(to right, v.$primary-color, #f8a845);
       border-radius: 10px;
       width: 0%;
+      will-change: transform, width;
     }
   }
   

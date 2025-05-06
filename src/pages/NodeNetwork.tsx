@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import styles from '../styles/SatoshiPage.module.scss';
+import { motion } from 'framer-motion';
+import styles from '../styles/NodeNetwork.module.scss'; 
 import { mineBlock, DIFFICULTY_LEVELS } from '../utils/miningUtils';
-import { FaServer, FaDesktop, FaCheck } from 'react-icons/fa';
 
 interface MiningResult {
   hash: string;
@@ -21,6 +21,7 @@ interface Node {
   type: 'miner' | 'full';
   connected: boolean;
   hasLatestBlock: boolean;
+  isReceivingBlock?: boolean;
   connections: number[]; // Array von Node-IDs, mit denen dieser Node verbunden ist
 }
 
@@ -40,7 +41,8 @@ const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({}) => {
   const [isMobile, setIsMobile] = useState(false);
   const [nodes, setNodes] = useState<Node[]>([]);
   const [propagatingBlock, setPropagatingBlock] = useState(false);
-  const [networkStats, setNetworkStats] = useState({
+  const [hoveredNode, setHoveredNode] = useState<number | null>(null);
+  const [_networkStats, setNetworkStats] = useState({
     totalNodes: 0,
     miners: 0,
     fullNodes: 0,
@@ -341,179 +343,149 @@ const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({}) => {
     }, 800);
   };
 
+  const handleButtonClick = () => {
+    if (hasLatestBlock) {
+      simulateBlockPropagation();
+    } else {
+      simulateMining();
+    }
+  };
+
+  const hasLatestBlock = nodes.some(node => node.hasLatestBlock);
+
   return (
     <div className={styles.page}>
       {/* Intro-Bereich */}
-      <div className={styles.introSection}>
-        <h1 className={styles.title}>Das Bitcoin-Netzwerk</h1>
-        <p className={styles.description}>
-          Das Bitcoin-Netzwerk besteht aus tausenden von Nodes (Knotenpunkten), die zusammenarbeiten, 
-          um Transaktionen zu bestätigen und die Blockchain zu sichern. Diese dezentrale Struktur 
-          ist das Herzstück von Bitcoin - es gibt keine zentrale Kontrolle.
-        </p>
-      </div>
-
-      {/* Node-Informationen - einfacher */}
-      <div className={styles.nodeInfoBox}>
-        <h3>Typen von Nodes</h3>
-        <div className={styles.nodeTypesGrid}>
-          <div className={styles.nodeTypeCard}>
-            <h4>Miner Nodes</h4>
-            <p>Stellen neue Blöcke her und erhalten Block-Belohnungen.</p>
-          </div>
-          <div className={styles.nodeTypeCard}>
-            <h4>Full Nodes</h4>
-            <p>Speichern und validieren die gesamte Blockchain und überprüfen alle Regeln.</p>
-          </div>
-        </div>
-      </div>
-      
-      {/* Vereinfachte Netzwerk-Visualisierung */}
-      <div className={styles.networkContainer} ref={networkRef}>
-        <h3 className={styles.networkTitle}>
-          Peer-to-Peer Netzwerk
-        </h3>
-        
-        <p className={styles.networkDescription}>
-          Im Bitcoin-Netzwerk ist jeder Teilnehmer (Node) direkt mit mehreren anderen verbunden. 
-          Neue Blöcke werden von Minern erstellt und dann durch das gesamte Netzwerk verbreitet.
-          Auch Miner sind untereinander verbunden, damit neue Blöcke schnell weitergegeben werden können.
-        </p>
-        
-        <div className={styles.networkVisualization}>
-          {/* Verbindungslinien zuerst rendern, damit sie unter den Nodes liegen */}
-          {nodes.map((node, idx) => 
-            // Für jeden Node seine Verbindungen visualisieren
-            node.connections.map(connectedIdx => 
-              // Wir zeigen jede Verbindung nur einmal, indem wir prüfen, ob der Index kleiner ist
-              idx < connectedIdx ? (
-                <div 
-                  key={`conn-${idx}-${connectedIdx}`} 
-                  className={`${styles.connectionLine} ${(node.hasLatestBlock && nodes[connectedIdx].hasLatestBlock) ? styles.activeLine : ''}`}
-                  style={{
-                    left: `${node.x}px`,
-                    top: `${node.y}px`,
-                    width: `${Math.hypot(nodes[connectedIdx].x - node.x, nodes[connectedIdx].y - node.y)}px`,
-                    transform: `rotate(${Math.atan2(nodes[connectedIdx].y - node.y, nodes[connectedIdx].x - node.x)}rad)`
-                  }}
-                />
-              ) : null
-            )
-          )}
-          
-          {/* Dann die Nodes rendern */}
-          {nodes.map(node => (
-            <div 
-              key={node.id}
-              className={`${styles.networkNode} ${styles[node.type+'Node']} 
-                ${!node.connected ? styles.disconnected : ''} 
-                ${node.hasLatestBlock ? styles.hasLatestBlock : ''} 
-                ${propagatingBlock ? styles.propagating : ''}`}
-              style={{
-                left: `${node.x}px`,
-                top: `${node.y}px`
-              }}
-            >
-              {node.type === 'miner' && <FaServer size={12} />}
-              {node.type === 'full' && <FaDesktop size={12} />}
-            </div>
-          ))}
-        </div>
-        
-        <div className={styles.propagationExplanation}>
-          {propagatingBlock ? (
-            <p><strong>Block wird verbreitet!</strong> Beobachte, wie der neue Block von Node zu Node weitergegeben wird.</p>
-          ) : miningResult && miningResult.found ? (
-            <p>Block erfolgreich durch das Netzwerk verbreitet! Alle verbundenen Nodes haben jetzt die aktuellen Daten.</p>
-          ) : (
-            <p>Klicke auf "Block minen & verbreiten", um zu sehen, wie ein neuer Block im Netzwerk verteilt wird.</p>
-          )}
-        </div>
-
-           {/* Simplified mining interface */}
-      {!miningResult ? (
-        <div className={styles.networkAction}>
-          <button 
-            className={styles.mineButton} 
-            onClick={simulateMining}
-            disabled={isAnimating}
-          >
-            {isAnimating ? 'Mining läuft...' : 'Block minen & verbreiten'}
-          </button>
-        </div>
-      ) : (
-        <div className={`${styles.miningBlock} ${miningResult.found ? styles.foundAnimation : styles.notFoundAnimation}`}>
-          <h2>Mining Block #{miningResult.blockNumber}</h2>
-          <div className={styles.hashTarget}>
-            <div className={styles.hashDisplay}>
-              <strong>Hash:</strong> 
-              <span className={`${styles.hash} ${miningResult.found ? styles.validHash : styles.invalidHash}`}>
-                {miningResult.hash}
-              </span>
-            </div>
-            
-            <span className={styles.mustBeBelow}>
-              muss kleiner sein als
-            </span>
-            
-            <div>
-              <strong>Target:</strong>
-              <span className={styles.target}>
-                {miningResult.target}
-              </span>
-            </div>
-          </div>
-          
-          <p><strong>Status:</strong> {
-            propagatingBlock 
-              ? "Block wird im Netzwerk verbreitet..." 
-              : miningResult.found 
-                ? "Block erfolgreich im Netzwerk verbreitet! ✅" 
-                : "Kein gültiger Block gefunden ❌"
-          }</p>
-          
-          <div className={styles.blockButtons}>
-            <button 
-              className={styles.mineButton} 
-              onClick={simulateMining}
-              disabled={isAnimating || propagatingBlock}
-            >
-              {isAnimating ? 'Mining läuft...' : miningResult.found ? 'Nächsten Block minen' : 'Erneut versuchen'}
-            </button>
-          </div>
-        </div>
-      )}
-
-        {/* Neue Info-Box für Netzwerk-Konsens */}
-        <div className={styles.infoBox}>
-          <h3>Warum ist die Block-Verbreitung so wichtig?</h3>
-          <p>
-            Damit alle Teilnehmer dieselbe Version der Blockchain haben, müssen neue Blöcke schnell und zuverlässig im gesamten Netzwerk verteilt werden.
-            Nur so kann Konsens erreicht und verhindert werden, dass jemand unbemerkt eine alternative Kette aufbaut.
+      <section className={styles.introSection}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h1 className={styles.title}>Das Bitcoin-Netzwerk</h1>
+          <p className={styles.description}>
+            Das Bitcoin-Netzwerk besteht aus tausenden von Nodes (Knotenpunkten), die zusammenarbeiten, 
+            um Transaktionen zu bestätigen und die Blockchain zu sichern. Diese dezentrale Struktur 
+            ist das Herzstück von Bitcoin - es gibt keine zentrale Kontrolle.
           </p>
-        </div>
-        
-        <div className={styles.networkLegend}>
-          <div className={styles.legendItem}>
-            <div className={`${styles.legendIcon} ${styles.minerNode}`}>
-              <FaServer size={12} />
+        </motion.div>
+      </section>
+
+      {/* Node-Informationen */}
+      <section className={styles.nodeInfoBox}>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+        >
+          <h3>Typen von Nodes</h3>
+          <div className={styles.nodeTypesGrid}>
+            <div className={styles.nodeTypeCard}>
+              <h4>Miner Nodes</h4>
+              <p>Stellen neue Blöcke her und erhalten Block-Belohnungen.</p>
             </div>
-            <span>Miner ({networkStats.miners})</span>
-          </div>
-          <div className={styles.legendItem}>
-            <div className={`${styles.legendIcon} ${styles.fullNode}`}>
-              <FaDesktop size={12} />
+            <div className={styles.nodeTypeCard}>
+              <h4>Full Nodes</h4>
+              <p>Speichern und validieren die gesamte Blockchain und überprüfen alle Regeln.</p>
             </div>
-            <span>Full Node ({networkStats.fullNodes})</span>
           </div>
-          <div className={styles.legendItem}>
-            <div className={`${styles.legendIcon} ${styles.hasLatestBlock}`}>
-              <FaCheck size={12} />
-            </div>
-            <span>Hat neuesten Block</span>
+        </motion.div>
+      </section>
+      
+      {/* Netzwerk-Visualisierung */}
+      <section className={styles.networkContainer} ref={networkRef}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          <h3 className={styles.networkTitle}>
+            Peer-to-Peer Netzwerk
+          </h3>
+          <p className={styles.networkDescription}>
+            Im Bitcoin-Netzwerk ist jeder Teilnehmer (Node) direkt mit mehreren anderen verbunden. 
+            Neue Blöcke werden von Minern erstellt und dann durch das gesamte Netzwerk verbreitet.
+            Auch Miner sind untereinander verbunden, damit neue Blöcke schnell weitergegeben werden können.
+          </p>
+          <div className={styles.networkVisualization}>
+            {/* Verbindungslinien zuerst rendern, damit sie unter den Nodes liegen */}
+            {nodes.map((node, idx) => 
+              // Für jeden Node seine Verbindungen visualisieren
+              node.connections.map(connectedIdx => 
+                // Wir zeigen jede Verbindung nur einmal, indem wir prüfen, ob der Index kleiner ist
+                idx < connectedIdx ? (
+                  <div 
+                    key={`conn-${idx}-${connectedIdx}`} 
+                    className={`${styles.connectionLine} ${(node.hasLatestBlock && nodes[connectedIdx].hasLatestBlock) ? styles.activeLine : ''}`}
+                    style={{
+                      left: `${node.x}px`,
+                      top: `${node.y}px`,
+                      width: `${Math.hypot(nodes[connectedIdx].x - node.x, nodes[connectedIdx].y - node.y)}px`,
+                      transform: `rotate(${Math.atan2(nodes[connectedIdx].y - node.y, nodes[connectedIdx].x - node.x)}rad)`
+                    }}
+                  />
+                ) : null
+              )
+            )}
+            
+            {/* Dann die Nodes rendern */}
+            {nodes.map((node) => (
+              <div
+                key={node.id}
+                className={`
+                  ${styles.networkNode}
+                  ${node.hasLatestBlock ? styles.hasLatestBlock : ''}
+                  ${node.isReceivingBlock ? styles.receivingBlock : ''}
+                `}
+                style={{ left: node.x, top: node.y }}
+                onMouseEnter={() => setHoveredNode(node.id)}
+                onMouseLeave={() => setHoveredNode(null)}
+              >
+                {hoveredNode === node.id && (
+                  <div className={styles.tooltip}>
+                    <strong>{node.type === 'miner' ? 'Miner' : 'Full Node'}</strong>
+                    <br />
+                    {node.hasLatestBlock ? 'Hat aktuellen Block' : 'Wartet auf Block'}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
-        </div>
-      </div>
+          <div className={styles.propagationExplanation}>
+            {propagatingBlock ? (
+              <p><strong>Block wird verbreitet!</strong> Beobachte, wie der neue Block von Node zu Node weitergegeben wird.</p>
+            ) : miningResult && miningResult.found ? (
+              <p>Block erfolgreich durch das Netzwerk verbreitet! Alle verbundenen Nodes haben jetzt die aktuellen Daten.</p>
+            ) : (
+              <p>Klicke auf "Block minen & verbreiten", um zu sehen, wie ein neuer Block im Netzwerk verteilt wird.</p>
+            )}
+          </div>
+
+          {/* Simplified mining interface */}
+          <div className={styles.networkAction}>
+            <motion.button
+              className={styles.mineButton}
+              onClick={handleButtonClick}
+              disabled={isAnimating}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {hasLatestBlock
+                ? "Block im Netzwerk verteilen"
+                : "Block minen"}
+            </motion.button>
+          </div>
+
+          {/* Neue Info-Box für Netzwerk-Konsens */}
+          <div className={styles.infoBox}>
+            <h3>Warum ist die Block-Verbreitung so wichtig?</h3>
+            <p>
+              Damit alle Teilnehmer dieselbe Version der Blockchain haben, müssen neue Blöcke schnell und zuverlässig im gesamten Netzwerk verteilt werden.
+              Nur so kann Konsens erreicht und verhindert werden, dass jemand unbemerkt eine alternative Kette aufbaut.
+            </p>
+          </div>
+        </motion.div>
+      </section>
     </div>
   );
 };

@@ -1,0 +1,399 @@
+@use './variables' as v;
+
+// Hauptcontainer
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 5vw, 2.5rem);
+  color: v.$text-color-white;
+}
+
+// Intro-Sektion
+.introSection {
+  margin-bottom: 2rem;
+  text-align: center;
+
+  h1 {
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    color: v.$primary-color;
+    margin-bottom: 1rem;
+  }
+  
+  p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: 0 auto;
+    max-width: 600px;
+  }
+}
+
+// Timeline-Container
+.timelineContainer {
+  background: linear-gradient(145deg, rgba(25,35,55,0.7), rgba(15,25,45,0.9));
+  border-radius: 16px;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+  border: 1px solid rgba(v.$primary-color, 0.15);
+
+  h2 {
+    color: v.$primary-color;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    text-align: center;
+  }
+}
+
+// Tab-Auswahl
+.tabSelector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-bottom: 1.2rem;
+  justify-content: center;
+}
+
+.tabButton {
+  background: rgba(255,255,255,0.07);
+  color: v.$text-color-white;
+  border: none;
+  border-radius: 20px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  font-size: 1rem;
+
+  &.active {
+    background: v.$primary-color;
+    color: #111;
+    box-shadow: 0 0 8px v.$primary-color;
+  }
+}
+
+.currentLabel {
+  color: #4caf50;
+  font-size: 0.9em;
+  margin-left: 0.5em;
+}
+
+// Timeline-Inhalt
+.timelineContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.timelineItem {
+  display: none;
+  width: 100%;
+  max-width: 650px;
+  background: rgba(0,0,0,0.13);
+  border-radius: 12px;
+  padding: 1.2rem;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+
+  &.active {
+    display: block;
+  }
+
+  h3 {
+    color: v.$primary-color;
+    font-size: 1.1rem;
+    margin: 0.5rem 0;
+    text-align: center;
+  }
+}
+
+.timelineDate {
+  color: v.$primary-color;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+// Supply-Container
+.supplyContainer {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.supplyInfo {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+// Modern Supply Gauge
+.modernSupplyContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gaugeWrapper {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin-bottom: 0.8rem;
+}
+
+.backgroundGlow {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 40px 10px rgba(#f7931a, 0.25);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.trackCircle {
+  opacity: 0.25;
+  stroke-width: 8px;
+  transition: all 0.3s ease;
+}
+
+.progressCircle {
+  opacity: 0.9;
+  stroke-width: 8px;
+  filter: drop-shadow(0 0 3px rgba(247, 147, 26, 0.5));
+  transition: all 0.5s ease;
+}
+
+.gaugeCenter {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 2;
+}
+
+.percentageValue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #f7931a;
+}
+
+.percentageLabel {
+  font-size: 0.95rem;
+  color: v.$text-color-white;
+  opacity: 0.8;
+}
+
+.gaugeInfo {
+  display: flex;
+  gap: 1.2rem;
+  justify-content: center;
+}
+
+.gaugeInfoItem {
+  text-align: center;
+}
+
+.gaugeInfoTitle {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.gaugeInfoValue {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #f7931a;
+}
+
+// Belohnungs-Vergleich
+.rewardComparison {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin: 1.5rem 0;
+  flex-wrap: wrap;
+}
+
+.oldReward, .newReward {
+  text-align: center;
+  h3 {
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+    color: v.$primary-color;
+  }
+}
+
+.rewardAmount {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.rewardCoins {
+  font-size: 1.1rem;
+  color: #f7931a;
+  letter-spacing: 0.05em;
+  line-height: 1.4;
+}
+
+.rewardCoin {
+  margin: 0 0.05em;
+}
+
+.rewardArrow {
+  display: flex;
+  align-items: center;
+}
+
+.halvingIcon {
+  font-size: 1.5rem;
+  color: #e67e22;
+  background: rgba(255,255,255,0.09);
+  border-radius: 50%;
+  padding: 0.4rem;
+  box-shadow: 0 0 8px rgba(#e67e22, 0.5);
+}
+
+// Ökonomische Auswirkungen
+.economicImpact {
+  background: rgba(0,0,0,0.10);
+  border-radius: 12px;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+
+  h3 {
+    color: v.$primary-color;
+    margin-bottom: 0.7rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  p {
+    margin-bottom: 0.7rem;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+}
+
+.infoIcon {
+  color: v.$primary-color;
+  font-size: 1.2rem;
+}
+
+.impactPoints {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.impactPoint {
+  background: rgba(255,255,255,0.07);
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  font-size: 0.97rem;
+  
+  strong {
+    color: v.$primary-color;
+  }
+}
+
+// Navigation
+.navigationButtons {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.nextButton {
+  background: linear-gradient(135deg, v.$primary-color, v.$hover-color);
+  color: #111;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.13);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.22);
+  }
+  
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+/* Responsive Styles */
+@media (max-width: 800px) {
+  .page {
+    padding: 1rem;
+  }
+  
+  .timelineContainer, .economicImpact {
+    padding: 1rem;
+  }
+  
+  .timelineItem {
+    padding: 1rem;
+  }
+  
+  .rewardComparison {
+    gap: 1rem;
+  }
+  
+  .gaugeWrapper {
+    width: 110px;
+    height: 110px;
+  }
+  
+  .percentageValue {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 0.5rem;
+  }
+  
+  .introSection, .timelineContainer, .timelineItem, .economicImpact {
+    padding: 0.5rem;
+  }
+  
+  .tabSelector {
+    gap: 0.4rem;
+  }
+  
+  .tabButton {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .rewardComparison {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .gaugeWrapper {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .percentageValue {
+    font-size: 1.2rem;
+  }
+  
+  .navigationButtons .nextButton {
+    width: 100%;
+    text-align: center;
+  }
+}

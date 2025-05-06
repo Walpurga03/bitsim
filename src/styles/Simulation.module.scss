@@ -7,7 +7,7 @@
   justify-content: center;
   min-height: 100vh;
   background: linear-gradient(135deg, $secondary-color, #0a0a0a);
-  color: $text-color-with;
+  color: $text-color-white;
   padding: clamp(1rem, 5vw, 2rem);
   text-align: center;
   animation: fadeIn 1s ease-out;
@@ -78,8 +78,8 @@
 .prevButton {
   @extend .button;
   background: transparent;
-  color: $text-color-with;
-  border: 1px solid $text-color-with;
+  color: $text-color-white;
+  border: 1px solid $text-color-white;
   
   &:hover {
     background: rgba(255, 255, 255, 0.1);

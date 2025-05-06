@@ -13,7 +13,7 @@
   overflow-x: hidden; // Verhindert horizontales Scrollen
   position: relative; // Wichtig für Positionierungskontext
   background-color: v.$bg-dark;
-  color: v.$text-color-with;
+  color: v.$text-color-white;
   display: flex;
   flex-direction: column;
 }
@@ -990,5 +990,5 @@
 
 .timelineDesc {
   font-size: clamp(v.$font-size-small, 2vw, v.$font-size-base);
-  color: rgba(v.$text-color-with, 0.9);
+  color: rgba(v.$text-color-white, 0.9);
 }

@@ -128,8 +128,9 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
       
       timeoutRef.current = setTimeout(() => {
         setShowMiningProcess(false);
-      }, 2000);
-    }, 3000);
+      }, 1500); // 2 Sekunden nach Abschluss des Mining-Prozesses
+      
+    }, 1000); // 3 Sekunden für den Mining-Prozess selbst
   };
   
   const blocksToDisplay = isMobile ? chainBlocks.slice(-2) : chainBlocks;
@@ -202,8 +203,7 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
                 </div>
                 
                 <div className={styles.targetExplanation}>
-                  <p><strong>Hinweis:</strong> Im echten Bitcoin-Netzwerk versuchen speziale Computer Millionen 
-                  von Hashes pro Sekunde, bis ein gültiger Hash gefunden wird.</p>
+                  <p><strong>Hinweis:</strong> Im realen Bitcoin-Netzwerk probieren spezielle Computer Millionen von Hashes pro Sekunde aus, bis ein gültiger Hash gefunden wird.</p>
                 </div>
               </motion.div>
               
@@ -264,14 +264,32 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
                             transition={{ delay: idx * 0.1 }}
                           >
                             <p className={styles.blockHeader}><strong>Block {block.blockNumber}</strong></p>
+                            
                             <div className={styles.blockDetails}>
-                              <p>Hash: <span className={styles.blockHash}>{block.hash}</span></p>
-                              <p>Last: <span className={styles.blockPrev}>{prevDisplay.substring(0, 8)}</span></p>
-                              <p>Nonce: <span className={styles.blockNonce}>{block.nonce}</span></p>
+                              <div className={styles.blockHashContainer}>
+                                <p className={styles.blockHashLabel}>Block Hash:</p>
+                                <p className={styles.blockHashValue}>{block.hash}</p>
+                              </div>
+                              
+                              <div className={styles.blockPrevContainer}>
+                                <p className={styles.blockPrevLabel}>
+                                  <span className={styles.chainIcon}>⛓️</span> Hash Block {block.blockNumber - 1}:
+                                </p>
+                                <p className={styles.blockPrevValue}>
+                                  {block.blockNumber === 1 ? "Genesis" : prevDisplay}
+                                </p>
+                              </div>
+                              
+                              <p className={styles.blockNonceValue}>Nonce: <span>{block.nonce}</span></p>
                             </div>
+                            
                             {idx < blocksToDisplay.length - 1 && (
                               <div className={styles.blockLink}>
-                                <FaAngleDoubleDown />
+                                <div className={styles.chainConnection}>
+                                  <div className={styles.chainLine}></div>
+                                  <div className={styles.chainArrow}><FaAngleDoubleDown /></div>
+                                  <div className={styles.chainExplanation}>Hash wird Teil des nächsten Blocks</div>
+                                </div>
                               </div>
                             )}
                           </motion.div>
@@ -371,15 +389,17 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
                     </div>
                     
                     <div className={styles.blockButtons}>
-                      <motion.button 
-                        className={styles.mineButton} 
-                        onClick={simulateMining}
-                        disabled={isAnimating}
-                        whileHover={!isAnimating ? { scale: 1.05 } : {}}
-                        whileTap={!isAnimating ? { scale: 0.95 } : {}}
-                      >
-                        {isAnimating ? 'Mining läuft...' : miningResult.found ? 'Nächsten Block minen' : 'Erneut versuchen'}
-                      </motion.button>
+                      {walletInfo.currentBlock < 3 && (
+                        <motion.button 
+                          className={styles.mineButton} 
+                          onClick={simulateMining}
+                          disabled={isAnimating}
+                          whileHover={!isAnimating ? { scale: 1.05 } : {}}
+                          whileTap={!isAnimating ? { scale: 0.95 } : {}}
+                        >
+                          {isAnimating ? 'Mining läuft...' : miningResult.found ? 'Nächsten Block minen' : 'Erneut versuchen'}
+                        </motion.button>
+                      )}
                       
                       {walletInfo.currentBlock >= 3 && (
                         <motion.button 
@@ -414,13 +434,17 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.5 }} // Hier Dauer in Sekunden anpassen
                   >
                     <div className={styles.miningAnimation}>
                       <div className={styles.miningIcon}>
                         <motion.div
                           animate={{ rotate: [0, 15, 0, -15, 0] }}
-                          transition={{ repeat: Infinity, duration: 0.8 }}
+                          transition={{ 
+                            repeat: Infinity, 
+                            duration: 0.8, // Dauer eines Schwungzyklus in Sekunden
+                            ease: "easeInOut" // Optional: Art der Animation
+                          }}
                         >
                           <FaHammer className={styles.hammer} />
                         </motion.div>
@@ -430,7 +454,10 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
                           className={styles.miningProgressBar} 
                           initial={{ width: "0%" }}
                           animate={{ width: ["0%", "50%", "75%", "90%", "100%"] }}
-                          transition={{ duration: 2.5 }}
+                          transition={{ 
+                            duration: 2.8, // Gesamtdauer in Sekunden anpassen
+                            ease: "easeOut" // Optional: Art der Animation
+                          }}
                         />
                       </div>
                       <p>Suche nach gültigem Hash...</p>

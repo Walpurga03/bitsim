@@ -1,0 +1,342 @@
+@use './variables' as v;
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 5vw, 2.5rem);
+  color: v.$text-color-white;
+}
+
+.introSection {
+  margin-bottom: 2rem;
+  text-align: center;
+
+  h1 {
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    color: v.$primary-color;
+    margin-bottom: 1rem;
+  }
+  p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: 0 auto;
+    max-width: 600px;
+  }
+}
+
+.enhancedBlockchainContainer {
+  background: linear-gradient(145deg, rgba(25, 35, 55, 0.7), rgba(15, 25, 45, 0.9));
+  border-radius: 16px;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+  border: 1px solid rgba(v.$primary-color, 0.15);
+
+  h3 {
+    color: v.$primary-color;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+.difficultyProgressContainer {
+  margin-bottom: 1.2rem;
+}
+
+.progressLabel {
+  margin-bottom: 0.5rem;
+  .adjustmentTarget {
+    color: #e74c3c;
+    font-weight: 600;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+}
+
+.progressBar {
+  width: 100%;
+  height: 14px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.5s;
+}
+
+.blockCountdown {
+  font-size: 0.98rem;
+  color: v.$primary-color;
+  margin-bottom: 0.5rem;
+}
+
+.adjustmentComplete {
+  color: #e74c3c;
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.blockchainVisualization {
+  display: flex;
+  gap: 1.2rem;
+  margin-top: 1.2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.block {
+  background: rgba(0,0,0,0.18);
+  border-radius: 10px;
+  padding: 0.8rem 1.2rem;
+  min-width: 140px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  font-size: 0.97rem;
+  p {
+    margin: 0.2rem 0;
+    word-break: break-all;
+  }
+}
+
+.targetDisplay {
+  margin: 2rem 0 1.5rem 0;
+  text-align: center;
+
+  h3 {
+    color: v.$primary-color;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+  .targetValue {
+    font-family: monospace;
+    font-weight: 600;
+    color: #e67e22;
+    margin-left: 0.3rem;
+  }
+  .targetExplanation {
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+    .newTarget {
+      color: #e74c3c;
+      font-weight: 600;
+      margin-left: 0.5rem;
+    }
+  }
+}
+
+.miningSection {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.mineButton, .nextButton {
+  background: linear-gradient(135deg, v.$primary-color, v.$hover-color);
+  color: #111;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  margin: 0.5rem;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.22);
+  }
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+.miningBlock {
+  background: linear-gradient(145deg, rgba(25, 35, 55, 0.7), rgba(15, 25, 45, 0.9));
+  border-radius: 16px;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  margin: 1.5rem 0;
+  text-align: center;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+  border: 1px solid rgba(255,255,255,0.05);
+
+  h2 {
+    font-size: 1.15rem;
+    color: v.$primary-color;
+    margin-bottom: 1rem;
+  }
+}
+
+.foundAnimation {
+  border: 1px solid #4caf50;
+  box-shadow: 0 0 10px #4caf50;
+}
+.notFoundAnimation {
+  border: 1px solid #e74c3c;
+  box-shadow: 0 0 10px #e74c3c;
+}
+
+.adjustmentAlert {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #e67e22;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.98rem;
+}
+
+.hashTarget {
+  background: rgba(0,0,0,0.13);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  font-family: monospace;
+  .hashDisplay {
+    margin-bottom: 0.5rem;
+  }
+  .hash, .target {
+    padding: 0.3rem 0.7rem;
+    background: rgba(0,0,0,0.18);
+    border-radius: 4px;
+    margin-left: 0.5rem;
+    font-size: 1rem;
+  }
+  .validHash {
+    color: #4caf50;
+  }
+  .invalidHash {
+    color: #e74c3c;
+  }
+  .mustBeBelow {
+    display: block;
+    margin: 0.7rem 0;
+    font-size: 0.95rem;
+    opacity: 0.8;
+  }
+  .harderTarget {
+    color: #e74c3c;
+    font-weight: 700;
+  }
+}
+
+.blockButtons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.2rem;
+  flex-wrap: wrap;
+}
+
+.simpleExplanation {
+  margin: 2rem 0;
+  background: rgba(0,0,0,0.10);
+  border-radius: 12px;
+  padding: 1.2rem 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+
+  h3 {
+    color: v.$primary-color;
+    margin-bottom: 0.7rem;
+  }
+  p {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  .mathExplanation {
+    background: rgba(255,255,255,0.07);
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    margin-top: 1rem;
+    font-size: 0.97rem;
+  }
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+  .blockchainVisualization {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.7rem;
+  }
+  .block {
+    min-width: 90vw;
+    font-size: 0.95rem;
+  }
+  .enhancedBlockchainContainer {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding: 0.5rem;
+  }
+  .introSection, .enhancedBlockchainContainer, .miningBlock, .simpleExplanation {
+    padding: 0.5rem;
+  }
+  .blockchainVisualization {
+    gap: 0.5rem;
+  }
+  .block {
+    min-width: 98vw;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.5rem;
+  }
+  .targetDisplay {
+    margin: 1rem 0 1rem 0;
+    h3 {
+      font-size: 1rem;
+    }
+    .targetValue {
+      font-size: 1rem;
+    }
+  }
+  .hashTarget {
+    padding: 0.4rem;
+    font-size: 0.9rem;
+  }
+  .blockButtons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .mineButton, .nextButton {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.7rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .introSection, .enhancedBlockchainContainer, .miningBlock, .simpleExplanation {
+    padding: 0.7rem;
+  }
+  .block {
+    min-width: 98vw;
+    font-size: 0.93rem;
+    padding: 0.5rem 0.7rem;
+  }
+  .hashTarget {
+    padding: 0.6rem;
+    font-size: 0.93rem;
+  }
+  .blockButtons {
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+}

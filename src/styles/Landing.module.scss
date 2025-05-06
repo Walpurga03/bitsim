@@ -87,10 +87,10 @@
 }
 
 .staticTxt {
-  color: v.$text-color-with;
+  color: v.$text-color-white;
   font-size: clamp(1.8rem, 4vw, 3rem);
   font-weight: 600;
-  background: linear-gradient(to bottom, v.$text-color-with, rgba(v.$text-color-with, 0.7));
+  background: linear-gradient(to bottom, v.$text-color-white, rgba(v.$text-color-white, 0.7));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -145,7 +145,7 @@
   
   p {
     font-size: 0.95rem;
-    color: v.$text-color-with;
+    color: v.$text-color-white;
     line-height: 1.4;
     margin: 0;
   }
@@ -183,7 +183,7 @@
 // Moderner CTA-Button mit Animationen
 .ctaButton {
   background: linear-gradient(to right, v.$primary-color, color.scale(v.$primary-color, $lightness: -10%));
-  color: v.$text-color-with;
+  color: v.$text-color-white;
   border: none;
   border-radius: 12px;
   padding: 0.9rem 2rem;

@@ -11,7 +11,7 @@
   width: 100%;
   min-height: 100vh;
   background-color: v.$bg-dark;
-  color: v.$text-color-with;
+  color: v.$text-color-white;
 }
 
 // =============================================================================
@@ -417,7 +417,7 @@
     .timelineTitle {
       font-size: 1.6rem;
       font-weight: 700;
-      color: v.$text-color-with;
+      color: v.$text-color-white;
       margin: 0;
       display: flex;
       align-items: center;
@@ -457,7 +457,7 @@
       }
       .blockNumber {
         font-size: 1.2rem;
-        color: v.$text-color-with;
+        color: v.$text-color-white;
       }
     }
   }
@@ -466,7 +466,7 @@
     padding: 2.5rem;
     line-height: 1.7;
     font-size: 1.05rem;
-    color: v.$text-color-with;
+    color: v.$text-color-white;
     strong {
       color: v.$primary-color;
       font-weight: 700;
@@ -509,7 +509,7 @@
     background: linear-gradient(90deg, rgba(v.$primary-color, 0.25) 0%, rgba(10, 14, 25, 0.5) 100%);
     margin: 0;
     padding: 1.5rem 2rem;
-    color: v.$text-color-with;
+    color: v.$text-color-white;
     font-size: 1.4rem;
     font-weight: 700;
     display: flex;
