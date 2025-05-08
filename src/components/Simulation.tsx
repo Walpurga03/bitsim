@@ -6,7 +6,7 @@ import BasicMiningPage from '../pages/Mining';
 import NodeNetworkPage from '../pages/NodeNetwork';
 import DifficultyAdjustmentPage from '../pages/Difficulty';
 import TransactionPage from '../pages/TransactionPage';
-import _MempoolPage from '../pages/MempoolPage';
+import MempoolPage from '../pages/MempoolPage';
 import HalvingPage from '../pages/Halving';
 import EndPage from '../pages/EndPage';
 import styles from '../styles/Simulation.module.scss';
@@ -18,7 +18,7 @@ const simulationPages = [
   { id: 4, title: 'Das Bitcoin-Netzwerk', component: NodeNetworkPage },
   { id: 5, title: 'Schwierigkeitsanpassung', component: DifficultyAdjustmentPage },
   { id: 6, title: 'Transaktionen', component: TransactionPage },
-  //{ id: 7, title: 'Mempool & Gebührenmarkt', component: MempoolPage },
+  { id: 7, title: 'Mempool & Gebührenmarkt', component: MempoolPage },
   { id: 8, title: 'Block-Belohnung & Halving', component: HalvingPage },
   { id: 9, title: 'Abschluss', component: EndPage },
 ];

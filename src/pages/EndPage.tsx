@@ -11,25 +11,14 @@ const EndPage: React.FC<EndPageProps> = ({ onRestart }) => {
   const [animate, setAnimate] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showQRCodeExpanded, setShowQRCodeExpanded] = useState(false);
-  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
-  
-  // Kontaktdaten aus der contactConfig
+
   const contactConfig = {
     github: "https://github.com/walpurga03",
     lightning: "aldo.barazutti@walletofsatoshi.com",
     nostr: "npub1hht9umpeet75w55uzs9lq6ksayfpcvl9lk64hye75j0yj4husq5ss8xsry"
   };
-  
-  // Vordefinierte Spendenbeträge in Sats
-  const donationAmounts = [
-    { label: '1.000 sats', value: 1000 },
-    { label: '5.000 sats', value: 5000 },
-    { label: '21.000 sats', value: 21000 },
-    { label: '100.000 sats', value: 100000 }
-  ];
-  
+
   useEffect(() => {
-    // Start animation when component mounts
     setTimeout(() => setAnimate(true), 100);
   }, []);
 
@@ -39,14 +28,8 @@ const EndPage: React.FC<EndPageProps> = ({ onRestart }) => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Generiere Lightning-Zahlungs-URL mit ausgewähltem Betrag
   const getLightningPaymentLink = () => {
-    const baseAddress = contactConfig.lightning;
-    if (selectedAmount) {
-      // Einfache Lightning Address URL mit Betrag
-      return `lightning:${baseAddress}?amount=${selectedAmount/100000000}`;
-    }
-    return baseAddress;
+    return `lightning:${contactConfig.lightning}`;
   };
 
   return (
@@ -62,7 +45,6 @@ const EndPage: React.FC<EndPageProps> = ({ onRestart }) => {
         </p>
       </div>
       
-      {/* Neuer Abschnitt: Lightning Network Erklärung */}
       <div className={`${styles.lightningSection} ${animate ? styles.animate : ''}`}>
         <div className={styles.lightningGrid}>
           <div className={styles.lightningCard}>
@@ -85,12 +67,11 @@ const EndPage: React.FC<EndPageProps> = ({ onRestart }) => {
         </div>
         
         <div className={styles.lightningExperience}>
-          <p>Die <strong>beste Möglichkeit, Lightning zu verstehen, ist es selbst auszuprobieren!</strong></p>
-          <p>Unterstütze den Entwickler mit einer kleinen Lightning-Spende und teste gleichzeitig diese revolutionäre Technologie - damit die Motivation für solche Bildungsprojekte nicht verloren geht.</p>
+          
+        <p><strong>Die beste Möglichkeit, Lightning zu verstehen, ist es selbst auszuprobieren!</strong></p>
         </div>
       </div>
       
-      {/* Verbesserte Spenden-Sektion mit persönlicherem Bezug */}
       <div className={`${styles.donationSection} ${animate ? styles.animate : ''}`}>
         <div className={styles.donationHeader}>
           <FaHeart className={styles.donationIcon} />
@@ -99,23 +80,8 @@ const EndPage: React.FC<EndPageProps> = ({ onRestart }) => {
         
         <p className={styles.donationText}>
           Hinter dieser Bitcoin-Simulation stecken viele Stunden Arbeit und Leidenschaft für Bitcoin-Bildung. 
-          Mit einer Lightning-Spende kannst du nicht nur Lightning selbst testen, sondern auch deine Wertschätzung 
-          für dieses Projekt zeigen und zukünftige Entwicklungen ermöglichen.
+          Mit einer Lightning-Spende kannst du nicht nur Lightning selbst testen, sondern auch deine Wertschätzung für dieses Projekt zeigen.
         </p>
-
-        {/* Neue Spendenbeträge als Auswahlmöglichkeit */}
-        <div className={styles.donationAmounts}>
-          {donationAmounts.map((amount) => (
-            <button
-              key={amount.value}
-              className={`${styles.donationButton} ${selectedAmount === amount.value ? styles.selected : ''}`}
-              onClick={() => setSelectedAmount(amount.value)}
-            >
-              {amount.label}
-              <span className={styles.satValue}>{(amount.value / 100000000).toFixed(8)} BTC</span>
-            </button>
-          ))}
-        </div>
 
         <div className={`${styles.lightningContainer} ${showQRCodeExpanded ? styles.expanded : ''}`}>
           <div className={styles.lightningAddress} onClick={handleCopyLightningAddress}>
@@ -128,19 +94,7 @@ const EndPage: React.FC<EndPageProps> = ({ onRestart }) => {
             {copied && <span className={styles.copiedNotification}>Kopiert!</span>}
           </div>
           
-          {selectedAmount && (
-            <div className={styles.selectedAmount}>
-              <span>Ausgewählter Betrag: <strong>{selectedAmount} sats</strong></span>
-              <a 
-                href={getLightningPaymentLink()}
-                className={styles.payButton}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Mit Lightning bezahlen <FaBolt />
-              </a>
-            </div>
-          )}
+  
           
           <button 
             className={styles.qrToggleButton} 
@@ -153,7 +107,7 @@ const EndPage: React.FC<EndPageProps> = ({ onRestart }) => {
             <div className={styles.qrCodeContainer}>
               <div className={styles.qrWrapper}>
                 <QRCode
-                  value={selectedAmount ? getLightningPaymentLink() : contactConfig.lightning}
+                  value={getLightningPaymentLink()}
                   size={220}
                   level="H"
                   bgColor="#FFFFFF"
@@ -162,7 +116,7 @@ const EndPage: React.FC<EndPageProps> = ({ onRestart }) => {
                 />
               </div>
               <p className={styles.qrInstructions}>
-                Scanne diesen QR-Code mit deiner Lightning-Wallet, um {selectedAmount ? `${selectedAmount} Satoshis` : 'eine Spende'} zu senden
+                Scanne diesen QR-Code mit deiner Lightning-Wallet, um eine Spende zu senden
               </p>
             </div>
           )}
@@ -200,7 +154,7 @@ const EndPage: React.FC<EndPageProps> = ({ onRestart }) => {
       </div>
       
       <div className={styles.footer}>
-        <p>©Selbstverständlich können alle Inhalte gemäß den Bestimmungen des Open-Source-Prinzips verwendet werden.</p>
+        <p className={styles.footerp}>©Selbstverständlich können alle Inhalte gemäß den Bestimmungen des Open-Source-Prinzips verwendet werden.</p>
       </div>
     </div>
   );

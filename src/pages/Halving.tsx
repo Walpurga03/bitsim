@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaInfoCircle, FaMinus } from 'react-icons/fa';
+import { FaInfoCircle, FaMinus, FaBolt } from 'react-icons/fa';
 import styles from '../styles/Halving.module.scss';
 
 interface HalvingPageProps {
@@ -180,123 +180,140 @@ const HalvingPage: React.FC<HalvingPageProps> = ({ onNext }) => {
   };
 
   return (
-    <div className={styles.page} style={{border: '2px solid red'}}>
-      {/* Intro */}
-      <section className={styles.introSection}>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h1>Block-Belohnung & Halving</h1>
-          <p>Alle 210.000 Blöcke (~4 Jahre) halbiert sich die Bitcoin-Block-Belohnung</p>
-        </motion.div>
-      </section>
+    <div className={styles.page}>
+      {/* Intro Section */}
+      <motion.section 
+        className={styles.introSection}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <h1>Block-Belohnung & Halving</h1>
+        <p>Alle 210.000 Blöcke (~4 Jahre) halbiert sich die Bitcoin-Block-Belohnung</p>
+      </motion.section>
 
       {/* Timeline */}
-      <section className={styles.timelineContainer}>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-        >
-          <h2>Bitcoin Halving Timeline</h2>
-          <div className={styles.tabSelector}>
-            {halvingEvents.map((event, index) => (
-              <button 
-                key={index}
-                className={`${styles.tabButton} ${selectedTimelineEvent === index ? styles.active : ''}`}
-                onClick={() => setSelectedTimelineEvent(index)}
-              >
-                {event.blockHeight === 0 ? 'Genesis' : `${index}. Halving`}
-                {event.status === 'current' && <span className={styles.currentLabel}>• Aktuell</span>}
-              </button>
-            ))}
-          </div>
-          <div className={styles.timelineContent}>
-            {halvingEvents.map((event, index) => (
-              <div 
-                key={index}
-                className={`${styles.timelineItem} ${selectedTimelineEvent === index ? styles.active : ''}`}
-              >
-                <div className={styles.timelineDate}>{event.date}</div>
-                <h3>Block #{formatNumber(event.blockHeight)}</h3>
-                <div className={styles.supplyContainer}>
-                  <div className={styles.supplyInfo}>
-                    <strong>Bitcoin im Umlauf:</strong> {event.circulatingSupply}
-                  </div>
-                  <ModernSupplyGauge percentage={extractPercentage(event.circulatingSupply)} />
+      <motion.section 
+        className={styles.timelineContainer}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+      >
+        <h2 className={styles.sectionTitle}>Bitcoin Halving Timeline</h2>
+        <div className={styles.tabSelector}>
+          {halvingEvents.map((event, index) => (
+            <button 
+              key={index}
+              className={`${styles.tabButton} ${selectedTimelineEvent === index ? styles.active : ''}`}
+              onClick={() => setSelectedTimelineEvent(index)}
+            >
+              {event.blockHeight === 0 ? 'Genesis' : `${index}. Halving`}
+              {event.status === 'current' && <span className={styles.currentLabel}>• Aktuell</span>}
+            </button>
+          ))}
+        </div>
+        <div className={styles.timelineContent}>
+          {halvingEvents.map((event, index) => (
+            <div 
+              key={index}
+              className={`${styles.timelineItem} ${selectedTimelineEvent === index ? styles.active : ''}`}
+            >
+              <div className={styles.timelineDate}>{event.date}</div>
+              <h3>Block #{formatNumber(event.blockHeight)}</h3>
+              <div className={styles.supplyContainer}>
+                <div className={styles.supplyInfo}>
+                  <strong>Bitcoin im Umlauf:</strong> {event.circulatingSupply}
                 </div>
-                <div className={styles.rewardComparison}>
-                  <div className={styles.oldReward}>
-                    <h3>Belohnung davor</h3>
-                    <div className={styles.rewardAmount}>{event.rewardBefore} BTC</div>
-                    <div className={styles.rewardCoins}>
-                      {Array.from({ length: Math.min(event.rewardBefore, 50) }).map((_, i) => (
-                        <span key={i} className={styles.rewardCoin}>₿</span>
-                      ))}
-                    </div>
+                <ModernSupplyGauge percentage={extractPercentage(event.circulatingSupply)} />
+              </div>
+              <div className={styles.rewardComparison}>
+                <div className={styles.oldReward}>
+                  <h3>Belohnung davor</h3>
+                  <div className={styles.rewardAmount}>{event.rewardBefore} BTC</div>
+                  <div className={styles.rewardCoins}>
+                    {Array.from({ length: Math.min(event.rewardBefore, 50) }).map((_, i) => (
+                      <span key={i} className={styles.rewardCoin}>₿</span>
+                    ))}
                   </div>
-                  <div className={styles.rewardArrow}>
-                    <div className={styles.halvingIcon}>
-                      <FaMinus />
-                    </div>
+                </div>
+                <div className={styles.rewardArrow}>
+                  <div className={styles.halvingIcon}>
+                    <FaMinus />
                   </div>
-                  <div className={styles.newReward}>
-                    <h3>Belohnung danach</h3>
-                    <div className={styles.rewardAmount}>{event.rewardAfter} BTC</div>
-                    <div className={styles.rewardCoins}>
-                      {Array.from({ length: Math.min(event.rewardAfter, 50) }).map((_, i) => (
-                        <span key={i} className={styles.rewardCoin}>₿</span>
-                      ))}
-                    </div>
+                </div>
+                <div className={styles.newReward}>
+                  <h3>Belohnung danach</h3>
+                  <div className={styles.rewardAmount}>{event.rewardAfter} BTC</div>
+                  <div className={styles.rewardCoins}>
+                    {Array.from({ length: Math.min(event.rewardAfter, 50) }).map((_, i) => (
+                      <span key={i} className={styles.rewardCoin}>₿</span>
+                    ))}
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </motion.div>
-      </section>
+            </div>
+          ))}
+        </div>
+      </motion.section>
 
       {/* Economic Impact */}
-      <section className={styles.economicImpact}>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-        >
-          <h3><FaInfoCircle className={styles.infoIcon} /> Wirtschaftliche Bedeutung des Halvings</h3>
-          <p>
-            Die programmierte Verknappung durch Halvings macht Bitcoin zu einem deflationären Asset. 
-            Während zentrale Banken die Geldmenge beliebig erhöhen können, ist Bitcoins 
-            Ausgaberate vorhersehbar und endlich. Damit wird eine künstliche Inflation vermieden.
-          </p>
-          <div className={styles.impactPoints}>
-            <div className={styles.impactPoint}>
-              <strong>Reduzierte Inflation:</strong> Mit jedem Halving sinkt die Rate, mit der neue Bitcoins erzeugt werden
-            </div>
-            <div className={styles.impactPoint}>
-              <strong>Angebotsverknappung:</strong> Bei gleichbleibender oder steigender Nachfrage kann dies den Wert steigern
-            </div>
-            <div className={styles.impactPoint}>
-              <strong>Mining-Ökonomie:</strong> Miner müssen effizienter arbeiten oder auf steigende Transaktionsgebühren setzen
-            </div>
+      <motion.section 
+        className={styles.economicImpact}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+      >
+        <h3><FaInfoCircle className={styles.infoIcon} /> Wirtschaftliche Bedeutung des Halvings</h3>
+        <p>
+          Die programmierte Verknappung durch Halvings macht Bitcoin zu einem deflationären Asset. 
+          Während zentrale Banken die Geldmenge beliebig erhöhen können, ist Bitcoins 
+          Ausgaberate vorhersehbar und endlich. Damit wird eine künstliche Inflation vermieden.
+        </p>
+        <div className={styles.impactPoints}>
+          <div className={styles.impactPoint}>
+            <strong>Reduzierte Inflation:</strong> Mit jedem Halving sinkt die Rate, mit der neue Bitcoins erzeugt werden
           </div>
-        </motion.div>
-      </section>
+          <div className={styles.impactPoint}>
+            <strong>Angebotsverknappung:</strong> Bei gleichbleibender oder steigender Nachfrage kann dies den Wert steigern
+          </div>
+          <div className={styles.impactPoint}>
+            <strong>Mining-Ökonomie:</strong> Miner müssen effizienter arbeiten oder auf steigende Transaktionsgebühren setzen
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Übergang zum Lightning Network */}
+      <motion.section 
+        className={styles.lightningTeaser}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.35, duration: 0.5 }}
+      >
+        <div className={styles.teaserContent}>
+          <div className={styles.lightningIcon}>
+            <FaBolt />
+          </div>
+          <div>
+            <h3>Nächster Schritt: Lightning Network</h3>
+            <p>
+              Als Lösung für die Skalierbarkeit von Bitcoin ermöglicht das Lightning Network 
+              schnellere und kostengünstigere Transaktionen abseits der Blockchain.
+            </p>
+          </div>
+        </div>
+      </motion.section>
 
       {/* Navigation */}
-      <section className={styles.navigationButtons}>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-        >
-          <button className={styles.nextButton} onClick={onNext}>
-            Weiter
-          </button>
-        </motion.div>
-      </section>
+      <motion.section 
+        className={styles.navigationButtons}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4, duration: 0.5 }}
+      >
+        <button className={styles.nextButton} onClick={onNext}>
+          Weiter zum Lightning Network <FaBolt />
+        </button>
+      </motion.section>
     </div>
   );
 };

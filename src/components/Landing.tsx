@@ -19,7 +19,7 @@ const Landing = () => {
   const [simulate, setSimulate] = useState(false); // Zustandsvariable für Navigation zur Simulation
   
   // Liste der Bitcoin-Begriffe für die Typing-Animation
-  const words = ['..........','Blockchain', 'Consensus', 'Mining', 'Network', 'Nodes', 
+  const words = ['Blockchain', 'Consensus', 'Mining', 'Network', 'Nodes', 
                 'Difficulty', 'Transactions', 'Mempool', 'Halving'];
   
   // Typing-Effekt-Hook initialisieren mit Geschwindigkeitsparametern
@@ -101,7 +101,7 @@ const Landing = () => {
           transition={{ 
             duration: 2,                       // Animationsdauer in Sekunden
             ease: "easeOut",                   // Easing-Funktion (Beschleunigung)
-            delay: 4                           // Verzögerung vor Animationsstart
+            delay: 2                          // Verzögerung vor Animationsstart
           }}
         >
           <h1 className={styles.glassTitle}>   {/* Glasmorphismus-Effekt */}
@@ -134,7 +134,7 @@ const Landing = () => {
           transition={{ 
             duration: 1, 
             ease: "easeOut", 
-            delay: 5                           // Erscheint nach Titel
+            delay: 3                           // Erscheint nach Titel
           }}
         >
           <div className={styles.infoHint}>
@@ -153,7 +153,7 @@ const Landing = () => {
           transition={{ 
             duration: 1, 
             ease: "easeOut", 
-            delay: 6                          // Erscheint nach Info-Hinweis
+            delay: 4                          // Erscheint nach Info-Hinweis
           }}
         >
           Diese Simulation dient ausschließlich Lernzwecken und ist vereinfacht dargestellt.
@@ -167,7 +167,7 @@ const Landing = () => {
           transition={{ 
             duration: 1, 
             ease: "easeOut",
-            delay: 1                          // Erscheint als letztes Element
+            delay: 5                          // Erscheint als letztes Element
           }}
         >
           <button 

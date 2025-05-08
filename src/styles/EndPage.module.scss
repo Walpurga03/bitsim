@@ -329,10 +329,7 @@
   border-radius: 12px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease;
-  
-  &:hover {
-    transform: scale(1.05);
-  }
+
 }
 
 .qrInstructions {
@@ -823,11 +820,14 @@
 }
 
 .footer {
-  margin-top: 3rem;
+  margin-top: 3rem; 
   text-align: center;
   width: 100%;
   opacity: 0.5;
   font-size: 0.9rem;
+}
+.footerp{
+margin: auto;
 }
 
 // Responsive adjustments
