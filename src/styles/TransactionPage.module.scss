@@ -1,5 +1,5 @@
 @use "sass:color";
-@use './variables' as *;
+@use './variables' as v;
 @use './common.module.scss';
 
 // Spezifische Transaktionsinterface-Stile
@@ -45,13 +45,13 @@
     
     &.activeStep {
       .stepNumber {
-        background: rgba($primary-color, 0.2);
-        border-color: $primary-color;
-        color: $primary-color;
+        background: rgba(v.$primary-color, 0.2);
+        border-color: v.$primary-color;
+        color: v.$primary-color;
       }
       
       span {
-        color: $primary-color;
+        color: v.$primary-color;
       }
     }
   }
@@ -64,7 +64,7 @@
     transition: all 0.3s ease;
     
     &.activeConnector {
-      background: $primary-color;
+      background: v.$primary-color;
     }
   }
 }
@@ -90,13 +90,132 @@
   padding: 0 1rem;
 }
 
+// Wallets Container
+.walletsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.walletCard {
+  flex: 1;
+  background: linear-gradient(145deg, rgba(20, 20, 20, 0.8), rgba(10, 10, 10, 0.9));
+  border-radius: 12px;
+  padding: 1.2rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(v.$primary-color, 0.15);
+  transition: all 0.3s ease;
+  
+  
+  h3 {
+    color: v.$primary-color;
+    font-size: 1.2rem;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+  }
+  
+  .walletAddress {
+    font-family: monospace;
+    font-size: 0.9rem;
+    opacity: 0.7;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    margin-bottom: 0.8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .walletBalance {
+    font-size: 1.3rem;
+    
+    strong {
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+    
+    .pendingOutgoing {
+      font-size: 0.9rem;
+      color: #e74c3c;
+      display: block;
+    }
+    
+    .pendingIncoming {
+      font-size: 0.9rem;
+      color: #2ecc71;
+      display: block;
+    }
+  }
+}
+
+.transactionArrow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  flex-shrink: 1;
+  
+  .arrowWithAmount {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    
+    .txAmount {
+      background: rgba(v.$primary-color, 0.15);
+      color: v.$primary-color;
+      padding: 0.3rem 0.7rem;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    
+    .arrow {
+      color: v.$primary-color;
+      font-size: 1.8rem;
+      animation: pulse 2s infinite;
+    }
+  }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.7; }
+}
+
+// Anpassungen für mobile Geräte
+@media (max-width: 768px) {
+  .walletsContainer {
+    flex-direction: column;
+    padding: 0.8rem;
+  }
+  
+  .walletCard {
+    width: 100%;
+  }
+  
+  .transactionArrow {
+    transform: rotate(90deg);
+    margin: 1rem 0;
+  }
+}
+
 // Spezifische Transaktionsinteraktionen
 .betterAmountInputContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
   background: rgba(0, 0, 0, 0.3);
-  border: 2px solid rgba($primary-color, 0.4);
+  border: 2px solid rgba(v.$primary-color, 0.4);
   border-radius: 16px;
   padding: 1.5rem 2rem;
   margin: 1rem 0;
@@ -112,7 +231,7 @@
     transform: translateX(-50%);
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
-    border-bottom: 10px solid rgba($primary-color, 0.4);
+    border-bottom: 10px solid rgba(v.$primary-color, 0.4);
   }
 }
 
@@ -120,7 +239,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: $primary-color;
+  color: v.$primary-color;
   font-weight: 600;
   font-size: 1.1rem;
   margin-bottom: 0.8rem;
@@ -136,20 +255,20 @@
   .amountInput {
     width: 100%;
     background: rgba(0, 0, 0, 0.4);
-    border: 2px solid rgba($primary-color, 0.6);
+    border: 2px solid rgba(v.$primary-color, 0.6);
     border-radius: 10px;
     color: white;
     font-size: 1.4rem;
     padding: 1rem;
     text-align: center;
     font-weight: bold;
-    font-family: $font-mono;
+    font-family: v.$font-mono;
     transition: all 0.3s ease;
     
     &:focus {
       outline: none;
-      border-color: $primary-color;
-      box-shadow: 0 0 10px rgba($primary-color, 0.4);
+      border-color: v.$primary-color;
+      box-shadow: 0 0 10px rgba(v.$primary-color, 0.4);
     }
     
     &::placeholder {
@@ -161,8 +280,8 @@
     position: absolute;
     right: -8px;
     top: -8px;
-    background: $primary-color;
-    color: $text-color-black;
+    background: v.$primary-color;
+    color: v.$text-color-black;
     font-weight: bold;
     padding: 0.3rem 0.6rem;
     border-radius: 8px;
@@ -179,14 +298,14 @@
   margin-bottom: 1.2rem;
   
   strong {
-    color: $primary-color;
+    color: v.$primary-color;
   }
 }
 
 // Signierungsbereich
 .signatureContainer {
   background: rgba(0, 0, 0, 0.3);
-  border: 2px solid rgba($primary-color, 0.4);
+  border: 2px solid rgba(v.$primary-color, 0.4);
   border-radius: 16px;
   padding: 1.5rem 2rem;
   margin: 1rem 0;
@@ -194,7 +313,7 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   
   h3 {
-    color: $primary-color;
+    color: v.$primary-color;
     margin-bottom: 1rem;
     text-align: center;
     font-size: 1.1rem;
@@ -214,7 +333,7 @@
       font-size: 0.9rem;
       
       strong {
-        color: rgba($primary-color, 0.9);
+        color: rgba(v.$primary-color, 0.9);
         margin-right: 0.5rem;
       }
     }
@@ -238,11 +357,11 @@
   border-radius: 8px;
   
   .keyIcon {
-    color: $primary-color;
+    color: v.$primary-color;
   }
   
   .privateKeyMasked {
-    font-family: $font-mono;
+    font-family: v.$font-mono;
     font-size: 0.9rem;
     color: rgba(255, 255, 255, 0.8);
   }
@@ -259,14 +378,14 @@
   .signatureProgressBar {
     height: 100%;
     width: 0;
-    background: linear-gradient(90deg, $primary-color, color.adjust($primary-color, $lightness: 15%));
+    background: linear-gradient(90deg, v.$primary-color, color.adjust(v.$primary-color, $lightness: 15%));
     border-radius: 5px;
     transition: width 0.1s ease-out;
   }
 }
 
 .signButton {
-  background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: 10%));
+  background: linear-gradient(135deg, v.$primary-color, color.adjust(v.$primary-color, $lightness: 10%));
   color: rgb(7, 7, 7);
   padding: 0.8rem 1.5rem;
   border-radius: 30px;
@@ -325,8 +444,8 @@
 }
 
 .transactionAmount {
-  background: rgba($primary-color, 0.1);
-  color: $primary-color;
+  background: rgba(v.$primary-color, 0.1);
+  color: v.$primary-color;
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-weight: 600;
@@ -338,7 +457,7 @@
 }
 
 .transactionArrow {
-  color: $primary-color;
+  color: v.$primary-color;
   font-size: 1.5rem;
   
   &.animating {
@@ -387,8 +506,8 @@
 
 // Buttons
 .transferButton, .confirmButton {
-  background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: 10%));
-  color: $text-color-black;
+  background: linear-gradient(135deg, v.$primary-color, color.adjust(v.$primary-color, $lightness: 10%));
+  color: v.$text-color-black;
   padding: 0.9rem 2rem;
   border-radius: 30px;
   font-weight: 700;
@@ -401,7 +520,7 @@
   
   &:hover {
     transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba($primary-color, 0.3);
+    box-shadow: 0 5px 15px rgba(v.$primary-color, 0.3);
   }
   
   &.disabled {
@@ -409,6 +528,62 @@
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
+  }
+}
+
+// Mining-Button (hauptsächlich in Bitcoin-Orange)
+.mineButton {
+  background: linear-gradient(135deg, v.$primary-color, color.adjust(v.$primary-color, $lightness: 10%));
+  color: #111;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  margin: 0.5rem;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(v.$primary-color, 0.2);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(v.$primary-color, 0.3);
+  }
+  
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+// Aktionsbutton (dunkler mit Bitcoin-Orange Akzenten)
+.actionButton {
+  background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  margin: 0.5rem;
+  transition: all 0.3s;
+  border: 1px solid rgba(v.$primary-color, 0.5); // Deutlicher Bitcoin-farbiger Rand
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15), 0 0 0 rgba(v.$primary-color, 0);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.22), 0 0 10px rgba(v.$primary-color, 0.3);
+    border-color: v.$primary-color;
+    color: v.$primary-color; // Text wird beim Hover orange
+  }
+  
+  // Pfeil am Ende
+  &::after {
+    content: " →";
+    font-weight: bold;
+    margin-left: 0.3rem;
+    color: v.$primary-color;
   }
 }
 
@@ -422,7 +597,7 @@
 
 @keyframes arrowPulse {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.2); color: $primary-color, 10%; }
+  50% { transform: scale(1.2); color: v.$primary-color, 10%; }
 }
 
 @keyframes popIn {
@@ -437,8 +612,8 @@
   top: 1rem;
   left: 1rem;
   background: rgba(0, 0, 0, 0.2);
-  color: $text-color-with;
-  border: 1px solid rgba($primary-color, 0.3);
+  color: v.$text-color-white;
+  border: 1px solidq rgba(v.$primary-color, 0.3);
   padding: 0.5rem 1rem;
   border-radius: 8px;
   display: flex;
@@ -449,15 +624,15 @@
   transition: all 0.2s ease;
   
   &:hover {
-    background: rgba($primary-color, 0.2);
+    background: rgba(v.$primary-color, 0.2);
   }
 }
 
 // Ausstehende Transaktion Styling
 .pendingTransaction {
   background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba($primary-color, 0.3);
-  border-left: 4px solid $primary-color;
+  border: 1px solid rgba(v.$primary-color, 0.3);
+  border-left: 4px solid v.$primary-color;
   border-radius: 12px;
   padding: 1rem 1.5rem;
   margin: 1.5rem auto;
@@ -469,7 +644,7 @@
   h3 {
     font-size: 1.2rem;
     margin: 0 0 0.5rem;
-    color: $primary-color;
+    color: v.$primary-color;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -483,11 +658,11 @@
   
   .spinningIcon {
     animation: spin 1.5s linear infinite;
-    color: $primary-color;
+    color: v.$primary-color;
   }
   
   .txId {
-    font-family: $font-mono;
+    font-family: v.$font-mono;
     background: rgba(0, 0, 0, 0.2);
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
@@ -508,7 +683,7 @@
 // Erweiterte Blockchain-Visualisierung
 .enhancedBlockchainContainer {
   background: linear-gradient(145deg, rgba(20, 20, 20, 0.8), rgba(5, 5, 5, 0.9));
-  border: 1px solid rgba($primary-color, 0.2);
+  border: 1px solid rgba(v.$primary-color, 0.2);
   border-radius: 16px;
   padding: 1.5rem;
   width: 100%;
@@ -517,7 +692,7 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   
   h3 {
-    color: $primary-color;
+    color: v.$primary-color;
     font-size: 1.3rem;
     margin-bottom: 1rem;
     display: flex;
@@ -548,7 +723,7 @@
     
     strong {
       font-size: 1.2rem;
-      color: $primary-color;
+      color: v.$primary-color;
     }
   }
 }
@@ -575,11 +750,11 @@
   }
   
   &::-webkit-scrollbar-thumb {
-    background: rgba($primary-color, 0.3);
+    background: rgba(v.$primary-color, 0.3);
     border-radius: 3px;
     
     &:hover {
-      background: rgba($primary-color, 0.5);
+      background: rgba(v.$primary-color, 0.5);
     }
   }
 }
@@ -600,15 +775,15 @@
   }
   
   &.latestBlockCard {
-    border-color: rgba($primary-color, 0.5);
+    border-color: rgba(v.$primary-color, 0.5);
     background: linear-gradient(145deg, rgba(20, 20, 20, 0.8), rgba(10, 10, 10, 0.9));
-    box-shadow: 0 0 15px rgba($primary-color, 0.2);
+    box-shadow: 0 0 15px rgba(v.$primary-color, 0.2);
   }
 }
 
 .blockHeader {
-  background: rgba($primary-color, 0.15);
-  color: $primary-color;
+  background: rgba(v.$primary-color, 0.15);
+  color: v.$primary-color;
   padding: 0.5rem;
   border-radius: 6px;
   margin-bottom: 0.8rem;
@@ -624,7 +799,7 @@
     word-break: break-all;
     
     strong {
-      color: rgba($primary-color, 0.9);
+      color: rgba(v.$primary-color, 0.9);
       margin-right: 0.2rem;
     }
   }
@@ -636,7 +811,7 @@
   right: -1.5rem;
   width: 1.5rem;
   height: 2px;
-  background: rgba($primary-color, 0.5);
+  background: rgba(v.$primary-color, 0.5);
   transform: translateY(-50%);
   
   &::after {
@@ -649,7 +824,7 @@
     height: 0;
     border-top: 4px solid transparent;
     border-bottom: 4px solid transparent;
-    border-left: 6px solid rgba($primary-color, 0.5);
+    border-left: 6px solid rgba(v.$primary-color, 0.5);
   }
   
   @media (max-width: 768px) {
@@ -662,9 +837,9 @@
   position: absolute;
   top: -12px;
   right: 10px;
-  background: rgba($primary-color, 0.15);
-  border: 1px solid rgba($primary-color, 0.3);
-  color: $primary-color;
+  background: rgba(v.$primary-color, 0.15);
+  border: 1px solid rgba(v.$primary-color, 0.3);
+  color: v.$primary-color;
   padding: 0.3rem 0.6rem;
   border-radius: 20px;
   font-size: 0.8rem;
@@ -679,12 +854,12 @@
 }
 
 .nextBlockCard {
-  background: rgba($primary-color, 0.06);
-  border: 2px dashed rgba($primary-color, 0.3);
+  background: rgba(v.$primary-color, 0.06);
+  border: 2px dashed rgba(v.$primary-color, 0.3);
   opacity: 0.9;
   
   .blockHeader {
-    background: rgba($primary-color, 0.1);
+    background: rgba(v.$primary-color, 0.1);
   }
   
   .pendingTxNote {
@@ -692,7 +867,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    color: $primary-color;
+    color: v.$primary-color;
     font-style: italic;
     
     .spinningIcon {
@@ -702,7 +877,7 @@
   
   .pendingTxDetails {
     margin-top: 1rem;
-    background: rgba($primary-color, 0.1);
+    background: rgba(v.$primary-color, 0.1);
     padding: 0.5rem;
     border-radius: 6px;
     text-align: center;
@@ -724,7 +899,7 @@
   padding: 1.5rem;
   
   h3 {
-    color: $primary-color;
+    color: v.$primary-color;
     margin-bottom: 1.2rem;
     text-align: center;
     font-size: 1.3rem;
@@ -756,8 +931,8 @@
   .txStepNumber {
     width: 36px;
     height: 36px;
-    background: rgba($primary-color, 0.2);
-    color: $primary-color;
+    background: rgba(v.$primary-color, 0.2);
+    color: v.$primary-color;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -769,7 +944,7 @@
   
   .txStepContent {
     h4 {
-      color: $primary-color;
+      color: v.$primary-color;
       margin-bottom: 0.5rem;
       font-size: 1.1rem;
     }
@@ -783,31 +958,118 @@
   }
 }
 
+// Verbesserte Transaktionsliste
+.transactionList {
+  margin: 2rem auto;
+  padding: 0;
+  counter-reset: tx-step;
+  list-style: none;
+  max-width: 800px;
+  
+  li {
+    position: relative;
+    padding: 1.5rem 1.5rem 1.5rem 5rem;
+    margin-bottom: 1.2rem;
+    background: linear-gradient(145deg, rgba(15,15,15,0.5), rgba(0,0,0,0.7));
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border-left: 4px solid v.$primary-color;
+    counter-increment: tx-step;
+    transition: all 0.3s ease;
+    
+    
+    &::before {
+      content: counter(tx-step);
+      position: absolute;
+      left: 1.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 2.5rem;
+      height: 2.5rem;
+      background: linear-gradient(135deg, v.$primary-color, color.adjust(v.$primary-color, $lightness: 10%));
+      color: #111;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+      box-shadow: 0 5px 15px rgba(v.$primary-color, 0.3);
+    }
+    
+    &::after {
+      content: '';
+      position: absolute;
+      left: 2.75rem;
+      top: calc(50% + 1.9rem);
+      width: 2px;
+      height: calc(50% + 1rem);
+      background: linear-gradient(to bottom, v.$primary-color 20%, rgba(v.$primary-color, 0.05));
+      z-index: 0;
+    }
+    
+    &:last-child::after {
+      display: none;
+    }
+    
+    strong {
+      display: block;
+      color: v.$primary-color;
+      font-size: 1.2rem;
+      margin-bottom: 0.6rem;
+      font-weight: 600;
+    }
+    
+    p {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.9);
+    }
+  }
+}
+
+// Anpassungen für die Tipps-Box
 .transactionTip {
-  background: rgba(0, 0, 0, 0.3);
-  border-left: 3px solid $primary-color;
-  border-radius: 8px;
-  padding: 1rem 1.5rem;
-  margin-top: 1.5rem;
+  position: relative;
+  background: linear-gradient(145deg, rgba(15,15,15,0.4), rgba(0,0,0,0.6));
+  border-radius: 12px;
+  padding: 1.5rem 1.8rem;
+  margin: 2.5rem auto 1rem;
+  max-width: 800px;
   display: flex;
-  gap: 1rem;
+  gap: 1.2rem;
   align-items: flex-start;
   text-align: left;
+  border: 1px solid rgba(v.$primary-color, 0.2);
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 2rem;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(145deg, rgba(15,15,15,0.4), rgba(0,0,0,0.6));
+    transform: rotate(45deg);
+    border-top: 1px solid rgba(v.$primary-color, 0.2);
+    border-left: 1px solid rgba(v.$primary-color, 0.2);
+  }
   
   .tipIcon {
-    color: $primary-color;
-    font-size: 1.2rem;
-    margin-top: 0.2rem;
+    color: v.$primary-color;
+    font-size: 1.4rem;
+    margin-top: 0.1rem;
     flex-shrink: 0;
   }
   
   p {
     margin: 0;
-    line-height: 1.5;
-    font-size: 0.95rem;
+    line-height: 1.7;
+    font-size: 1rem;
     
     strong {
-      color: $primary-color;
+      color: v.$primary-color;
     }
   }
 }
@@ -815,29 +1077,6 @@
 // Mining UI
 .transactionActions {
   margin: 2rem 0;
-}
-
-.createTxButton {
-  background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: 10%));
-  color: rgb(15, 15, 15);
-  font-size: 1rem;
-  padding: 0.9rem 2rem;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  letter-spacing: 1px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(#3498db, 0.4);
-  }
-  
-  &:active {
-    transform: translateY(-1px);
-  }
 }
 
 // Transaktionsbestätigung
@@ -903,6 +1142,455 @@
   margin: 1rem 0;
   
   strong {
-    color: $primary-color;
+    color: v.$primary-color;
+  }
+}
+
+// Zusätzliche Stile
+.informationSection {
+  margin: 2rem 0;
+}
+
+.walletsSection {
+  margin-bottom: 2rem;
+}
+
+.pendingTxSection {
+  margin-bottom: 2rem;
+}
+
+.actionSection {
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .transactionArrow {
+    margin: 1rem 0;
+  }
+  
+  .pendingTransaction {
+    padding: 1rem;
+  }
+  
+  .blockButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  
+  .confirmedTx {
+    flex-direction: column;
+    align-items: center;
+    
+    .confirmedIcon {
+      margin-bottom: 0.5rem;
+    }
+    
+    .txConfirmDetails {
+      text-align: center;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .transactionSteps {
+    grid-template-columns: 1fr;
+  }
+  
+  .miningBlock {
+    padding: 1rem;
+  }
+  
+  .hashTarget {
+    font-size: 0.9rem;
+    
+    .hash, .target {
+      font-size: 0.85rem;
+      word-break: break-all;
+    }
+  }
+}
+
+// Popup Styles (integriert aus TransactionExplanationPopup.module.scss)
+.popupOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.popupContent {
+  background: linear-gradient(135deg, #181818 80%, v.$primary-color 120%);
+  border-radius: 18px;
+  box-shadow: 0 8px 40px rgba(v.$primary-color, 0.18), 0 2px 8px rgba(0,0,0,0.18);
+  padding: 2rem;
+  max-width: 500px;
+  width: 90%;
+  color: v.$text-color-white;
+  position: relative;
+  text-align: center;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(v.$primary-color, 0.1), transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+  }
+  
+  h2 {
+    color: v.$primary-color;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    margin: 0 0 1.2rem 0;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.popupHeaderIcon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, v.$primary-color, color.adjust(v.$primary-color, $lightness: 15%));
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: 1.5rem;
+  box-shadow: 0 5px 15px rgba(v.$primary-color, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.popupTextContent {
+  position: relative;
+  z-index: 1;
+  text-align: left;
+  margin-bottom: 1.5rem;
+  
+  p {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.popupCloseButton {
+  background: linear-gradient(135deg, v.$primary-color, #ffa94d);
+  color: #000;
+  border: none;
+  border-radius: 30px;
+  padding: 0.7rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(v.$primary-color, 0.25);
+  position: relative;
+  z-index: 1;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(v.$primary-color, 0.35);
+    background: linear-gradient(135deg, #ffa94d, v.$primary-color);
+  }
+}
+
+@media (max-width: 600px) {
+  .popupContent {
+    padding: 1.5rem;
+    
+    h2 {
+      font-size: 1.3rem;
+    }
+  }
+  
+  .popupHeaderIcon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+  
+  .popupTextContent p {
+    font-size: 0.95rem;
+  }
+}
+
+// Neuen Stil für den Untertitel hinzufügen
+.subtitle {
+  font-size: 1.15rem;
+  color: v.$primary-color;
+  margin-bottom: 1.2rem;
+  line-height: 1.4;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  border-bottom: 1px solid rgba(v.$primary-color, 0.3);
+  padding-bottom: 0.8rem;
+  
+  strong {
+    font-weight: 600;
+  }
+}
+
+// In TransactionPage.module.scss hinzufügen
+.explainActionButton {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+// Verbesserte Responsive-Anpassungen
+@media (max-width: 768px) {
+  .page {
+    padding: 1rem;
+  }
+  
+  .introSection {
+    padding: 1.5rem 1rem;
+    
+    h1 {
+      font-size: 1.8rem;
+    }
+    
+    p {
+      font-size: 0.95rem;
+    }
+    
+    .subtitle {
+      font-size: 1.05rem;
+    }
+  }
+  
+  .walletsContainer {
+    flex-direction: column;
+    padding: 0.8rem;
+    
+    .walletCard {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+  }
+  
+  .transactionArrow {
+    transform: rotate(90deg);
+    margin: 0.5rem 0;
+    
+    .arrowWithAmount {
+      .txAmount {
+        font-size: 0.85rem;
+      }
+      
+      .arrow {
+        font-size: 1.5rem;
+      }
+    }
+  }
+  
+  .pendingTransaction {
+    padding: 1rem;
+    
+    h3 {
+      font-size: 1.1rem;
+    }
+    
+    p {
+      font-size: 0.9rem;
+    }
+    
+    .txId {
+      font-size: 0.8rem;
+      word-break: break-all;
+    }
+  }
+  
+  .miningBlock {
+    padding: 1.2rem 1rem;
+    
+    h2 {
+      font-size: 1.3rem;
+    }
+  }
+  
+  .hashTarget {
+    flex-direction: column;
+    align-items: stretch;
+    
+    .hashDisplay, .mustBeBelow, .target {
+      text-align: center;
+      margin: 0.5rem 0;
+    }
+    
+    .hash, .target {
+      font-size: 0.9rem;
+      word-break: break-all;
+    }
+  }
+  
+  .transactionConfirmation {
+    padding: 1.2rem 1rem;
+  }
+  
+  .confirmedTx {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    
+    .confirmedIcon {
+      margin-bottom: 0.5rem;
+    }
+    
+    .txConfirmDetails {
+      text-align: center;
+      
+      p:first-child {
+        font-size: 1rem;
+      }
+      
+      .txDetails {
+        justify-content: center;
+        
+        span {
+          font-size: 0.85rem;
+        }
+      }
+    }
+  }
+  
+  .blockButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    
+    button {
+      width: 100%;
+      margin: 0.3rem 0;
+    }
+  }
+  
+  .transactionList {
+    li {
+      padding: 1.2rem 1.2rem 1.2rem 4rem;
+      
+      &::before {
+        left: 1rem;
+        width: 2.2rem;
+        height: 2.2rem;
+        font-size: 1.1rem;
+      }
+      
+      &::after {
+        left: 2.1rem;
+      }
+      
+      strong {
+        font-size: 1.1rem;
+      }
+      
+      p {
+        font-size: 0.9rem;
+      }
+    }
+  }
+  
+  .transactionTip {
+    padding: 1.2rem;
+    gap: 0.8rem;
+    
+    .tipIcon {
+      font-size: 1.2rem;
+    }
+    
+    p {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+// Noch kleinere Bildschirme (Smartphones)
+@media (max-width: 480px) {
+  .introSection {
+    h1 {
+      font-size: 1.6rem;
+    }
+  }
+  
+  .walletCard {
+    padding: 1rem;
+    
+    h3 {
+      font-size: 1.1rem;
+    }
+    
+    .walletBalance {
+      font-size: 1.1rem;
+    }
+  }
+  
+  .hashTarget {
+    .hash, .target {
+      font-size: 0.8rem;
+      padding: 0.3rem;
+    }
+  }
+  
+  .mineButton, .actionButton {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+  }
+  
+  .transactionList {
+    li {
+      padding: 1rem 1rem 1rem 3.5rem;
+      margin-bottom: 1rem;
+      
+      &::before {
+        left: 0.8rem;
+        width: 2rem;
+        height: 2rem;
+        font-size: 1rem;
+      }
+      
+      &::after {
+        left: 1.8rem;
+      }
+      
+      strong {
+        font-size: 1rem;
+        margin-bottom: 0.4rem;
+      }
+      
+      p {
+        font-size: 0.85rem;
+      }
+    }
+  }
+  
+  .transactionTip {
+    padding: 1rem;
+    flex-direction: column;
+    
+    .tipIcon {
+      margin-bottom: 0.5rem;
+    }
   }
 }

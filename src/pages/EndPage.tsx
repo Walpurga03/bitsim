@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../styles/EndPage.module.scss';
-import { FaGithub, FaEnvelope, FaBitcoin, FaBolt, FaHeart, FaQrcode, FaCopy, FaCheckCircle } from 'react-icons/fa';
+import { FaGithub, FaEnvelope, FaBitcoin, FaBolt, FaHeart, FaQrcode, FaCopy, FaCheckCircle, FaNetworkWired, FaExchangeAlt, FaClock } from 'react-icons/fa';
 import { QRCodeSVG as QRCode } from 'qrcode.react';
 
 interface EndPageProps {
@@ -11,6 +11,7 @@ const EndPage: React.FC<EndPageProps> = ({ onRestart }) => {
   const [animate, setAnimate] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showQRCodeExpanded, setShowQRCodeExpanded] = useState(false);
+  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   
   // Kontaktdaten aus der contactConfig
   const contactConfig = {
@@ -18,6 +19,14 @@ const EndPage: React.FC<EndPageProps> = ({ onRestart }) => {
     lightning: "aldo.barazutti@walletofsatoshi.com",
     nostr: "npub1hht9umpeet75w55uzs9lq6ksayfpcvl9lk64hye75j0yj4husq5ss8xsry"
   };
+  
+  // Vordefinierte Spendenbeträge in Sats
+  const donationAmounts = [
+    { label: '1.000 sats', value: 1000 },
+    { label: '5.000 sats', value: 5000 },
+    { label: '21.000 sats', value: 21000 },
+    { label: '100.000 sats', value: 100000 }
+  ];
   
   useEffect(() => {
     // Start animation when component mounts
@@ -30,30 +39,83 @@ const EndPage: React.FC<EndPageProps> = ({ onRestart }) => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // Generiere Lightning-Zahlungs-URL mit ausgewähltem Betrag
+  const getLightningPaymentLink = () => {
+    const baseAddress = contactConfig.lightning;
+    if (selectedAmount) {
+      // Einfache Lightning Address URL mit Betrag
+      return `lightning:${baseAddress}?amount=${selectedAmount/100000000}`;
+    }
+    return baseAddress;
+  };
+
   return (
     <div className={styles.endPage}>
       <div className={`${styles.header} ${animate ? styles.animate : ''}`}>
         <div className={styles.bitcoinLogo}>
           <FaBitcoin />
         </div>
-        <h1>Bitcoin Simulation abgeschlossen!</h1>
+        <h1>Lightning Network: </h1>
         <p className={styles.congratsText}>
           Gratulation! Du hast alle Etappen der Simulation erfolgreich durchlaufen und ein 
           grundlegendes Verständnis darüber erlangt, wie Bitcoin funktioniert.
         </p>
       </div>
       
-      {/* Vereinfachte Spenden-Sektion mit lokal generiertem QR-Code */}
+      {/* Neuer Abschnitt: Lightning Network Erklärung */}
+      <div className={`${styles.lightningSection} ${animate ? styles.animate : ''}`}>
+        <div className={styles.lightningGrid}>
+          <div className={styles.lightningCard}>
+            <div className={styles.cardIcon}><FaExchangeAlt /></div>
+            <h3>Sofortige Transaktionen</h3>
+            <p>Im Gegensatz zu On-Chain-Transaktionen ermöglicht Lightning sofortige Zahlungen ohne Wartezeiten auf Blockbestätigungen.</p>
+          </div>
+          
+          <div className={styles.lightningCard}>
+            <div className={styles.cardIcon}><FaNetworkWired /></div>
+            <h3>Layer-2-Lösung</h3>
+            <p>Lightning ist eine Second-Layer-Technologie, die auf der Bitcoin-Blockchain aufbaut und Millionen von Transaktionen pro Sekunde ermöglicht.</p>
+          </div>
+          
+          <div className={styles.lightningCard}>
+            <div className={styles.cardIcon}><FaClock /></div>
+            <h3>Minimale Gebühren</h3>
+            <p>Lightning-Transaktionen kosten nur Bruchteile eines Cents, was Mikrozahlungen und regelmäßige Bitcoin-Nutzung praktikabel macht.</p>
+          </div>
+        </div>
+        
+        <div className={styles.lightningExperience}>
+          <p>Die <strong>beste Möglichkeit, Lightning zu verstehen, ist es selbst auszuprobieren!</strong></p>
+          <p>Unterstütze den Entwickler mit einer kleinen Lightning-Spende und teste gleichzeitig diese revolutionäre Technologie - damit die Motivation für solche Bildungsprojekte nicht verloren geht.</p>
+        </div>
+      </div>
+      
+      {/* Verbesserte Spenden-Sektion mit persönlicherem Bezug */}
       <div className={`${styles.donationSection} ${animate ? styles.animate : ''}`}>
         <div className={styles.donationHeader}>
           <FaHeart className={styles.donationIcon} />
-          <h2>Unterstütze dieses Projekt</h2>
+          <h2>Motivation durch Wertschätzung</h2>
         </div>
         
         <p className={styles.donationText}>
-          Wenn dir diese Bitcoin-Simulation gefallen hat, würde ich mich über eine Lightning-Spende freuen! 
-          Damit kann ich weitere Bildungsprojekte entwickeln und verbessern.
+          Hinter dieser Bitcoin-Simulation stecken viele Stunden Arbeit und Leidenschaft für Bitcoin-Bildung. 
+          Mit einer Lightning-Spende kannst du nicht nur Lightning selbst testen, sondern auch deine Wertschätzung 
+          für dieses Projekt zeigen und zukünftige Entwicklungen ermöglichen.
         </p>
+
+        {/* Neue Spendenbeträge als Auswahlmöglichkeit */}
+        <div className={styles.donationAmounts}>
+          {donationAmounts.map((amount) => (
+            <button
+              key={amount.value}
+              className={`${styles.donationButton} ${selectedAmount === amount.value ? styles.selected : ''}`}
+              onClick={() => setSelectedAmount(amount.value)}
+            >
+              {amount.label}
+              <span className={styles.satValue}>{(amount.value / 100000000).toFixed(8)} BTC</span>
+            </button>
+          ))}
+        </div>
 
         <div className={`${styles.lightningContainer} ${showQRCodeExpanded ? styles.expanded : ''}`}>
           <div className={styles.lightningAddress} onClick={handleCopyLightningAddress}>
@@ -66,6 +128,20 @@ const EndPage: React.FC<EndPageProps> = ({ onRestart }) => {
             {copied && <span className={styles.copiedNotification}>Kopiert!</span>}
           </div>
           
+          {selectedAmount && (
+            <div className={styles.selectedAmount}>
+              <span>Ausgewählter Betrag: <strong>{selectedAmount} sats</strong></span>
+              <a 
+                href={getLightningPaymentLink()}
+                className={styles.payButton}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Mit Lightning bezahlen <FaBolt />
+              </a>
+            </div>
+          )}
+          
           <button 
             className={styles.qrToggleButton} 
             onClick={() => setShowQRCodeExpanded(!showQRCodeExpanded)}
@@ -77,7 +153,7 @@ const EndPage: React.FC<EndPageProps> = ({ onRestart }) => {
             <div className={styles.qrCodeContainer}>
               <div className={styles.qrWrapper}>
                 <QRCode
-                  value={contactConfig.lightning}
+                  value={selectedAmount ? getLightningPaymentLink() : contactConfig.lightning}
                   size={220}
                   level="H"
                   bgColor="#FFFFFF"
@@ -86,11 +162,16 @@ const EndPage: React.FC<EndPageProps> = ({ onRestart }) => {
                 />
               </div>
               <p className={styles.qrInstructions}>
-                Scanne diesen QR-Code mit deiner Lightning-Wallet um eine Spende zu senden
+                Scanne diesen QR-Code mit deiner Lightning-Wallet, um {selectedAmount ? `${selectedAmount} Satoshis` : 'eine Spende'} zu senden
               </p>
             </div>
           )}
         </div>
+        
+        <p className={styles.donationFeedback}>
+          Deine Unterstützung ist nicht nur ein finanzieller Beitrag, sondern motiviert mich auch, 
+          weiter an Bildungsprojekten wie diesem zu arbeiten. Vielen Dank! ⚡
+        </p>
       </div>
       
       <div className={`${styles.contactSection} ${animate ? styles.animate : ''}`}>
@@ -119,7 +200,7 @@ const EndPage: React.FC<EndPageProps> = ({ onRestart }) => {
       </div>
       
       <div className={styles.footer}>
-        <p>© 2023 Bitcoin Education | Alle Inhalte dienen ausschließlich Bildungszwecken</p>
+        <p>©Selbstverständlich können alle Inhalte gemäß den Bestimmungen des Open-Source-Prinzips verwendet werden.</p>
       </div>
     </div>
   );
