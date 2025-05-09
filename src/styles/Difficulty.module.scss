@@ -267,6 +267,33 @@
   }
 }
 
+.miningAnimation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  .spinner {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 5px solid v.$primary-color;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 /* Responsive */
 @media (max-width: 800px) {
   .blockchainVisualization {
@@ -334,6 +361,32 @@
   .hashTarget {
     padding: 0.6rem;
     font-size: 0.93rem;
+
+    .hash, .target {
+      font-size: 0.85rem;
+      word-break: break-all;
+      padding: 0.2rem 0.4rem;
+    }
+  }
+  .adjustmentAlert {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.7rem;
+  }
+  .simpleExplanation {
+    padding: 1rem;
+
+    h3 {
+      font-size: 1.1rem;
+    }
+
+    p {
+      font-size: 0.9rem;
+    }
+
+    .mathExplanation {
+      font-size: 0.85rem;
+      padding: 0.5rem 0.7rem;
+    }
   }
   .blockButtons {
     flex-direction: column;

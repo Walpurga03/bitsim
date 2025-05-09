@@ -85,7 +85,14 @@
     p {
       line-height: 1.6;
       margin-top: 0.3rem;
+      text-align: center;
     }
+  }
+  
+  p {
+    text-align: center;
+    margin: 0 auto;
+    max-width: 90%;
   }
 }
 
@@ -194,6 +201,14 @@
     border-radius: 6px;
     border: 1px solid rgba(231, 76, 60, 0.3);
     animation: pulse 1.5s infinite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    
+    svg {
+      flex-shrink: 0;
+    }
   }
 }
 
@@ -376,7 +391,8 @@
   
   p {
     text-align: center;
-    margin-bottom: 0.8rem;
+    margin: 0 auto 1rem;
+    max-width: 90%;
     
     strong {
       color: v.$primary-color;
@@ -465,7 +481,8 @@
     
     p {
       color: #fff;
-      margin: 0;
+      margin: 0 auto;
+      white-space: pre-line; // Behält Zeilenumbrüche bei, wichtig für formatierte Ausgabe
       
       strong {
         color: v.$primary-color;
@@ -487,6 +504,74 @@
   0% { opacity: 0.7; }
   50% { opacity: 1; }
   100% { opacity: 0.7; }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+// Mining Overlay
+.miningOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.miningAnimationContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(145deg, rgba(30, 30, 30, 0.8), rgba(10, 10, 10, 0.9));
+  border-radius: 20px;
+  padding: 2rem;
+  max-width: 90%;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  
+  .spinner {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 6px solid transparent;
+    border-top-color: v.$primary-color;
+    border-left-color: v.$primary-color;
+    animation: spin 1.3s linear infinite;
+    margin-bottom: 1.5rem;
+  }
+  
+  .progressContainer {
+    width: 250px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  
+  .progressBar {
+    height: 100%;
+    background: v.$primary-color;
+    transition: width 0.1s linear;
+  }
+  
+  p {
+    color: white;
+    font-size: 1.1rem;
+    margin: 0;
+  }
 }
 
 // Responsive Anpassungen
@@ -628,6 +713,44 @@
   
   .blockSizeContainer h3 {
     font-size: 1.1rem;
+  }
+  
+  .mempoolContainer {
+    .mempoolHeader {
+      .sortInfo {
+        flex-direction: column;
+        align-items: flex-start;
+        
+        span {
+          margin-bottom: 0.5rem;
+        }
+        
+        .sortButton {
+          width: 100%;
+          justify-content: center;
+          margin-bottom: 0.3rem;
+        }
+      }
+    }
+  }
+  
+  .miningResult p {
+    font-size: 0.9rem;
+    white-space: pre-line; // Für bessere Formatierung des Ergebnistexts
+  }
+  
+  .miningAnimationContainer {
+    padding: 1.5rem;
+    
+    .spinner {
+      width: 50px;
+      height: 50px;
+      margin-bottom: 1rem;
+    }
+    
+    .progressContainer {
+      width: 200px;
+    }
   }
   
   .mempoolContainer {

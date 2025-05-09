@@ -80,9 +80,20 @@
 
 .blockchainNavigation {
   grid-area: blockchain;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
   padding: clamp(0.5rem, 2vw, 1rem) 0 clamp(1rem, 3vw, 2rem);
   overflow: hidden;
-  width: 100%;
+}
+
+.navigationHint {
+  text-align: center;
+  margin: 0 auto 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+  max-width: 80%;
 }
 
 .blockchainContainer {
@@ -106,7 +117,7 @@
   height: 220px;
   padding: 1.2rem;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.2s ease;
   flex-shrink: 0;
   position: relative;
   overflow: hidden;
@@ -186,36 +197,21 @@
   }
 
   // Hover-Effekte für den Button
-  &:hover {
-    transform: translateY(-10px);
-    border-color: rgba(v.$primary-color, 0.4);
-    box-shadow:
-      0 20px 30px rgba(0, 0, 0, 0.25),
-      0 10px 15px rgba(0, 0, 0, 0.15),
-      inset 0 2px 3px rgba(255, 255, 255, 0.1);
+  &:hover, &:focus {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    outline: none;
 
-    &::before {
-      opacity: 0.7;
-      background-position: 100% 100%;
-    }
-
-    .blockIcon {
-      transform: scale(1.15);
-      color: v.$hover-color;
-    }
-
-    .blockInfo {
-      background: rgba(0, 0, 0, 0.3);
-      border-color: rgba(v.$primary-color, 0.2);
-    }
-
-    .blockHeight {
-      background: rgba(v.$primary-color, 0.25);
-      box-shadow: 0 0 10px rgba(v.$primary-color, 0.3);
+    .blockInner {
+      border-color: rgba(v.$primary-color, 0.8);
     }
   }
 
-  // Dynamischer Hintergrund-Effekt im Button
+  &:focus-visible {
+    outline: 2px solid v.$primary-color;
+    outline-offset: 2px;
+  }
+
   &::before {
     content: '';
     position: absolute;
@@ -245,7 +241,7 @@
   &.activeBlock {
     background: linear-gradient(135deg, rgba(v.$primary-color, 0.2), rgba(20, 30, 50, 0.5));
     border: 2px solid v.$primary-color;
-    transform: translateY(-12px) scale(1.08);
+    transform: scale(1.05);
     box-shadow:
       0 25px 30px rgba(0, 0, 0, 0.25),
       0 0 20px rgba(v.$primary-color, 0.3),
@@ -260,6 +256,14 @@
           rgba(v.$primary-color, 0.15) 0%, 
           transparent 70%
         );
+    }
+
+    .blockInner {
+      background: linear-gradient(135deg, 
+        rgba(v.$primary-color, 0.15), 
+        rgba(v.$primary-color, 0.05)
+      );
+      border-color: v.$primary-color;
     }
 
     .blockIcon {
@@ -603,5 +607,56 @@
     margin: 0 auto;
     display: inline-flex;
     justify-content: center;
+  }
+}
+
+// Responsive Verbesserungen für die Blockchain-Komponente
+@media (max-width: 768px) {
+  .blockchainContainer {
+    flex-direction: column;
+    align-items: stretch;
+    
+    .blockButton {
+      width: 100%;
+      margin-bottom: 1rem;
+      
+      .blockInner {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+    }
+    
+    .blockchainLink {
+      height: 30px;
+      width: 2px;
+      margin: 0 auto;
+    }
+  }
+  
+  .timelineHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    
+    .headerLeft {
+      margin-bottom: 0.5rem;
+    }
+  }
+  
+  .timelineText {
+    font-size: 0.95rem;
+  }
+  
+  .blockProperty {
+    flex-direction: column;
+    align-items: flex-start;
+    
+    .propertyName {
+      margin-bottom: 0.2rem;
+    }
+    
+    .propertyValue {
+      word-break: break-all; // Wichtig für lange Hash-Werte
+      font-size: 0.85rem;
+    }
   }
 }

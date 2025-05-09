@@ -132,8 +132,7 @@
 }
 
 .infoHint {
-  background: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.5); // Fallback für Browser ohne backdrop-filter
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 1rem 1.5rem;
@@ -142,6 +141,11 @@
   gap: 1rem;
   max-width: 90%;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  
+  @supports (backdrop-filter: blur(10px)) {
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+  }
   
   p {
     font-size: 0.95rem;
@@ -215,5 +219,20 @@
   
   &:hover .buttonIcon {
     transform: translateX(5px);
+  }
+}
+
+@media (max-width: 768px) {
+  .heroSection {
+    grid-template-rows: 15% 40% 15% 15% 15%;
+  }
+  
+  .staticTxt {
+    margin-left: 1rem;
+  }
+  
+  .typingContainer {
+    flex-direction: column;
+    gap: 5px;
   }
 }

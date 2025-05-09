@@ -32,50 +32,58 @@ const Landing = () => {
   // Funktion zum Wechseln zur Simulationsansicht
   const startSimulation = () => setSimulate(true);
   
-  
   useEffect(() => {
     // GSAP für komplexe Animationssequenzen einrichten
     gsap.registerPlugin(ScrollTrigger);
     
-    // Timeline-Animation definieren (Sequenz von Animationsschritten)
-    const tl = gsap.timeline();
+    // Starte Animationen nur, wenn alle Refs existieren
+    if (heroRef.current && titleRef.current) {
+      // Timeline-Animation definieren
+      const tl = gsap.timeline();
+      
+      // Animation 1: Gesamter Herobereich einblenden
+      tl.fromTo(
+        heroRef.current, 
+        { opacity: 0, scale: 0.9 },
+        { opacity: 1, scale: 1, duration: 1, ease: "power3.out" }
+      );
+      
+      // Animation 2: Titel von unten einfahren
+      tl.fromTo(
+        titleRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.7, ease: "back.out(1.7)" },
+        "-=0.5"
+      );
+      
+      // Animation 3 nur ausführen, wenn descRef existiert
+      if (descRef.current) {
+        tl.fromTo(
+          descRef.current,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.7, stagger: 0.2 },
+          "-=0.3"
+        );
+      }
+    }
     
-    // Animation 1: Gesamter Herobereich einblenden mit leichter Skalierung
-    tl.fromTo(
-      heroRef.current, 
-      { opacity: 0, scale: 0.9 },             // Startzustand
-      { opacity: 1, scale: 1, duration: 1, ease: "power3.out" } // Endzustand
-    )
-    // Animation 2: Titel von unten einfahren mit Überschneidung zur vorigen Animation
-    .fromTo(
-      titleRef.current,
-      { opacity: 0, y: 20 },                  // Startzustand
-      { opacity: 1, y: 0, duration: 0.7, ease: "back.out(1.7)" },
-      "-=0.5"                                 // Überlappung mit voriger Animation
-    )
-    // Animation 3: Beschreibung einblenden
-    .fromTo(
-      descRef.current,
-      { opacity: 0 },                         // Startzustand
-      { opacity: 1, duration: 0.7, stagger: 0.2 }, // Endzustand (stagger = zeitversetzt)
-      "-=0.3"                                 // Überlappung mit voriger Animation
-    );
-    
-    // ScrollTrigger-Setup für Panel-Animationen beim Scrollen
+    // ScrollTrigger-Setup für Panel-Animationen
     const panels = document.querySelectorAll(`.${styles.panel}`);
-    panels.forEach(panel => {
-      ScrollTrigger.create({
-        trigger: panel,                       // Element, das Animation auslöst
-        start: "top bottom",                  // Starttrigger: Oberkante des Panels trifft Unterkante des Viewports
-        end: "bottom top",                    // Endtrigger: Unterkante des Panels trifft Oberkante des Viewports
-        onEnter: () => panel.classList.add(styles.active),      // Beim Eintreten aktivieren
-        onLeave: () => panel.classList.remove(styles.active),   // Beim Verlassen deaktivieren
-        onEnterBack: () => panel.classList.add(styles.active),  // Beim Zurückkommen aktivieren
-        onLeaveBack: () => panel.classList.remove(styles.active)// Beim Zurückverlassen deaktivieren
+    if (panels.length > 0) {
+      panels.forEach(panel => {
+        ScrollTrigger.create({
+          trigger: panel,
+          start: "top bottom",
+          end: "bottom top",
+          onEnter: () => panel.classList.add(styles.active),
+          onLeave: () => panel.classList.remove(styles.active),
+          onEnterBack: () => panel.classList.add(styles.active),
+          onLeaveBack: () => panel.classList.remove(styles.active)
+        });
       });
-    });
+    }
     
-    // Cleanup-Funktion: Entfernt alle ScrollTrigger beim Komponentenabbau
+    // Cleanup-Funktion
     return () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
@@ -99,9 +107,9 @@ const Landing = () => {
           initial={{ opacity: 0}}              // Startzustand für Animation
           animate={{ opacity: 1}}              // Zielzustand für Animation
           transition={{ 
-            duration: 2,                       // Animationsdauer in Sekunden
+            duration: 1.5,                     // Reduzierte Dauer
             ease: "easeOut",                   // Easing-Funktion (Beschleunigung)
-            delay: 2                          // Verzögerung vor Animationsstart
+            delay: 1                           // Frühere Einblendung
           }}
         >
           <h1 className={styles.glassTitle}>   {/* Glasmorphismus-Effekt */}
@@ -128,13 +136,14 @@ const Landing = () => {
 
         {/* Info-Hinweis (15% Höhe) */}
         <motion.div 
+          ref={descRef}
           className={styles.infoHintContainer}
           initial={{ opacity: 0, y: 20 }}      // Startet unsichtbar und versetzt
           animate={{ opacity: 1, y: 0 }}       // Wird sichtbar und bewegt sich nach oben
           transition={{ 
             duration: 1, 
             ease: "easeOut", 
-            delay: 3                           // Erscheint nach Titel
+            delay: 5                           // Erscheint nach Titel
           }}
         >
           <div className={styles.infoHint}>
@@ -153,7 +162,7 @@ const Landing = () => {
           transition={{ 
             duration: 1, 
             ease: "easeOut", 
-            delay: 4                          // Erscheint nach Info-Hinweis
+            delay: 6                          // Erscheint nach Info-Hinweis
           }}
         >
           Diese Simulation dient ausschließlich Lernzwecken und ist vereinfacht dargestellt.
@@ -167,7 +176,7 @@ const Landing = () => {
           transition={{ 
             duration: 1, 
             ease: "easeOut",
-            delay: 5                          // Erscheint als letztes Element
+            delay: 1                          // Erscheint als letztes Element
           }}
         >
           <button 

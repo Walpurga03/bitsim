@@ -565,6 +565,12 @@
   }
 }
 
+.popupTitle {
+  font-size: 1.2rem;
+  margin: 0 0 0.5rem;
+  color: v.$primary-color;
+}
+
 .popupCloseButton {
   background: v.$primary-color;
   color: black;
@@ -883,61 +889,11 @@
   100% { transform: scale(1); }
 }
 
-// =============================================================================
-// Consensus Process Timeline
-// =============================================================================
 
-.consensusExplanation {
-  margin: clamp(3rem, 8vw, 5rem) 0;
-  padding: clamp(1.5rem, 4vw, 2.5rem);
-  background: linear-gradient(145deg, rgba(v.$secondary-color, 0.7), rgba(v.$bg-dark, 5%));
-  border-radius: 20px;
-  border: 1px solid rgba(v.$primary-color, 0.3);
-  box-shadow: 0 15px 30px rgba(v.$text-color-black, 0.3), 
-              0 0 50px rgba(v.$primary-color, 0.1);
-  
-  @media (max-width: v.$breakpoint-tablet) {
-    padding: clamp(1rem, 5vw, 1.5rem);
-  }
-}
 
-.processTitle {
-  text-align: center;
-  font-size: clamp(1.5rem, 3.5vw, 2.2rem);
-  margin-bottom: clamp(1.5rem, 5vw, 3rem);
-  color: v.$primary-color;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  position: relative;
-  display: inline-block;
-  width: 100%;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    bottom: -10px;
-    width: clamp(80px, 15vw, 120px);
-    height: 3px;
-    background: v.$primary-color;
-    transform: translateX(-50%);
-    border-radius: 3px;
-  }
-}
 
-.timelineConnector {
-  width: 2px;
-  height: 100%;
-  background: rgba(v.$primary-color, 0.3);
-  flex-grow: 1;
-  
-  @media (max-width: 600px) {
-    width: 100%;
-    height: 2px;
-    margin-left: 10px;
-  }
-}
+
+
 
 .timelineIcon {
   width: clamp(38px, 8vw, 50px);
@@ -991,4 +947,110 @@
 .timelineDesc {
   font-size: clamp(v.$font-size-small, 2vw, v.$font-size-base);
   color: rgba(v.$text-color-white, 0.9);
+}
+
+.timelineContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+  padding: 0.5rem 0 0.5rem 3rem;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, 
+      rgba(v.$primary-color, 0.2),
+      rgba(v.$primary-color, 0.8),
+      rgba(v.$primary-color, 0.2)
+    );
+    border-radius: 3px;
+  }
+}
+
+.timelineStep {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: -3rem;
+    top: 0.8rem;
+    width: 18px;
+    height: 18px;
+    background: v.$primary-color;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(v.$primary-color, 0.3);
+    z-index: 1;
+  }
+}
+
+// Dazugehörige Styles
+.interactionHint {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: rgba(v.$primary-color, 0.1);
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1.5rem;
+  
+  .hintIcon {
+    font-size: 1.5rem;
+    animation: bounce 1.5s infinite;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+// Ergänze diese Media Queries
+@media (max-width: 480px) {
+  .blockchainVisualization {
+    margin-top: 2rem;
+  }
+  
+  .block {
+    grid-template-columns: 1fr; // Statt auto 1fr
+    
+    .blockHeader {
+      border-radius: 12px 12px 0 0;
+      padding: 0.6rem;
+    }
+    
+    .blockContent {
+      padding: 0.8rem;
+      justify-content: space-between;
+      flex-direction: row;
+    }
+  }
+  
+  .forkHeader {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  
+  .resultStats {
+    padding: 0.8rem;
+    flex-direction: column;
+    gap: 1rem;
+    
+    .statDivider {
+      width: 80%;
+      height: 1px;
+    }
+  }
 }

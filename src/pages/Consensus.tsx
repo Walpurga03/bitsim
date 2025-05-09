@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import styles from "../styles/Consensus.module.scss";
 import { FaUserAlt, FaServer, FaNetworkWired, FaCubes, FaCheckCircle, FaShieldAlt } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -71,7 +71,7 @@ const Consensus: React.FC<ConsensusProps> = () => {
   const supportingNodes = nodes.filter(node => node.supportsChange);
 
   // Toggle Support für einen Node
-  const toggleNodeSupport = (index: number): void => {
+  const toggleNodeSupport = useCallback((index: number): void => {
     const newNodes = [...nodes];
     
     // Aktueller Status des angeklickten Nodes umkehren
@@ -80,7 +80,7 @@ const Consensus: React.FC<ConsensusProps> = () => {
     // Prüfen, ob alle Nodes zustimmen würden
     const allNodesSupport = newNodes.every(node => node.supportsChange);
     
-    // Falls alle zustimmen würden, einen zufälligen Node (außer den gerade angeklickten) wieder deaktivieren
+    // Falls alle zustimmen würden, einen zufälligen Node deaktivieren
     if (allNodesSupport) {
       // Verfügbare Indizes (alle außer dem gerade angeklickten)
       const availableIndices = Array.from({ length: nodes.length }, (_, i) => i)
@@ -101,10 +101,10 @@ const Consensus: React.FC<ConsensusProps> = () => {
     }
     
     setNodes(newNodes);
-  };
+  }, [nodes, setNodes, setPopupMessage, setShowPopup]);
 
   // Prüfen, ob der "Änderungen anwenden"-Button aktiviert sein soll
-  const canApplyChanges = (): boolean => {
+  const canApplyChanges = useCallback((): boolean => {
     // Prüfen, ob mindestens ein Node die Änderung unterstützt
     const hasNodeSupport = nodes.some(node => node.supportsChange);
     
@@ -113,7 +113,7 @@ const Consensus: React.FC<ConsensusProps> = () => {
     
     // Beide Bedingungen müssen erfüllt sein
     return hasNodeSupport && hasRuleChanges;
-  };
+  }, [nodes, blockSize, maxCoins]);
 
   // Simuliere den Fork
   const simulateFork = () => {
@@ -352,6 +352,14 @@ const Consensus: React.FC<ConsensusProps> = () => {
             ) : null}
           </AnimatePresence>
           
+          {/* Füge diese Komponente für eine bessere Benutzerführung ein */}
+          {!showFork && (
+            <div className={styles.interactionHint}>
+              <div className={styles.hintIcon}>👆</div>
+              <p>Klicke auf die Nodes, um deren Unterstützung für die Regeländerungen zu aktivieren</p>
+            </div>
+          )}
+          
           {/* Visualisierung der Blockchain vor/nach Fork mit Animation */}
           {showFork && (
             <motion.div 
@@ -424,15 +432,20 @@ const Consensus: React.FC<ConsensusProps> = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="popup-title"
             >
               <div className={styles.popupContent}>
-                <div className={styles.popupIcon}>⚠️</div>
+                <div className={styles.popupIcon} aria-hidden="true">⚠️</div>
+                <h4 id="popup-title" className={styles.popupTitle}>Hinweis</h4>
                 <p>{popupMessage}</p>
                 <motion.button 
                   className={styles.popupCloseButton}
                   onClick={() => setShowPopup(false)}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
+                  autoFocus // Automatischer Fokus für bessere Tastaturnavigation
                 >
                   Verstanden
                 </motion.button>
@@ -440,63 +453,6 @@ const Consensus: React.FC<ConsensusProps> = () => {
             </motion.div>
           )}
         </AnimatePresence>
-        
-        {/* Prozessablauf mit visueller Timeline und Animation */}
-        <motion.div 
-          className={styles.consensusExplanation}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.9 }}
-        >
-          <h2 className={styles.processTitle}>Der Konsensus-Prozess im Detail</h2>
-          
-          <div className={styles.timelineContainer}>
-            {[
-              { 
-                title: "Transaktion wird initiiert", 
-                desc: "Ein Nutzer sendet eine Bitcoin-Transaktion",
-              },
-              { 
-                title: "Validierung durch Nodes", 
-                desc: "Vollständige Nodes prüfen, ob die Transaktion den Konsensus-Regeln entspricht",
-              },
-              { 
-                title: "Aufnahme in den Mempool", 
-                desc: "Gültige Transaktionen werden in die Warteschlange aufgenommen",
-              },
-              { 
-                title: "Mining-Prozess", 
-                desc: "Miner nehmen Transaktionen aus dem Mempool und versuchen, einen gültigen Block zu finden",
-              },
-              { 
-                title: "Neuer Block gefunden", 
-                desc: "Ein Miner löst das Proof-of-Work-Rätsel und verbreitet seinen Block",
-              },
-              { 
-                title: "Konsensus-Bestätigung", 
-                desc: "Andere Nodes prüfen den neuen Block und akzeptieren ihn bei Regelkonformität",
-              },
-              { 
-                title: "Finalisierung", 
-                desc: "Mit jeder weiteren Bestätigung wird die Transaktion unumkehrbarer",
-              }
-            ].map((step, index) => (
-              <motion.div 
-                key={index}
-                className={styles.timelineStep}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.9 + (index * 0.15) }}
-              >
-                
-                <div className={styles.timelineContent}>
-                  <h3 className={styles.timelineTitle}>{step.title}</h3>
-                  <p className={styles.timelineDesc}>{step.desc}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
       </section>
     </div>
   );

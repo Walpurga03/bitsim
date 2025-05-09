@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from '../styles/TransactionPage.module.scss';
 import CombinedTransactionWalletsPage from './CombinedTransactionWalletsPage';
 import { mineBlock, DIFFICULTY_LEVELS } from '../utils/miningUtils';
-import { FaInfoCircle, FaCheck, FaSpinner, FaArrowRight } from 'react-icons/fa';
+import { FaInfoCircle, FaCheck, FaSpinner, FaArrowRight, FaExclamationCircle } from 'react-icons/fa';
 
 interface MiningResult {
   hash: string;
@@ -34,6 +34,9 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
   const [txIdFromCombined, setTxIdFromCombined] = useState<string>('');
   const [pendingTransactionAmount, setPendingTransactionAmount] = useState<number>(0);
   const [transactionCompleted, setTransactionCompleted] = useState(false);
+  const [showMiningAnimation, setShowMiningAnimation] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [miningProgress, setMiningProgress] = useState(0);
 
   const satoshiAddress = "1SatoshiPioneerXXX";
   const hallAddress = "1HallLegendeXXX";
@@ -49,12 +52,30 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
     ]);
   }, []);
 
-  const simulateMining = () => {
+  useEffect(() => {
+    if (showMiningAnimation) {
+      const interval = setInterval(() => {
+        setMiningProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            return 100;
+          }
+          return prev + 5;
+        });
+      }, 50); // 20 Schritte für 1 Sekunde
+      
+      return () => clearInterval(interval);
+    } else {
+      setMiningProgress(0);
+    }
+  }, [showMiningAnimation]);
+
+  const simulateMining = useCallback(() => {
     if (isAnimating) return;
-
+    
     setIsAnimating(true);
-    setTimeout(() => setIsAnimating(false), 2000);
-
+    setShowMiningAnimation(true);
+    
     // Create timestamp
     const now = new Date();
     now.setFullYear(now.getFullYear() - 16);
@@ -80,63 +101,66 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
     // Block data
     const blockData = `${previousHash}-${timestamp}-${merkleRoot}`;
 
-    // Mining animation
-    const miningAnimation = document.createElement('div');
-    miningAnimation.className = styles.miningAnimation;
-    document.body.appendChild(miningAnimation);
-
     // Mining with timeout
     setTimeout(() => {
-      const difficulty = DIFFICULTY_LEVELS.MEDIUM;
+      try {
+        const difficulty = DIFFICULTY_LEVELS.MEDIUM;
 
-      const result = mineBlock(blockData, difficulty);
+        const result = mineBlock(blockData, difficulty);
 
-      const newBlock = walletInfo.currentBlock + 1;
+        const newBlock = walletInfo.currentBlock + 1;
 
-      const newBlockData: MiningResult = {
-        hash: result.hash.toString(),
-        nonce: result.nonce,
-        target: result.target.toString(),
-        timestamp,
-        transactions,
-        merkleRoot,
-        found: result.found,
-        blockNumber: newBlock,
-      };
+        const newBlockData: MiningResult = {
+          hash: result.hash.toString(),
+          nonce: result.nonce,
+          target: result.target.toString(),
+          timestamp,
+          transactions,
+          merkleRoot,
+          found: result.found,
+          blockNumber: newBlock,
+        };
 
-      setMiningResult(newBlockData);
+        setMiningResult(newBlockData);
 
-      if (result.found) {
-        setChainBlocks(prev => {
-          const newChain = [...prev, newBlockData];
-          while (newChain.length > 5) {
-            newChain.shift();
+        if (result.found) {
+          setChainBlocks(prev => {
+            const newChain = [...prev, newBlockData];
+            while (newChain.length > 5) {
+              newChain.shift();
+            }
+            return newChain;
+          });
+
+          if (pendingTransactionAmount > 0) {
+            setWalletInfo(prev => ({
+              ...prev,
+              balance: prev.balance + prev.currentReward - pendingTransactionAmount,
+              hallBalance: prev.hallBalance + pendingTransactionAmount,
+              currentBlock: newBlock,
+            }));
+            setTxIdFromCombined('');
+            setPendingTransactionAmount(0);
+            setTransactionCompleted(true);
+          } else {
+            setWalletInfo(prev => ({
+              ...prev,
+              balance: prev.balance + prev.currentReward,
+              currentBlock: newBlock,
+            }));
           }
-          return newChain;
-        });
-
-        if (pendingTransactionAmount > 0) {
-          setWalletInfo(prev => ({
-            ...prev,
-            balance: prev.balance + prev.currentReward - pendingTransactionAmount,
-            hallBalance: prev.hallBalance + pendingTransactionAmount,
-            currentBlock: newBlock,
-          }));
-          setTxIdFromCombined('');
-          setPendingTransactionAmount(0);
-          setTransactionCompleted(true);
-        } else {
-          setWalletInfo(prev => ({
-            ...prev,
-            balance: prev.balance + prev.currentReward,
-            currentBlock: newBlock,
-          }));
         }
-      }
 
-      document.body.removeChild(miningAnimation);
+        setError(null); // Fehler zurücksetzen
+      } catch (err) {
+        console.error("Mining-Fehler:", err);
+        setError("Bei der Bestätigung der Transaktion ist ein Fehler aufgetreten. Bitte versuche es erneut.");
+      } finally {
+        setShowMiningAnimation(false);
+        setIsAnimating(false);
+      }
     }, 1000);
-  };
+  }, [isAnimating, chainBlocks, walletInfo, pendingTransactionAmount, txIdFromCombined]);
 
   if (showCombinedPage) {
     return (
@@ -360,7 +384,7 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
                   className={styles.actionButton}
                   onClick={onNext}
                 >
-                  Weiter zum Halving
+                  Weiter
                 </button>
               )}
             </div>
@@ -375,34 +399,29 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
           >
-            <div className={styles.transactionExplanation}>
-              <h3>Wie Bitcoin-Transaktionen funktionieren</h3>
-              
-              <ol className={styles.transactionList}>
-                <li>
-                  <strong>Erstellen:</strong> Der Sender erstellt eine Transaktion mit der Empfängeradresse und dem gewünschten Betrag.
-                </li>
-                <li>
-                  <strong>Signieren:</strong> Die Transaktion wird mit dem privaten Schlüssel des Senders kryptografisch signiert.
-                </li>
-                <li>
-                  <strong>Übertragen:</strong> Die signierte Transaktion wird an das Bitcoin-Netzwerk übertragen.
-                </li>
-                <li>
-                  <strong>Bestätigen:</strong> Miner bestätigen die Transaktion durch Aufnahme in einen Block der Blockchain.
-                </li>
-              </ol>
-              
-              <div className={styles.transactionTip}>
-                <FaInfoCircle className={styles.tipIcon} />
-                <p>
-                  Im Gegensatz zu Banküberweisungen benötigen Bitcoin-Transaktionen keine Genehmigung von Dritten. 
-                  Die Bestätigung durch das Mining sorgt für Sicherheit und Unveränderlichkeit.
-                </p>
-              </div>
-            </div>
           </motion.div>
         </section>
+      )}
+
+      {showMiningAnimation && (
+        <div className={styles.miningAnimation}>
+          <div className={styles.spinner}></div>
+          <div className={styles.progressContainer}>
+            <div 
+              className={styles.progressBar} 
+              style={{ width: `${miningProgress}%` }}
+            ></div>
+          </div>
+          <p>Transaktion wird bestätigt...</p>
+        </div>
+      )}
+
+      {error && (
+        <div className={styles.errorMessage}>
+          <FaExclamationCircle className={styles.errorIcon} />
+          <p>{error}</p>
+          <button onClick={() => setError(null)} className={styles.closeButton}>Schließen</button>
+        </div>
       )}
     </div>
   );

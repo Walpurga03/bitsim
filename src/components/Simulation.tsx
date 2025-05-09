@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Consensus from '../pages/Consensus';
 import SatoshiIntroPage from '../pages/Blockchain';
@@ -27,30 +27,34 @@ const Simulation: React.FC = () => {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [isNavigating, setIsNavigating] = useState(false);
 
-  const navigateToPage = (index: number) => {
+  // Sicherstellen, dass isNavigating zurückgesetzt wird
+  useEffect(() => {
+    const timer = setTimeout(() => setIsNavigating(false), 500);
+    return () => clearTimeout(timer); // Cleanup bei Komponentenwechsel
+  }, [currentPageIndex]);
+
+  // Vereinfachte Navigationsfunktion
+  const navigateToPage = useCallback((index: number) => {
     if (index >= 0 && index < simulationPages.length && !isNavigating) {
       setIsNavigating(true);
       setCurrentPageIndex(index);
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      
-      // Kurze Verzögerung, um schnelles Klicken zu verhindern
-      setTimeout(() => setIsNavigating(false), 500);
     }
-  };
+  }, [isNavigating, simulationPages.length]);
 
-  const goToNextPage = () => {
+  const goToNextPage = useCallback(() => {
     if (currentPageIndex < simulationPages.length - 1) {
-      setCurrentPageIndex(currentPageIndex + 1);
+      setCurrentPageIndex(prev => prev + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  };
+  }, [currentPageIndex, simulationPages.length]);
 
-  const goToPrevPage = () => {
+  const goToPrevPage = useCallback(() => {
     if (currentPageIndex > 0) {
-      setCurrentPageIndex(currentPageIndex - 1);
+      setCurrentPageIndex(prev => prev - 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  };
+  }, [currentPageIndex]);
 
   const restartSimulation = () => {
     setCurrentPageIndex(0);
@@ -120,15 +124,16 @@ const Simulation: React.FC = () => {
           transition={{ delay: 0.5 }}
         >
           {simulationPages.slice(0, simulationPages.length - 1).map((_, index) => (
-            <div 
+            <button 
               key={index} 
-              className={`${styles.dot} ${index === currentPageIndex ? styles.active : ''}`}
-              role="button"
-              tabIndex={0}
+              className={`${styles.dotButton} ${index === currentPageIndex ? styles.active : ''}`}
               onClick={() => navigateToPage(index)}
-              onKeyDown={(e) => e.key === 'Enter' && navigateToPage(index)}
               aria-label={`Gehe zu Seite ${index + 1}: ${simulationPages[index].title}`}
-            />
+              aria-current={index === currentPageIndex ? "page" : undefined}
+              title={simulationPages[index].title}
+            >
+              <span className={styles.dot}></span>
+            </button>
           ))}
         </motion.div>
       )}

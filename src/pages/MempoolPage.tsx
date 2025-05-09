@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from '../styles/MempoolPage.module.scss';
 import { FaInfoCircle, FaChartBar, FaClock, FaListAlt, FaRedo, FaSort, FaSortAmountDown, FaSortAmountUp, FaWallet } from 'react-icons/fa';
@@ -18,6 +18,51 @@ interface MempoolPageProps {
   onNext: () => void;
 }
 
+// Neue Komponente für Transaktionszeilen
+const TransactionRow = React.memo(({ 
+  transaction, 
+  isSelected, 
+  onToggle 
+}: { 
+  transaction: Transaction; 
+  isSelected: boolean; 
+  onToggle: (tx: Transaction) => void; 
+}) => {
+  return (
+    <div
+      className={`${styles.transactionRow} ${isSelected ? styles.selectedTx : ''}`}
+      onClick={() => onToggle(transaction)}
+      onKeyPress={(e) => e.key === 'Enter' && onToggle(transaction)}
+      role="listitem"
+      tabIndex={0}
+      aria-selected={isSelected}
+    >
+      <div className={styles.txColumn}>
+        <div className={styles.txId}>{transaction.id}</div>
+        <div className={styles.txAddresses}>
+          Von: {transaction.sender.substring(0, 5)}...{transaction.sender.substring(transaction.sender.length-3)} → 
+          An: {transaction.recipient.substring(0, 5)}...{transaction.recipient.substring(transaction.recipient.length-3)}
+        </div>
+        <div className={styles.priority}>
+          <div 
+            className={styles.priorityIndicator} 
+            style={{ 
+              background: transaction.priority === 'high' ? '#e74c3c' : 
+                          transaction.priority === 'medium' ? '#f39c12' : '#2ecc71' 
+            }}
+          ></div>
+          {transaction.priority === 'high' ? 'Hohe Priorität' : 
+            transaction.priority === 'medium' ? 'Mittlere Priorität' : 'Niedrige Priorität'}
+        </div>
+      </div>
+      <div className={styles.txColumn}>{transaction.amount.toFixed(8)}</div>
+      <div className={styles.txColumn}>{Math.round(transaction.fee)}</div>
+      <div className={styles.txColumn}>{transaction.feeRate}</div>
+      <div className={styles.txColumn}>{(transaction.size / 1000).toFixed(2)} KB</div>
+    </div>
+  );
+});
+
 const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [selectedTransactions, setSelectedTransactions] = useState<Transaction[]>([]);
@@ -29,31 +74,27 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
   const [blockMined, setBlockMined] = useState<boolean>(false);
   const [miningResult, setMiningResult] = useState<string | null>(null);
   const [animate, setAnimate] = useState(false);
-  
+  const [showMiningAnimation, setShowMiningAnimation] = useState(false);
+  const [miningProgress, setMiningProgress] = useState(0);
+
   const MAX_BLOCK_SIZE = 1000000; // 1 MB in Bytes
-  
+
   useEffect(() => {
     // Erst verzögert die Animation aktivieren für bessere UX
     setTimeout(() => setAnimate(true), 100);
-    
+
     // Transaktionen generieren
     generateTransactions();
   }, []);
-  
-  const generateTransactions = () => {
-    // Hier würden Sie in einer realen Anwendung Daten abrufen
-    // Für die Simulation generieren wir zufällige Transaktionen
+
+  // Optimierte Funktionen mit useCallback
+  const generateTransactions = useCallback(() => {
     const newTransactions: Transaction[] = [];
-    
     const priorities: ('high' | 'medium' | 'low')[] = ['high', 'medium', 'low'];
-    
-    // Generiere 15-25 zufällige Transaktionen
     const numTransactions = Math.floor(Math.random() * 10) + 15;
-    
+
     for (let i = 0; i < numTransactions; i++) {
       const priority = priorities[Math.floor(Math.random() * priorities.length)];
-      
-      // Gebührenrate basierend auf Priorität
       let feeRate;
       if (priority === 'high') {
         feeRate = Math.floor(Math.random() * 40) + 80; // 80-120 sat/byte
@@ -63,13 +104,14 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
         feeRate = Math.floor(Math.random() * 15) + 5; // 5-20 sat/byte
       }
       
-      // Transaktionsgröße zwischen 200 und 600 Bytes
-      const size = Math.floor(Math.random() * 400) + 200;
+      // Geändert von 200-600 Bytes auf 30.000-300.000 Bytes (30-300 KB)
+      const size = Math.floor(Math.random() * 270000) + 30000;
       
-      // Gebühr berechnen
-      const fee = feeRate * size;
-      
-      // Transaktion erstellen
+      // Anpassen der Gebühr - eventuell reduzieren, da sonst extrem hohe Gebühren entstehen würden
+      // Beispiel: 100 sat/byte * 300.000 bytes = 30.000.000 sat, was sehr unrealistisch ist
+      // Wir können die Gebühr pro KB berechnen statt pro Byte
+      const fee = feeRate * (size / 1000);
+
       newTransactions.push({
         id: `tx${Math.random().toString(36).substring(2, 10)}`,
         amount: Math.floor(Math.random() * 2) + 0.1,
@@ -81,53 +123,43 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
         priority
       });
     }
-    
+
     setTransactions(newTransactions);
     setSelectedTransactions([]);
     setBlockSize(0);
     setIsBlockFull(false);
     setBlockMined(false);
     setMiningResult(null);
-  };
-  
-  const toggleTransaction = (tx: Transaction) => {
-    // Prüfen, ob die Transaktion bereits ausgewählt ist
+  }, []);
+
+  const toggleTransaction = useCallback((tx: Transaction) => {
     const isSelected = selectedTransactions.some(t => t.id === tx.id);
-    
+
     if (isSelected) {
-      // Transaktion entfernen
       const newSelected = selectedTransactions.filter(t => t.id !== tx.id);
       setSelectedTransactions(newSelected);
       setBlockSize(calculateBlockSize(newSelected));
       setIsBlockFull(false);
     } else {
-      // Prüfen, ob der Block voll wird
       const newBlockSize = blockSize + tx.size;
-      
+
       if (newBlockSize <= MAX_BLOCK_SIZE) {
         const newSelected = [...selectedTransactions, tx];
         setSelectedTransactions(newSelected);
         setBlockSize(newBlockSize);
         setIsBlockFull(newBlockSize >= MAX_BLOCK_SIZE);
       } else {
-        // Block würde zu groß werden
         setIsBlockFull(true);
       }
     }
-  };
-  
-  const calculateBlockSize = (txs: Transaction[]) => {
-    return txs.reduce((total, tx) => total + tx.size, 0);
-  };
-  
-  const autoSelectByFee = () => {
-    // Sortiere Transaktionen nach Gebührenrate (höchste zuerst)
+  }, [selectedTransactions, blockSize, isBlockFull]);
+
+  const autoSelectByFee = useCallback(() => {
     const sortedTransactions = [...transactions].sort((a, b) => b.feeRate - a.feeRate);
-    
+
     let totalSize = 0;
     const selected: Transaction[] = [];
-    
-    // Füge Transaktionen hinzu, bis der Block voll ist
+
     for (const tx of sortedTransactions) {
       if (totalSize + tx.size <= MAX_BLOCK_SIZE) {
         selected.push(tx);
@@ -136,55 +168,83 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
         break;
       }
     }
-    
+
     setSelectedTransactions(selected);
     setBlockSize(totalSize);
     setIsBlockFull(totalSize >= MAX_BLOCK_SIZE);
-  };
-  
-  const handleSortChange = (sortType: 'feeRate' | 'amount' | 'size') => {
+  }, [transactions, MAX_BLOCK_SIZE]);
+
+  const handleSortChange = useCallback((sortType: 'feeRate' | 'amount' | 'size') => {
     if (sortBy === sortType) {
-      // Wenn schon nach diesem Feld sortiert wird, Richtung umkehren
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     } else {
-      // Sonst neues Sortierfeld mit Standard-Sortierrichtung
       setSortBy(sortType);
       setSortDirection('desc');
     }
-  };
-  
-  const sortedTransactions = [...transactions].sort((a, b) => {
-    const factor = sortDirection === 'asc' ? 1 : -1;
-    return (a[sortBy] - b[sortBy]) * factor;
-  });
-  
-  const mineBlock = () => {
+  }, [sortBy, sortDirection]);
+
+  const mineBlock = useCallback(() => {
     if (selectedTransactions.length === 0) return;
-    
+
     setIsMining(true);
-    
+    setShowMiningAnimation(true);
+
+    // Animation starten
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+      progress += 5;
+      setMiningProgress(progress);
+
+      if (progress >= 100) {
+        clearInterval(progressInterval);
+      }
+    }, 100);
+
     // Simuliere Mining-Verzögerung
     setTimeout(() => {
       const totalFees = selectedTransactions.reduce((sum, tx) => sum + tx.fee, 0);
       const blockReward = 6.25 * 100000000; // in Satoshis
-      
+
       setMiningResult(
-        `Block erfolgreich gemined! 🎉\n` +
+        `Block erfolgreich gemined! 🎉\n\n` +
         `Enthaltene Transaktionen: ${selectedTransactions.length}\n` +
-        `Gesamte Gebühren: ${totalFees} Satoshis\n` +
-        `Block-Reward: ${blockReward} Satoshis (6.25 BTC)\n` +
-        `Gesamtbelohnung: ${totalFees + blockReward} Satoshis`
+        `Gesamte Gebühren: ${Math.round(totalFees)} Satoshis\n` +
+        `Block-Reward: ${Math.round(blockReward)} Satoshis (6.25 BTC)\n` +
+        `Gesamtbelohnung: ${Math.round(totalFees + blockReward)} Satoshis`
       );
-      
+
       setIsMining(false);
       setBlockMined(true);
+      setShowMiningAnimation(false);
+      clearInterval(progressInterval);
     }, 2000);
-  };
-  
+  }, [selectedTransactions]);
+
   const resetMining = () => {
     generateTransactions();
   };
-  
+
+  const calculateBlockSize = (txs: Transaction[]) => {
+    return txs.reduce((total, tx) => total + tx.size, 0);
+  };
+
+  // Optimierte Berechnungen mit useMemo
+  const sortedTransactions = useMemo(() => {
+    return [...transactions].sort((a, b) => {
+      const factor = sortDirection === 'asc' ? 1 : -1;
+      return (a[sortBy] - b[sortBy]) * factor;
+    });
+  }, [transactions, sortBy, sortDirection]);
+
+  const selectedStats = useMemo(() => {
+    const totalFees = selectedTransactions.reduce((sum, tx) => sum + tx.fee, 0);
+    return {
+      count: selectedTransactions.length,
+      size: blockSize,
+      fees: totalFees
+    };
+  }, [selectedTransactions, blockSize]);
+
   return (
     <div className={styles.page}>
       {/* Intro Section */}
@@ -350,43 +410,25 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
           <div className={styles.txColumn}>Betrag (BTC)</div>
           <div className={styles.txColumn}>Gebühr (sat)</div>
           <div className={styles.txColumn}>Gebühr/vByte</div>
-          <div className={styles.txColumn}>Größe (Bytes)</div>
+          <div className={styles.txColumn}>Größe (KB)</div> {/* Geändert von 'Größe (Bytes)' */}
         </div>
         
-        <div className={styles.transactionsList}>
+        <div 
+          className={styles.transactionsList}
+          role="list"
+          aria-label="Verfügbare Transaktionen im Mempool"
+        >
           {sortedTransactions.length > 0 ? (
             sortedTransactions.map((tx) => (
-              <div
+              <TransactionRow
                 key={tx.id}
-                className={`${styles.transactionRow} ${selectedTransactions.some(t => t.id === tx.id) ? styles.selectedTx : ''}`}
-                onClick={() => toggleTransaction(tx)}
-              >
-                <div className={styles.txColumn}>
-                  <div className={styles.txId}>{tx.id}</div>
-                  <div className={styles.txAddresses}>
-                    Von: {tx.sender.substring(0, 5)}...{tx.sender.substring(tx.sender.length-3)} → 
-                    An: {tx.recipient.substring(0, 5)}...{tx.recipient.substring(tx.recipient.length-3)}
-                  </div>
-                  <div className={styles.priority}>
-                    <div 
-                      className={styles.priorityIndicator} 
-                      style={{ 
-                        background: tx.priority === 'high' ? '#e74c3c' : 
-                                    tx.priority === 'medium' ? '#f39c12' : '#2ecc71' 
-                      }}
-                    ></div>
-                    {tx.priority === 'high' ? 'Hohe Priorität' : 
-                      tx.priority === 'medium' ? 'Mittlere Priorität' : 'Niedrige Priorität'}
-                  </div>
-                </div>
-                <div className={styles.txColumn}>{tx.amount.toFixed(8)}</div>
-                <div className={styles.txColumn}>{tx.fee}</div>
-                <div className={styles.txColumn}>{tx.feeRate}</div>
-                <div className={styles.txColumn}>{tx.size}</div>
-              </div>
+                transaction={tx}
+                isSelected={selectedTransactions.some(t => t.id === tx.id)}
+                onToggle={toggleTransaction}
+              />
             ))
           ) : (
-            <div className={styles.emptyState}>Keine Transaktionen im Mempool</div>
+            <div className={styles.emptyState} role="status">Keine Transaktionen im Mempool</div>
           )}
         </div>
       </motion.section>
@@ -400,9 +442,9 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
       >
         <h3>Transaktionsauswahl</h3>
         <p>
-          Du hast <strong>{selectedTransactions.length}</strong> Transaktionen mit insgesamt <strong>{blockSize} Bytes</strong> ausgewählt.
-          {selectedTransactions.length > 0 && (
-            <> Die Gesamtgebühren betragen <strong>{selectedTransactions.reduce((sum, tx) => sum + tx.fee, 0)} Satoshis</strong>.</>
+          Du hast <strong>{selectedStats.count}</strong> Transaktionen mit insgesamt <strong>{(selectedStats.size / 1000).toFixed(2)} KB</strong> ausgewählt.
+          {selectedStats.count > 0 && (
+            <> Die Gesamtgebühren betragen <strong>{Math.round(selectedStats.fees)} Satoshis</strong>.</>
           )}
         </p>
         
@@ -419,6 +461,12 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
             className={styles.mineButton} 
             onClick={mineBlock}
             disabled={selectedTransactions.length === 0 || isBlockFull || isMining || blockMined}
+            aria-busy={isMining}
+            aria-label={
+              isMining ? "Mining läuft..." : 
+              blockMined ? "Block wurde bereits gemined" : 
+              "Block mit ausgewählten Transaktionen minen"
+            }
           >
             {isMining ? "Mining..." : blockMined ? "Block gemined" : "Block minen"}
           </button>
@@ -453,12 +501,31 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
                 <FaRedo /> Neue Transaktionen laden
               </button>
               <button className={styles.nextButton} onClick={onNext}>
-                Weiter zum Halving
+                Weiter
               </button>
             </motion.div>
           )}
         </AnimatePresence>
       </motion.section>
+
+      {/* Mining Animation Overlay */}
+      {showMiningAnimation && (
+        <div className={styles.miningOverlay} role="dialog" aria-label="Mining läuft">
+          <div className={styles.miningAnimationContainer}>
+            <div className={styles.spinner}></div>
+            <div className={styles.progressContainer}>
+              <div 
+                className={styles.progressBar} 
+                style={{ width: `${miningProgress}%` }}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={miningProgress}
+              ></div>
+            </div>
+            <p>Block wird gemined...</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

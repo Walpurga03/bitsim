@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import styles from '../styles/NodeNetwork.module.scss'; 
 import { mineBlock, DIFFICULTY_LEVELS } from '../utils/miningUtils';
@@ -48,6 +48,7 @@ const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({}) => {
     fullNodes: 0,
     connectedNodes: 0
   });
+  const [showMiningAnimation, setShowMiningAnimation] = useState(false);
   
   const networkRef = useRef<HTMLDivElement>(null);
   
@@ -63,8 +64,8 @@ const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({}) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Generate network nodes (vereinfacht)
-  const generateNodes = () => {
+  // Optimierte Node-Generierung mit useCallback
+  const generateNodes = useCallback(() => {
     if (!networkRef.current) return;
     
     const width = networkRef.current.clientWidth;
@@ -116,10 +117,10 @@ const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({}) => {
       fullNodes: newNodes.filter(n => n.type === 'full').length,
       connectedNodes: newNodes.filter(n => n.connected).length
     });
-  };
+  }, [isMobile, networkRef]);
 
-  // Realistischere Verbindungen im Netzwerk erstellen
-  const createNetworkConnections = (nodesList: Node[]) => {
+  // Verwende useCallback für die Verbindungen
+  const createNetworkConnections = useCallback((nodesList: Node[]) => {
     // Für jeden Node Verbindungen erstellen
     nodesList.forEach((node, idx) => {
       if (!node.connected) return; // Nicht-verbundene Nodes ignorieren
@@ -149,7 +150,7 @@ const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({}) => {
         }
       }
     });
-  };
+  }, []);
 
   // Hilfsfunktion: Finde potentielle Nachbarn für einen Node
   const findPotentialNeighbors = (nodesList: Node[], sourceIdx: number): {idx: number, distance: number}[] => {
@@ -187,6 +188,7 @@ const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({}) => {
     if (isAnimating) return;
     
     setIsAnimating(true);
+    setShowMiningAnimation(true);
     
     // Create timestamp
     const now = new Date();
@@ -207,11 +209,6 @@ const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({}) => {
     
     // Block data
     const blockData = `${previousHash}-${timestamp}-${merkleRoot}`;
-    
-    // Mining animation
-    const miningAnimation = document.createElement('div');
-    miningAnimation.className = styles.miningAnimation;
-    document.body.appendChild(miningAnimation);
     
     // Mining with timeout
     setTimeout(() => {
@@ -263,7 +260,7 @@ const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({}) => {
         simulateBlockPropagation();
       }
       
-      document.body.removeChild(miningAnimation);
+      setShowMiningAnimation(false);
       setIsAnimating(false);
     }, 1000);
   };
@@ -353,6 +350,20 @@ const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({}) => {
 
   const hasLatestBlock = nodes.some(node => node.hasLatestBlock);
 
+  // Vermeide unnötige Re-Renderings mit React.memo
+  const NetworkNode = React.memo(({ node, onMouseEnter, onMouseLeave }: { node: Node, isHovered: boolean, onMouseEnter: () => void, onMouseLeave: () => void }) => (
+    <div
+      className={`
+        ${styles.networkNode}
+        ${node.hasLatestBlock ? styles.hasLatestBlock : ''}
+        ${node.isReceivingBlock ? styles.receivingBlock : ''}
+      `}
+      style={{ left: node.x, top: node.y }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    />
+  ));
+
   return (
     <div className={styles.page}>
       {/* Intro-Bereich */}
@@ -407,7 +418,11 @@ const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({}) => {
             Neue Blöcke werden von Minern erstellt und dann durch das gesamte Netzwerk verbreitet.
             Auch Miner sind untereinander verbunden, damit neue Blöcke schnell weitergegeben werden können.
           </p>
-          <div className={styles.networkVisualization}>
+          <div 
+            className={styles.networkVisualization}
+            role="region"
+            aria-label="Visualisierung des Bitcoin-Netzwerks mit Nodes und Verbindungen"
+          >
             {/* Verbindungslinien zuerst rendern, damit sie unter den Nodes liegen */}
             {nodes.map((node, idx) => 
               // Für jeden Node seine Verbindungen visualisieren
@@ -430,27 +445,16 @@ const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({}) => {
             
             {/* Dann die Nodes rendern */}
             {nodes.map((node) => (
-              <div
+              <NetworkNode
                 key={node.id}
-                className={`
-                  ${styles.networkNode}
-                  ${node.hasLatestBlock ? styles.hasLatestBlock : ''}
-                  ${node.isReceivingBlock ? styles.receivingBlock : ''}
-                `}
-                style={{ left: node.x, top: node.y }}
+                node={node}
+                isHovered={hoveredNode === node.id}
                 onMouseEnter={() => setHoveredNode(node.id)}
                 onMouseLeave={() => setHoveredNode(null)}
-              >
-                {hoveredNode === node.id && (
-                  <div className={styles.tooltip}>
-                    <strong>{node.type === 'miner' ? 'Miner' : 'Full Node'}</strong>
-                    <br />
-                    {node.hasLatestBlock ? 'Hat aktuellen Block' : 'Wartet auf Block'}
-                  </div>
-                )}
-              </div>
+              />
             ))}
           </div>
+          {showMiningAnimation && <div className={styles.miningAnimation} />}
           <div className={styles.propagationExplanation}>
             {propagatingBlock ? (
               <p><strong>Block wird verbreitet!</strong> Beobachte, wie der neue Block von Node zu Node weitergegeben wird.</p>
@@ -467,6 +471,8 @@ const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({}) => {
               className={styles.mineButton}
               onClick={handleButtonClick}
               disabled={isAnimating}
+              aria-busy={isAnimating}
+              aria-label={hasLatestBlock ? "Block im Netzwerk verteilen" : "Neuen Block minen"}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >

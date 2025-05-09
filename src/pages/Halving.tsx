@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { FaInfoCircle, FaMinus, FaBolt } from 'react-icons/fa';
 import styles from '../styles/Halving.module.scss';
@@ -65,6 +65,9 @@ const ModernSupplyGauge: React.FC<{percentage: number}> = ({ percentage }) => {
             strokeLinecap="round"
             transform={`rotate(-90 ${size / 2} ${size / 2})`}
             className={styles.progressCircle}
+            style={{
+              transition: 'stroke-dashoffset 1s ease-in-out'
+            }}
           />
           
           {/* Farbverläufe definieren */}
@@ -91,7 +94,15 @@ const ModernSupplyGauge: React.FC<{percentage: number}> = ({ percentage }) => {
         </svg>
         
         <div className={styles.gaugeCenter}>
-          <div className={styles.percentageValue}>{percentage}%</div>
+          <motion.div 
+            className={styles.percentageValue}
+            initial={false}
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 0.6, times: [0, 0.5, 1] }}
+            key={percentage} // Key ändert sich, wenn sich Prozentsatz ändert
+          >
+            {percentage}%
+          </motion.div>
           <div className={styles.percentageLabel}>Bitcoin im Umlauf</div>
         </div>
       </div>
@@ -99,7 +110,15 @@ const ModernSupplyGauge: React.FC<{percentage: number}> = ({ percentage }) => {
       <div className={styles.gaugeInfo}>
         <div className={styles.gaugeInfoItem}>
           <div className={styles.gaugeInfoTitle}>Aktueller Bestand</div>
-          <div className={styles.gaugeInfoValue}>{((percentage * 21) / 100).toFixed(2)} Mio BTC</div>
+          <motion.div 
+            className={styles.gaugeInfoValue}
+            initial={false}
+            animate={{ opacity: [0.7, 1] }}
+            transition={{ duration: 0.5 }}
+            key={percentage}
+          >
+            {((percentage * 21) / 100).toFixed(2)} Mio BTC
+          </motion.div>
         </div>
         <div className={styles.gaugeInfoItem}>
           <div className={styles.gaugeInfoTitle}>Maximum</div>
@@ -116,7 +135,7 @@ const HalvingPage: React.FC<HalvingPageProps> = ({ onNext }) => {
   const [selectedTimelineEvent, setSelectedTimelineEvent] = useState(1); // Default to second halving (index 1)
 
   // Halving events data
-  const halvingEvents: HalvingEvent[] = [
+  const halvingEvents = useMemo<HalvingEvent[]>(() => [
     {
       blockHeight: 0,
       date: "03.01.2009",
@@ -165,7 +184,7 @@ const HalvingPage: React.FC<HalvingPageProps> = ({ onNext }) => {
       status: 'future',
       circulatingSupply: '20,34 von 21 Millionen BTC (96,875%)'
     }
-  ];
+  ], []);
 
   // Show halving explanation when the component mounts
   useEffect(() => {
@@ -175,9 +194,9 @@ const HalvingPage: React.FC<HalvingPageProps> = ({ onNext }) => {
   }, [halvingExplanationShown]);
 
   // Format large numbers with dots as thousand separators
-  const formatNumber = (num: number) => {
+  const formatNumber = useCallback((num: number) => {
     return num.toLocaleString('de-DE');
-  };
+  }, []);
 
   return (
     <div className={styles.page}>
@@ -282,27 +301,6 @@ const HalvingPage: React.FC<HalvingPageProps> = ({ onNext }) => {
         </div>
       </motion.section>
 
-      {/* Übergang zum Lightning Network */}
-      <motion.section 
-        className={styles.lightningTeaser}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.35, duration: 0.5 }}
-      >
-        <div className={styles.teaserContent}>
-          <div className={styles.lightningIcon}>
-            <FaBolt />
-          </div>
-          <div>
-            <h3>Nächster Schritt: Lightning Network</h3>
-            <p>
-              Als Lösung für die Skalierbarkeit von Bitcoin ermöglicht das Lightning Network 
-              schnellere und kostengünstigere Transaktionen abseits der Blockchain.
-            </p>
-          </div>
-        </div>
-      </motion.section>
-
       {/* Navigation */}
       <motion.section 
         className={styles.navigationButtons}
@@ -311,7 +309,7 @@ const HalvingPage: React.FC<HalvingPageProps> = ({ onNext }) => {
         transition={{ delay: 0.4, duration: 0.5 }}
       >
         <button className={styles.nextButton} onClick={onNext}>
-          Weiter zum Lightning Network <FaBolt />
+          Weiter zum Lightning  <FaBolt />
         </button>
       </motion.section>
     </div>

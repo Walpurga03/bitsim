@@ -602,7 +602,8 @@
   margin: 0;
   
   @media (max-width: 480px) {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    padding: 0.4rem;
   }
 }
 
@@ -1072,5 +1073,47 @@
     margin: 0;
     font-size: 0.9rem;
     line-height: 1.4;
+  }
+}
+
+// Ergänzung in Mining.module.scss für die Fehleranzeige
+.errorMessage {
+  background: linear-gradient(145deg, rgba(244, 67, 54, 0.2), rgba(244, 67, 54, 0.1));
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  button {
+    background: rgba(244, 67, 54, 0.2);
+    border: 1px solid rgba(244, 67, 54, 0.3);
+    border-radius: 4px;
+    padding: 0.3rem 0.8rem;
+    color: white;
+    cursor: pointer;
+    
+    &:hover {
+      background: rgba(244, 67, 54, 0.3);
+    }
+  }
+}
+
+// Verbesserte Mobilansicht
+@media (max-width: 480px) {
+  .blockHashValue, .blockPrevValue {
+    font-size: 0.75rem;
+    padding: 0.4rem;
+  }
+  
+  .miningStats {
+    grid-template-columns: 1fr;
+  }
+  
+  .blockButtons {
+    flex-direction: column;
+    gap: 0.8rem;
   }
 }

@@ -21,9 +21,13 @@
   animation: slideIn 0.8s ease-out;
   padding: clamp(1rem, 3vw, 1.5rem);
   border-radius: 12px;
-  background-color: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(5px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.8); // Dunklerer Fallback für Browser ohne backdrop-filter
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); // Nach oben verschoben
+  
+  @supports (backdrop-filter: blur(5px)) {
+    background-color: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+  }
 }
 
 .navigationControls {
@@ -102,10 +106,58 @@
     border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.3);
     transition: all 0.3s ease;
+    position: relative;
+    cursor: pointer;
     
     &.active {
       background-color: $primary-color;
       transform: scale(1.2);
+    }
+    
+    &:hover::after {
+      content: attr(title);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      white-space: nowrap;
+      pointer-events: none;
+      margin-bottom: 5px;
+      z-index: 100;
+    }
+  }
+}
+
+.dotButton {
+  background: transparent;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+  
+  .dot {
+    display: block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+  }
+  
+  &.active .dot {
+    background-color: $primary-color;
+    transform: scale(1.2);
+  }
+  
+  &:focus {
+    outline: none;
+    
+    .dot {
+      box-shadow: 0 0 0 2px $primary-color;
     }
   }
 }
@@ -137,5 +189,75 @@
   
   .stepContainer {
     padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .progressIndicator {
+    .dot {
+      width: 16px; // Größere Touch-Targets für mobile Geräte
+      height: 16px;
+      margin: 0 2px; // Engerer Abstand bei vielen Punkten
+    }
+  }
+  
+  .navigationControls {
+    margin-top: 1rem;
+    
+    button {
+      width: 100%; // Vollbreite-Buttons auf sehr kleinen Geräten
+      justify-content: center;
+      margin-bottom: 0.5rem;
+    }
+  }
+  
+  // Zusätzliche mobile Optimierungen
+  // Kleinere Schriften auf mobilen Geräten
+  .simulation {
+    font-size: 0.9rem;
+  }
+  
+  // Swipe-Indikator für mobile Geräte
+  .stepContainer::after {
+    content: '';
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    opacity: 0.5;
+  }
+  
+  // Enge Seitendarstellung für bessere mobile Lesbarkeit
+  .stepContainer {
+    padding: 1rem 0.8rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .stepContainer {
+    max-width: 1400px; // Mehr Platz auf großen Bildschirmen
+    padding: 2rem;
+  }
+  
+  .navigationControls {
+    margin-top: 2rem;
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .simulation {
+    padding: 0.8rem;
+  }
+  
+  .stepContainer {
+    margin-bottom: 0.8rem;
+  }
+  
+  .progressIndicator {
+    margin-top: 0.8rem;
   }
 }

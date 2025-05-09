@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from '../styles/Mining.module.scss';
-import { mineBlock} from '../utils/miningUtils';
+import { mineBlock } from '../utils/miningUtils';
 import { FaHammer, FaAngleDoubleDown, FaInfoCircle } from 'react-icons/fa';
 
 interface MiningResult {
@@ -19,6 +19,14 @@ interface BasicMiningPageProps {
   onNext: () => void;
 }
 
+// Neue Hilfsfunktion
+const formatHash = (hash: string, isMobile: boolean) => {
+  if (isMobile && hash.length > 20) {
+    return `${hash.substring(0, 8)}...${hash.substring(hash.length - 8)}`;
+  }
+  return hash;
+};
+
 const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
   const [miningStarted, setMiningStarted] = useState(false);
   const [miningResult, setMiningResult] = useState<MiningResult | null>(null);
@@ -31,10 +39,13 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
   });
   const [isMobile, setIsMobile] = useState(false);
   const [showMiningProcess, setShowMiningProcess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [miningProgress, setMiningProgress] = useState(0);
   
-  const satoshiAddress = "1SatoshiPioneerXXX";
-  
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const MAX_MINING_ATTEMPTS = 1000; // Define maximum mining attempts for progress calculation
+    const satoshiAddress = "1SatoshiPioneerXXX";
+    
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 800);
@@ -56,12 +67,31 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (showMiningProcess) {
+      const interval = setInterval(() => {
+        setMiningProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            return 100;
+          }
+          return prev + 10;
+        });
+      }, 280); // 280ms * 10 Schritte ≈ 2.8s (Dauer der Animation)
+      
+      return () => clearInterval(interval);
+    } else {
+      setMiningProgress(0);
+    }
+  }, [showMiningProcess]);
   
-  const simulateMining = () => {
+  const simulateMining = useCallback(() => {
     if (isAnimating) return;
     
     setIsAnimating(true);
     setShowMiningProcess(true);
+    setMiningProgress(0);
     
     const now = new Date();
     now.setFullYear(now.getFullYear() - 16);
@@ -75,63 +105,133 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
       transactions = `${txCount} Transaktion${txCount > 1 ? 'en' : ''}`;
     }
     
-    const merkleRoot = Math.random().toString(16).substr(2, 8);
+    const blockData = {
+      timestamp,
+      transactions,
+      blockHeight: walletInfo.currentBlock + 1
+    };
     
-    const previousHash = chainBlocks.length > 0 
-      ? chainBlocks[chainBlocks.length - 1].hash.toString()
-      : "0";
-    
-    const blockData = `${previousHash}-${timestamp}-${merkleRoot}`;
-    
-    const miningAnimation = document.createElement('div');
-    miningAnimation.className = styles.miningAnimation;
-    document.body.appendChild(miningAnimation);
-    
-    timeoutRef.current = setTimeout(() => {
-  
+    if (window.Worker) {
+      const worker = new Worker(new URL('../utils/miningWorker.ts', import.meta.url));
       
-      const result = mineBlock(blockData);
+      worker.postMessage({ 
+        blockData: JSON.stringify(blockData),
+        blockHeight: walletInfo.currentBlock + 1
+      });
       
-      const newBlock = walletInfo.currentBlock + 1;
-      
-      const newBlockData: MiningResult = {
-        hash: result.hash.toString(),
-        nonce: result.nonce,
-        target: result.target.toString(),
-        timestamp,
-        transactions,
-        merkleRoot,
-        found: result.found,
-        blockNumber: newBlock,
-      };
-      
-      setMiningResult(newBlockData);
-      
-      if (result.found) {
-        setChainBlocks(prev => {
-          const newChain = [...prev, newBlockData];
-          while (newChain.length > 5) {
-            newChain.shift();
-          }
-          return newChain;
-        });
+      worker.onmessage = (e) => {
+        const { type, result, message, attempts } = e.data;
         
-        setWalletInfo(prev => ({
-          ...prev,
-          balance: prev.balance + prev.currentReward,
-          currentBlock: newBlock,
-        }));
-      }
-      
-      setIsAnimating(false);
-      document.body.removeChild(miningAnimation);
-      
+        if (type === 'progress') {
+          setMiningProgress((attempts / MAX_MINING_ATTEMPTS) * 100);
+        }
+        else if (type === 'result') {
+          const { hash, nonce, found, target } = result;
+          
+          try {
+            setError(null);
+            
+            const newBlock = walletInfo.currentBlock + 1;
+            
+            const newBlockData: MiningResult = {
+              hash: hash.toString(),
+              nonce,
+              target: target.toString(),
+              timestamp,
+              transactions,
+              merkleRoot: Math.random().toString(16).substr(2, 8),
+              found,
+              blockNumber: newBlock,
+            };
+            
+            setMiningResult(newBlockData);
+            
+            if (found) {
+              setChainBlocks(prev => {
+                const newChain = [...prev, newBlockData];
+                while (newChain.length > 5) {
+                  newChain.shift();
+                }
+                return newChain;
+              });
+              
+              setWalletInfo(prev => ({
+                ...prev,
+                balance: prev.balance + prev.currentReward,
+                currentBlock: newBlock,
+              }));
+            }
+            
+            setIsAnimating(false);
+            
+            timeoutRef.current = setTimeout(() => {
+              setShowMiningProcess(false);
+            }, 1500);
+          } catch (err) {
+            setError("Ein Fehler ist beim Mining aufgetreten. Bitte versuche es erneut.");
+            setIsAnimating(false);
+            setShowMiningProcess(false);
+          } finally {
+            worker.terminate();
+          }
+        }
+        else if (type === 'error') {
+          setError(message);
+          setIsAnimating(false);
+          setShowMiningProcess(false);
+          worker.terminate();
+        }
+      };
+    } else {
       timeoutRef.current = setTimeout(() => {
-        setShowMiningProcess(false);
-      }, 1500); // 2 Sekunden nach Abschluss des Mining-Prozesses
-      
-    }, 1000); // 3 Sekunden für den Mining-Prozess selbst
-  };
+        try {
+          const result = mineBlock(JSON.stringify(blockData), undefined, walletInfo.currentBlock + 1);
+          setError(null);
+          
+          const newBlock = walletInfo.currentBlock + 1;
+          
+          const newBlockData: MiningResult = {
+            hash: result.hash.toString(),
+            nonce: result.nonce,
+            target: result.target.toString(),
+            timestamp,
+            transactions,
+            merkleRoot: Math.random().toString(16).substr(2, 8),
+            found: result.found,
+            blockNumber: newBlock,
+          };
+          
+          setMiningResult(newBlockData);
+          
+          if (result.found) {
+            setChainBlocks(prev => {
+              const newChain = [...prev, newBlockData];
+              while (newChain.length > 5) {
+                newChain.shift();
+              }
+              return newChain;
+            });
+            
+            setWalletInfo(prev => ({
+              ...prev,
+              balance: prev.balance + prev.currentReward,
+              currentBlock: newBlock,
+            }));
+          }
+          
+          setIsAnimating(false);
+          
+          timeoutRef.current = setTimeout(() => {
+            setShowMiningProcess(false);
+          }, 1500);
+        } catch (err) {
+          setError("Ein Fehler ist beim Mining aufgetreten. Bitte versuche es erneut.");
+          setIsAnimating(false);
+          setShowMiningProcess(false);
+        }
+      }, 3000);
+    }
+  }, [isAnimating, chainBlocks, walletInfo]);
   
   const blocksToDisplay = isMobile ? chainBlocks.slice(-2) : chainBlocks;
   
@@ -268,7 +368,9 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
                             <div className={styles.blockDetails}>
                               <div className={styles.blockHashContainer}>
                                 <p className={styles.blockHashLabel}>Block Hash:</p>
-                                <p className={styles.blockHashValue}>{block.hash}</p>
+                                <p className={styles.blockHashValue}>
+                                  {formatHash(block.hash, isMobile)}
+                                </p>
                               </div>
                               
                               <div className={styles.blockPrevContainer}>
@@ -306,12 +408,20 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
               >
+                {error && (
+                  <div className={styles.errorMessage}>
+                    <p>{error}</p>
+                    <button onClick={() => setError(null)}>Schließen</button>
+                  </div>
+                )}
                 {!miningResult ? (
                   <div className={styles.miningControls}>
                     <motion.button 
                       className={styles.mineButton} 
                       onClick={simulateMining}
                       disabled={isAnimating}
+                      aria-busy={isAnimating}
+                      aria-label={isAnimating ? "Mining läuft gerade" : "Block minen starten"}
                       whileHover={!isAnimating ? { scale: 1.05 } : {}}
                       whileTap={!isAnimating ? { scale: 0.95 } : {}}
                     >
@@ -394,6 +504,8 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
                           className={styles.mineButton} 
                           onClick={simulateMining}
                           disabled={isAnimating}
+                          aria-busy={isAnimating}
+                          aria-label={isAnimating ? "Mining läuft gerade" : "Block minen starten"}
                           whileHover={!isAnimating ? { scale: 1.05 } : {}}
                           whileTap={!isAnimating ? { scale: 0.95 } : {}}
                         >
@@ -431,6 +543,9 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
                 {showMiningProcess && (
                   <motion.div 
                     className={styles.miningProcessVisualizer}
+                    role="dialog"
+                    aria-label="Mining im Gange"
+                    aria-live="polite"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -453,11 +568,8 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
                         <motion.div 
                           className={styles.miningProgressBar} 
                           initial={{ width: "0%" }}
-                          animate={{ width: ["0%", "50%", "75%", "90%", "100%"] }}
-                          transition={{ 
-                            duration: 2.8, // Gesamtdauer in Sekunden anpassen
-                            ease: "easeOut" // Optional: Art der Animation
-                          }}
+                          animate={{ width: `${miningProgress}%` }}
+                          transition={{ ease: "easeOut" }}
                         />
                       </div>
                       <p>Suche nach gültigem Hash...</p>

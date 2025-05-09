@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import styles from '../styles/Blockchain.module.scss';
 import { FaBitcoin, FaCalendarAlt, FaPizzaSlice, FaCubes } from 'react-icons/fa';
 import { motion } from 'framer-motion';
@@ -8,8 +8,8 @@ interface BlockchainProps {}
 const Blockchain: React.FC<BlockchainProps> = () => {
   const [activeTab, setActiveTab] = useState('genesis');
 
-  // Blockchain-Events ohne Whitepaper
-  const blockchainEvents = [
+  // Memoize blockchainEvents mit useMemo
+  const blockchainEvents = useMemo(() => [
     {
       id: 'genesis',
       title: 'Genesis-Block',
@@ -17,7 +17,7 @@ const Blockchain: React.FC<BlockchainProps> = () => {
       blockHeight: 0,
       icon: <FaCubes />,
       content: ( <>
-        Der allererste Block (Genesis-Block) wird von Satoshi geschürft. In diesem Block ist die Nachricht 
+        Der allererste Block (Genesis-Block) wird von Satoshi geschürft. In diesem Block ist die Nachricht{' '}
         <strong>"Chancellor on brink of second bailout for banks"</strong> eingebettet - ein ewiger Eintrag in der Blockchain, 
         der die Bankenkrise dokumentiert und Bitcoins Entstehungszweck verdeutlicht.
         <div className={styles.blockchainRecord}>
@@ -36,7 +36,12 @@ const Blockchain: React.FC<BlockchainProps> = () => {
             </div>
             <div className={styles.blockProperty}>
               <span className={styles.propertyName}>Hash:</span>
-              <span className={styles.propertyValue}>000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f</span>
+              <span 
+                className={styles.propertyValue} 
+                title="000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f"
+              >
+                00000000...8ce26f
+              </span>
             </div>
             <div className={styles.blockProperty}>
               <span className={styles.propertyName}>Zeitstempel:</span>
@@ -72,7 +77,12 @@ const Blockchain: React.FC<BlockchainProps> = () => {
               </div>
               <div className={styles.blockProperty}>
                 <span className={styles.propertyName}>Transaktion:</span>
-                <span className={styles.propertyValue}>f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16</span>
+                <span 
+                  className={styles.propertyValue} 
+                  title="f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16"
+                >
+                  f4184fc5...e9831e16
+                </span>
               </div>
               <div className={styles.blockProperty}>
                 <span className={styles.propertyName}>Betrag:</span>
@@ -157,7 +167,7 @@ const Blockchain: React.FC<BlockchainProps> = () => {
         </>
       )
     }
-  ];
+  ], []);
 
   return (
     <div className={styles.pageContainer}>
@@ -185,12 +195,15 @@ const Blockchain: React.FC<BlockchainProps> = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.3 }}
         >
+          <p className={styles.navigationHint}>Klicke auf einen Block, um dessen Details zu sehen:</p>
           <div className={styles.blockchainContainer}>
             {blockchainEvents.map((item, index) => (
               <React.Fragment key={item.id}>
                 <button 
                   className={`${styles.blockButton} ${activeTab === item.id ? styles.activeBlock : ''}`}
                   onClick={() => setActiveTab(item.id)}
+                  aria-pressed={activeTab === item.id}
+                  aria-label={`${item.title}, Block ${item.blockHeight}, ${item.date}`}
                 >
                   <div className={styles.blockInner}>
                     <div className={styles.blockIcon}>{item.icon}</div>
@@ -213,7 +226,7 @@ const Blockchain: React.FC<BlockchainProps> = () => {
           </div>
         </motion.div>
         
-        {/* Timeline-Inhalt mit verbesserter Darstellung */}
+        {/* Verbesserte Animation für die Timeline-Elemente */}
         <motion.div 
           className={styles.timelineSection}
           initial={{ opacity: 0 }}
@@ -221,13 +234,13 @@ const Blockchain: React.FC<BlockchainProps> = () => {
           transition={{ duration: 0.8, delay: 0.6 }}
         >
           <div className={styles.timelineContent}>
-            {blockchainEvents.map(item => (
+            {blockchainEvents.map((item, index) => (
               <motion.div 
                 key={item.id} 
                 className={`${styles.timelineItem} ${activeTab === item.id ? styles.active : ''}`}
                 initial={{ opacity: 0, y: 50 }}
                 animate={activeTab === item.id ? 
-                  { opacity: 1, y: 0, transition: { duration: 0.5 } } : 
+                  { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.1 * index } } : 
                   { opacity: 0, y: 50, transition: { duration: 0.3 } }
                 }
               >

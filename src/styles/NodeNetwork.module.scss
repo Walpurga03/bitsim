@@ -100,6 +100,9 @@
 // =============================================================================
 
 .networkContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background: linear-gradient(145deg, rgba(25, 35, 55, 0.7), rgba(15, 25, 45, 0.9));
   border-radius: 16px;
   padding: clamp(1.5rem, 3vw, 2rem);
@@ -146,6 +149,8 @@
   align-items: center;
   justify-content: center;
   transform: translate(-50%, -50%);
+  will-change: transform, box-shadow;
+  backface-visibility: hidden;
   transition: all 0.3s ease;
   z-index: 2;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -200,8 +205,14 @@
 }
 
 @keyframes pulseNode {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); }
-  50% { transform: translate(-50%, -50%) scale(1.15); }
+  0%, 100% { 
+    transform: translate(-50%, -50%) scale(1); 
+    box-shadow: 0 0 0 2px rgba(v.$primary-color, 0.6);
+  }
+  50% { 
+    transform: translate(-50%, -50%) scale(1.15);
+    box-shadow: 0 0 0 4px rgba(v.$primary-color, 0.4);
+  }
 }
 
 @keyframes pulseLine {
@@ -210,22 +221,47 @@
 }
 
 // =============================================================================
+// Tooltip-Styling hinzufügen
+// =============================================================================
+
+.tooltip {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 100;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.75) transparent transparent transparent;
+  }
+}
+
+// =============================================================================
 // Propagation Explanation
 // =============================================================================
 
 .propagationExplanation {
   text-align: center;
-  margin-bottom: 1.5rem;
-  padding: 0.8rem;
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 8px;
+  margin: 1rem auto;
+  max-width: 90%;  // Begrenzt die Breite für bessere Lesbarkeit
   
   p {
-    margin: 0;
-    
-    strong {
-      color: v.$primary-color;
-    }
+    margin: 0 auto;
+    // Bestehende Stile bleiben erhalten
   }
 }
 
@@ -346,21 +382,17 @@
 // =============================================================================
 
 .infoBox {
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 12px;
-  padding: 1.2rem;
-  margin: 1.5rem 0;
+  text-align: center;
+  margin: 2rem auto 1rem;
+  max-width: 90%;
   
   h3 {
-    color: v.$primary-color;
     margin-bottom: 0.8rem;
-    font-size: 1.1rem;
   }
   
   p {
-    margin: 0;
+    margin: 0 auto;
     line-height: 1.5;
-    font-size: 0.95rem;
   }
 }
 
@@ -456,15 +488,22 @@
 
 @media (max-width: 480px) {
   .networkVisualization {
-    height: 120px;
+    height: 180px; // Einheitliche Höhe
   }
-  .networkNode {
-    width: 14px;
-    height: 14px;
+  
+  .page {
+    padding: 1rem; // Reduzierter Padding für kleine Bildschirme
   }
+  
+  .mineButton {
+    padding: 0.6rem 1.2rem; // Kleinerer Button
+    font-size: 0.9rem;
+  }
+  
   .introSection, .nodeInfoBox, .networkContainer {
     padding: 0.5rem;
   }
+  
   .hashTarget {
     padding: 0.8rem;
     
@@ -476,7 +515,14 @@
     }
   }
   
-  .networkVisualization {
-    height: 200px;
+  .networkLegend {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    
+    .legendItem {
+      width: 100%;
+      justify-content: center;
+    }
   }
 }

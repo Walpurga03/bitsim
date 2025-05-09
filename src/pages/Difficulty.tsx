@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import styles from '../styles/Difficulty.module.scss'; // Aktualisierter Pfad
 import { mineBlock, DIFFICULTY_LEVELS } from '../utils/miningUtils';
@@ -32,6 +32,7 @@ const DifficultyAdjustmentPage: React.FC<DifficultyAdjustmentPageProps> = ({ onN
   const [difficultyLevel, setDifficultyLevel] = useState<'normal' | 'harder'>('normal');
   const [adjustmentMade, setAdjustmentMade] = useState(false);
   const [targetValue, setTargetValue] = useState('1.0');
+  const [showMiningAnimation, setShowMiningAnimation] = useState(false); // Neuen State hinzufügen
   
   // Handle responsive view
   useEffect(() => {
@@ -52,11 +53,11 @@ const DifficultyAdjustmentPage: React.FC<DifficultyAdjustmentPageProps> = ({ onN
     ]);
   }, []);
   
-  const simulateMining = () => {
+  const simulateMining = useCallback(() => {
     if (isAnimating) return;
     
     setIsAnimating(true);
-    setTimeout(() => setIsAnimating(false), 2000);
+    setShowMiningAnimation(true);
     
     // Create timestamp
     const now = new Date();
@@ -78,67 +79,78 @@ const DifficultyAdjustmentPage: React.FC<DifficultyAdjustmentPageProps> = ({ onN
     // Block data
     const blockData = `${previousHash}-${timestamp}-${merkleRoot}`;
     
-    // Mining animation
-    const miningAnimation = document.createElement('div');
-    miningAnimation.className = styles.miningAnimation;
-    document.body.appendChild(miningAnimation);
-    
     // Mining with timeout
     setTimeout(() => {
-      // Determine difficulty based on block number
-      let difficulty;
-      const newBlock = walletInfo.currentBlock + 1;
-      
-      if (newBlock >= 2016) {
-        difficulty = DIFFICULTY_LEVELS.MEDIUM; // After block 2016, use MEDIUM difficulty
-      } else {
-        difficulty = DIFFICULTY_LEVELS.EASY; // Before block 2016, use EASY difficulty
-      }
-      
-      // Perform mining with specified difficulty
-      const result = mineBlock(blockData, difficulty);
-      
-      // Create new block object
-      const newBlockData: MiningResult = {
-        hash: result.hash.toString(),
-        nonce: result.nonce,
-        target: result.target.toString(),
-        timestamp,
-        transactions,
-        merkleRoot,
-        found: result.found,
-        blockNumber: newBlock,
-      };
-      
-      setMiningResult(newBlockData);
-      
-      // Only if a block was found (hash < target), update the chain
-      if (result.found) {
-        setChainBlocks(prev => {
-          const newChain = [...prev, newBlockData];
-          while (newChain.length > 5) {
-            newChain.shift();
-          }
-          return newChain;
-        });
+      try {
+        // Determine difficulty based on block number
+        let difficulty;
+        const newBlock = walletInfo.currentBlock + 1;
         
-        setWalletInfo(prev => ({
-          ...prev,
-          balance: prev.balance + prev.currentReward,
-          currentBlock: newBlock,
-        }));
-
-        // NACH erfolgreichem Mining von Block 2016 erst die Difficulty anpassen
-        if (newBlock === 2016) {
-          setTargetValue('0.9');  // Änderung von 0.7 auf 0.9 (10% statt 30%)
-          setAdjustmentMade(true);
-          setDifficultyLevel('harder'); // Setze den neuen Schwierigkeitsgrad
+        if (newBlock >= 2016) {
+          difficulty = DIFFICULTY_LEVELS.MEDIUM; // After block 2016, use MEDIUM difficulty
+        } else {
+          difficulty = DIFFICULTY_LEVELS.EASY; // Before block 2016, use EASY difficulty
         }
+        
+        // Perform mining with specified difficulty
+        const result = mineBlock(blockData, difficulty);
+        
+        // Create new block object
+        const newBlockData: MiningResult = {
+          hash: result.hash.toString(),
+          nonce: result.nonce,
+          target: result.target.toString(),
+          timestamp,
+          transactions,
+          merkleRoot,
+          found: result.found,
+          blockNumber: newBlock,
+        };
+        
+        setMiningResult(newBlockData);
+        
+        // Only if a block was found (hash < target), update the chain
+        if (result.found) {
+          setChainBlocks(prev => {
+            const newChain = [...prev, newBlockData];
+            while (newChain.length > 5) {
+              newChain.shift();
+            }
+            return newChain;
+          });
+          
+          setWalletInfo(prev => ({
+            ...prev,
+            balance: prev.balance + prev.currentReward,
+            currentBlock: newBlock,
+          }));
+
+          // NACH erfolgreichem Mining von Block 2016 erst die Difficulty anpassen
+          if (newBlock === 2016) {
+            setTargetValue('0.9');  // Änderung von 0.7 auf 0.9 (10% statt 30%)
+            setAdjustmentMade(true);
+            setDifficultyLevel('harder'); // Setze den neuen Schwierigkeitsgrad
+          }
+        }
+      } catch (error) {
+        console.error("Mining fehlgeschlagen:", error);
+        // Fehlerbehandlung für den Benutzer
+        setMiningResult({
+          hash: "ERROR",
+          nonce: 0,
+          target: targetValue,
+          timestamp,
+          transactions: "Fehler",
+          merkleRoot: "Fehler",
+          found: false,
+          blockNumber: walletInfo.currentBlock + 1
+        });
+      } finally {
+        setShowMiningAnimation(false);
+        setIsAnimating(false);
       }
-      
-      document.body.removeChild(miningAnimation);
     }, 1000);
-  };
+  }, [isAnimating, walletInfo, chainBlocks]);
   
   // Determine which blocks to display based on screen size
   const blocksToDisplay = isMobile ? chainBlocks.slice(-2) : chainBlocks;
@@ -228,7 +240,18 @@ const DifficultyAdjustmentPage: React.FC<DifficultyAdjustmentPageProps> = ({ onN
         >
           {!miningResult && (
             <>
-              <h3>Aktuelles Target: <span className={styles.targetValue}>{targetValue}</span></h3>
+              <h3>Aktuelles Target: 
+                <motion.span 
+                  className={`${styles.targetValue} ${adjustmentMade ? styles.adjusted : ''}`}
+                  animate={{ 
+                    color: adjustmentMade ? ["#e67e22", "#e74c3c"] : "#e67e22",
+                    scale: adjustmentMade ? [1, 1.2, 1] : 1 
+                  }}
+                  transition={{ duration: 1 }}
+                >
+                  {targetValue}
+                </motion.span>
+              </h3>
               <p className={styles.targetExplanation}>
                 Der Hash deines Blocks muss <strong>kleiner</strong> als das Target sein, um akzeptiert zu werden.
                 {adjustmentMade && <span className={styles.newTarget}> Nach der Anpassung ist das Target niedriger, was das Mining schwieriger macht.</span>}
@@ -245,6 +268,11 @@ const DifficultyAdjustmentPage: React.FC<DifficultyAdjustmentPageProps> = ({ onN
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
         >
+          {showMiningAnimation && (
+            <div className={styles.miningAnimation}>
+              <div className={styles.spinner}></div>
+            </div>
+          )}
           {!miningResult ? (
             <button 
               className={styles.mineButton} 
