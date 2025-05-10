@@ -190,8 +190,7 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
           >
             <h1>Transaktionen</h1>
             <p className={styles.subtitle}>
-              <strong>Bitcoin-Transaktionen</strong> ermöglichen den direkten Werttransfer ohne Intermediäre.
-              Sie werden durch digitale Signaturen gesichert und von Minern in Blöcken bestätigt.
+              <strong>Bitcoin-Transaktionen</strong> ermöglichen den direkten Transfer von Werten ohne Zwischenhändler. Sie werden durch digitale Signaturen gesichert und von Minern in Blöcken bestätigt.
             </p>
             <p>
               Transaktionen sind der Kern des Bitcoin-Netzwerks. Sie ermöglichen es Benutzern,

@@ -149,7 +149,7 @@ const Consensus: React.FC<ConsensusProps> = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <h1 className={styles.title}>Spielregeln des Netzwerks</h1>
+          <h1 className={styles.title}>Konsens innerhalb des Bitcoin-Netzwerks</h1>
           <p className={styles.description}>
             Bitcoin basiert auf einem Regelwerk, dem alle Teilnehmer folgen. 
             Diese Regeln werden von niemandem kontrolliert, sondern durch gemeinsamen 
