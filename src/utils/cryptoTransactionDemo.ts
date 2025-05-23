@@ -50,7 +50,7 @@ export async function demoTransaction(): Promise<void> {
   // Erzeuge ein Key-Pair
   const keyPair = await generateKeyPair();
   // Beispiel-Transaktionsdaten
-  const transactionData = "Transaktion: Satoshi überweist 0.5 BTC an Hall";
+  const transactionData = "Transaktion: Satoshi überweist 0.5 BTC an Hal";
   
   // Signiere die Transaktionsdaten mit dem privaten Schlüssel
   const signature = await signData(keyPair.privateKey, transactionData);

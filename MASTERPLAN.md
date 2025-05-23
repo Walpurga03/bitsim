@@ -20,7 +20,7 @@ Die Anwendung wird folgende Bitcoin-Konzepte visualisieren:
 ## Hauptmerkmale und Funktionalität
 
 ### 1. Wallet-Komponente
-- Darstellung von mindestens zwei Wallets (z.B. "Satoshi's Wallet" und "Hall's Wallet")
+- Darstellung von mindestens zwei Wallets (z.B. "Satoshi's Wallet" und "Hal's Wallet")
 - Anzeige von Adressen, Guthaben, Public und Private Keys
 - Möglichkeit, Transaktionen zwischen Wallets durchzuführen
 

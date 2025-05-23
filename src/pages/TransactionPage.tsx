@@ -39,7 +39,7 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
   const [miningProgress, setMiningProgress] = useState(0);
 
   const satoshiAddress = "1SatoshiPioneerXXX";
-  const hallAddress = "1HallLegendeXXX";
+  const hallAddress = "1HalLegendeXXX";
 
   // Initialize blockchain with blocks after difficulty adjustment
   useEffect(() => {
@@ -198,7 +198,7 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
               aufgenommen und von allen Nodes im Netzwerk validiert.
             </p>
             <p>
-              In dieser Simulation sendest du Bitcoin von Satoshis Wallet an Halls Wallet
+              In dieser Simulation sendest du Bitcoin von Satoshis Wallet an Hals Wallet
               und siehst, wie diese Transaktion in der Blockchain bestätigt wird.
             </p>
           </motion.div>
@@ -242,7 +242,7 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
             </div>
             
             <div className={styles.walletCard}>
-              <h3>Hall's Wallet</h3>
+              <h3>Hal's Wallet</h3>
               <p className={styles.walletAddress}>{hallAddress}</p>
               <div className={styles.walletBalance}>
                 <strong>{walletInfo.hallBalance} BTC</strong>
