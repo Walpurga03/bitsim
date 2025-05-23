@@ -303,7 +303,7 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
                 </div>
                 
                 <div className={styles.targetExplanation}>
-                  <p><strong>Hinweis:</strong> Im realen Bitcoin-Netzwerk probieren spezielle Computer Millionen von Hashes pro Sekunde aus, bis ein gültiger Hash gefunden wird.</p>
+                  <p><strong>Hinweis:</strong> Im realen Bitcoin-Netzwerk probieren spezielle Computer Trillionen von Hashes pro Sekunde aus, bis ein gültiger Hash gefunden wird.</p>
                 </div>
               </motion.div>
               
