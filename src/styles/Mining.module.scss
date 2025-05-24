@@ -412,15 +412,16 @@
   }
   
   .targetExplanation {
-    background: rgba(v.$secondary-color, 0.1);
-    border-left: 3px solid v.$secondary-color;
-    padding: 0.8rem 1rem;
-    border-radius: 0 8px 8px 0;
-    margin-top: 1rem;
+    margin-top: 1.5rem;
+    text-align: center;
     
     p {
-      margin: 0;
-      font-size: 0.9rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 0.8rem;
+      margin: 0 auto; // Wichtig für die Zentrierung
+      max-width: 90%;  // Optional: Begrenzung der Breite für bessere Lesbarkeit
+      display: inline-block; // Oder 'block' mit margin: 0 auto;
     }
   }
 }

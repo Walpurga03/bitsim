@@ -240,18 +240,6 @@ const DifficultyAdjustmentPage: React.FC<DifficultyAdjustmentPageProps> = ({ onN
         >
           {!miningResult && (
             <>
-              <h3>Aktuelles Target: 
-                <motion.span 
-                  className={`${styles.targetValue} ${adjustmentMade ? styles.adjusted : ''}`}
-                  animate={{ 
-                    color: adjustmentMade ? ["#e67e22", "#e74c3c"] : "#e67e22",
-                    scale: adjustmentMade ? [1, 1.2, 1] : 1 
-                  }}
-                  transition={{ duration: 1 }}
-                >
-                  {targetValue}
-                </motion.span>
-              </h3>
               <p className={styles.targetExplanation}>
                 Der Hash deines Blocks muss <strong>kleiner</strong> als das Target sein, um akzeptiert zu werden.
                 {adjustmentMade && <span className={styles.newTarget}> Nach der Anpassung ist das Target niedriger, was das Mining schwieriger macht.</span>}

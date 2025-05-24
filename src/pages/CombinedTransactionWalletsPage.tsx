@@ -5,13 +5,13 @@ import { FaArrowRight, FaWallet, FaCoins, FaCheckCircle, FaExclamationCircle, Fa
 interface CombinedTransactionWalletsPageProps {
   satoshiBalance: number;
   onBack: (txId?: string, amount?: number) => void;
-  hallBalance?: number; // NEU: optionaler Prop für Hall's aktuellen Saldo
+  halBalance?: number; // NEU: optionaler Prop für Hal's aktuellen Saldo
 }
 
 const CombinedTransactionWalletsPage: React.FC<CombinedTransactionWalletsPageProps> = ({ 
   satoshiBalance, 
   onBack,
-  hallBalance = 0 // Default auf 0, falls nicht übergeben
+  halBalance = 0 // Default auf 0, falls nicht übergeben
 }) => {
   const [amount, setAmount] = useState<string>('');
   const [transferComplete, setTransferComplete] = useState(false);
@@ -24,7 +24,7 @@ const CombinedTransactionWalletsPage: React.FC<CombinedTransactionWalletsPagePro
   const [privateKey] = useState("KyT5woSXvMrjS2RS9Lfqxjdgjn9rA7r58RaQQCCB6Cw1rT4qrPXW");
 
   const satoshiAddress = "1SatoshiPioneerXXX";
-  const hallAddress = "1HallLegendeXXX";
+  const halAddress = "1HalLegendeXXX";
 
   useEffect(() => {
     // Generate a random transaction ID
@@ -107,7 +107,7 @@ const CombinedTransactionWalletsPage: React.FC<CombinedTransactionWalletsPagePro
       <div className={styles.introSection}>
         <h1>Bitcoin Transaktion erstellen</h1>
         <p>
-          Sende Bitcoin von Satoshi's Wallet an Hall's Wallet.
+          Sende Bitcoin von Satoshi's Wallet an Hal's Wallet.
           Nach der Erstellung wartet deine Transaktion auf die Bestätigung im nächsten Block.
         </p>
       </div>
@@ -197,7 +197,7 @@ const CombinedTransactionWalletsPage: React.FC<CombinedTransactionWalletsPagePro
                     <h3>Transaktion signieren</h3>
                     <div className={styles.txDetails}>
                       <p><strong>Von:</strong> {satoshiAddress.substring(0, 6)}...{satoshiAddress.substring(satoshiAddress.length-3)}</p>
-                      <p><strong>An:</strong> {hallAddress.substring(0, 6)}...{hallAddress.substring(hallAddress.length-3)}</p>
+                      <p><strong>An:</strong> {halAddress.substring(0, 6)}...{halAddress.substring(halAddress.length-3)}</p>
                       <p><strong>Betrag:</strong> {amount} BTC</p>
                       <p><strong>Gebühr:</strong> 0.0001 BTC</p>
                       <p><strong>Gesamt:</strong> {(parseFloat(amount) + 0.0001).toFixed(8)} BTC</p>
@@ -286,13 +286,13 @@ const CombinedTransactionWalletsPage: React.FC<CombinedTransactionWalletsPagePro
           <div className={`${styles.walletCard} ${styles.receiverWallet}`}>
             <div className={styles.walletHeader}>
               <FaWallet className={styles.walletIcon} />
-              <h2>Hall's Wallet</h2>
+              <h2>Hal's Wallet</h2>
             </div>
-            <p className={styles.walletAddress}>{hallAddress}</p>
+            <p className={styles.walletAddress}>{halAddress}</p>
             <div className={styles.balanceDisplay}>
               <FaCoins className={styles.coinsIcon} />
               <span className={styles.balanceAmount}>
-                {hallBalance} BTC
+                {halBalance} BTC
               </span>
             </div>
             {transferComplete && (

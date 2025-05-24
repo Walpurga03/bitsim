@@ -27,7 +27,7 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [walletInfo, setWalletInfo] = useState({
     balance: 2016 * 50, // Starting with blocks up to 2016 (including the difficulty adjustment)
-    hallBalance: 0,
+    halBalance: 0,
     currentBlock: 2016,
     currentReward: 50,
   });
@@ -39,7 +39,7 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
   const [miningProgress, setMiningProgress] = useState(0);
 
   const satoshiAddress = "1SatoshiPioneerXXX";
-  const hallAddress = "1HallLegendeXXX";
+  const halAddress = "1HalLegendeXXX";
 
   // Initialize blockchain with blocks after difficulty adjustment
   useEffect(() => {
@@ -84,7 +84,7 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
     // Create transaction information
     let transactions: string;
     if (pendingTransactionAmount > 0) {
-      transactions = `1 Transaktion (${pendingTransactionAmount} BTC an ${hallAddress})`;
+      transactions = `1 Transaktion (${pendingTransactionAmount} BTC an ${halAddress})`;
     } else {
       const txCount = Math.floor(Math.random() * 4) + 1;
       transactions = `${txCount} Transaktion${txCount > 1 ? 'en' : ''}`;
@@ -136,7 +136,7 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
             setWalletInfo(prev => ({
               ...prev,
               balance: prev.balance + prev.currentReward - pendingTransactionAmount,
-              hallBalance: prev.hallBalance + pendingTransactionAmount,
+              halBalance: prev.halBalance + pendingTransactionAmount,
               currentBlock: newBlock,
             }));
             setTxIdFromCombined('');
@@ -173,7 +173,7 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
           }
           setShowCombinedPage(false);
         }}
-        hallBalance={walletInfo.hallBalance}
+        halBalance={walletInfo.halBalance}
       />
     );
   }
@@ -193,12 +193,12 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
               <strong>Bitcoin-Transaktionen</strong> ermöglichen den direkten Transfer von Werten ohne Zwischenhändler. Sie werden durch digitale Signaturen gesichert und von Minern in Blöcken bestätigt.
             </p>
             <p>
-              Transaktionen sind der Kern des Bitcoin-Netzwerks. Sie ermöglichen es Benutzern,
-              Bitcoin von einer Adresse zu einer anderen zu senden. Jede Transaktion wird in einen Block
+              Transaktionen sind die Sprache des Bitcoin-Netzwerks. Mit ihnen kommunizieren Nutzer 
+              Wertübertragungen von einer Adresse zur anderen. Jede Transaktion wird in einen Block 
               aufgenommen und von allen Nodes im Netzwerk validiert.
             </p>
             <p>
-              In dieser Simulation sendest du Bitcoin von Satoshis Wallet an Halls Wallet
+              In dieser Simulation sendest du Bitcoin von Satoshi´s Wallet an Hal´s Wallet 
               und siehst, wie diese Transaktion in der Blockchain bestätigt wird.
             </p>
           </motion.div>
@@ -242,10 +242,10 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
             </div>
             
             <div className={styles.walletCard}>
-              <h3>Hall's Wallet</h3>
-              <p className={styles.walletAddress}>{hallAddress}</p>
+              <h3>Hal's Wallet</h3>
+              <p className={styles.walletAddress}>{halAddress}</p>
               <div className={styles.walletBalance}>
-                <strong>{walletInfo.hallBalance} BTC</strong>
+                <strong>{walletInfo.halBalance} BTC</strong>
                 {pendingTransactionAmount > 0 && (
                   <span className={styles.pendingIncoming}>
                     +<motion.span animate={{ opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 2 }}>
@@ -271,7 +271,7 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
             >
               <h3><FaSpinner className={styles.spinningIcon} /> Ausstehende Transaktion</h3>
               <p>
-                <strong>{pendingTransactionAmount} BTC</strong> von <strong>{satoshiAddress}</strong> an <strong>{hallAddress}</strong>
+                <strong>{pendingTransactionAmount} BTC</strong> von <strong>{satoshiAddress}</strong> an <strong>{halAddress}</strong>
               </p>
               <p>Transaktion-ID: <span className={styles.txId}>{txIdFromCombined}</span></p>
               <p className={styles.pendingNote}>
@@ -349,7 +349,7 @@ export const TransactionPage: React.FC<TransactionPageProps> = ({ onNext }) => {
                     <p><strong>{pendingTransactionAmount} BTC</strong> erfolgreich übertragen</p>
                     <p className={styles.txDetails}>
                       <span>Von: {satoshiAddress.substring(0, 6)}...{satoshiAddress.substring(satoshiAddress.length-3)}</span>
-                      <span>An: {hallAddress.substring(0, 6)}...{hallAddress.substring(hallAddress.length-3)}</span>
+                      <span>An: {halAddress.substring(0, 6)}...{halAddress.substring(halAddress.length-3)}</span>
                     </p>
                     <p className={styles.txConfirmTime}>
                       Bestätigt im Block #{miningResult.blockNumber} • {new Date().toLocaleTimeString()}

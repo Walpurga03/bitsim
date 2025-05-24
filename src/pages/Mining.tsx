@@ -251,7 +251,8 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
               <h1 className={styles.title}>Mining: Der Herzschlag von Bitcoin</h1>
               <p className={styles.description}>
                 Mining ist der Prozess, bei dem neue Bitcoin-Blöcke erzeugt und Transaktionen bestätigt werden. 
-                Als Miner wirst du ein mathematisches Rätsel lösen, um einen neuen Block zur Blockchain hinzuzufügen.
+                Im Wesentlichen funktioniert es wie eine Lotterie, die den Autor des nächsten Blocks bestimmt.
+                Wer den nächsten gültigen Block findet, darf ihn zur Blockchain hinzufügen und erhält eine Belohnung.
               </p>
               <motion.div 
                 className={styles.miningSimulationExplanation}
@@ -303,7 +304,9 @@ const BasicMiningPage: React.FC<BasicMiningPageProps> = ({ onNext }) => {
                 </div>
                 
                 <div className={styles.targetExplanation}>
-                  <p><strong>Hinweis:</strong> Im realen Bitcoin-Netzwerk probieren spezielle Computer Millionen von Hashes pro Sekunde aus, bis ein gültiger Hash gefunden wird.</p>
+                  <p>
+                    <strong>Hinweis:</strong> Stand Mitte 2025 erreicht das Bitcoin-Netzwerk eine Gesamt-Hash-Rate von etwa 986 EH/s – das sind 986 Trillionen Versuche pro Sekunde, einen gültigen Block zu finden! Diese immense Rechenleistung wird durch spezialisierte Mining-Computer (ASICs) erzeugt, die millionenfach effizienter sind als gewöhnliche PCs.
+                  </p>
                 </div>
               </motion.div>
               

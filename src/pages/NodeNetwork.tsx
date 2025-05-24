@@ -486,8 +486,10 @@ const NodeNetworkPage: React.FC<NodeNetworkPageProps> = ({}) => {
           <div className={styles.infoBox}>
             <h3>Warum ist die Block-Verbreitung so wichtig?</h3>
             <p>
-              Damit alle Teilnehmer dieselbe Version der Blockchain haben, müssen neue Blöcke schnell und zuverlässig im gesamten Netzwerk verteilt werden.
-              Nur so kann Konsens erreicht und verhindert werden, dass jemand unbemerkt eine alternative Kette aufbaut.
+              Schnelle Block-Verbreitung ist entscheidend für die Fairness im Mining-Prozess. Sie reduziert die Häufigkeit von konkurrierenden Blöcken (Orphans), da Miner schneller über neue Blöcke informiert werden und nicht unnötig an bereits gelösten Blöcken arbeiten. 
+            </p>
+            <p>
+              Dies verringert den inhärenten Vorteil größerer Miner und macht den Wettbewerb fairer für kleinere Mining-Teilnehmer. Der Proof-of-Work selbst macht es dagegen unpraktikabel, eine alternative Kette zu bauen.
             </p>
           </div>
         </motion.div>

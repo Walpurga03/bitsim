@@ -203,13 +203,13 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
     // Simuliere Mining-Verzögerung
     setTimeout(() => {
       const totalFees = selectedTransactions.reduce((sum, tx) => sum + tx.fee, 0);
-      const blockReward = 6.25 * 100000000; // in Satoshis
+      const blockReward = 3.125 * 100000000; // in Satoshis
 
       setMiningResult(
         `Block erfolgreich gemined! 🎉\n\n` +
         `Enthaltene Transaktionen: ${selectedTransactions.length}\n` +
         `Gesamte Gebühren: ${Math.round(totalFees)} Satoshis\n` +
-        `Block-Reward: ${Math.round(blockReward)} Satoshis (6.25 BTC)\n` +
+        `Block-Reward: ${Math.round(blockReward)} Satoshis\n` +
         `Gesamtbelohnung: ${Math.round(totalFees + blockReward)} Satoshis`
       );
 
@@ -291,8 +291,11 @@ const MempoolPage: React.FC<MempoolPageProps> = ({ onNext }) => {
           <div>
             <h3>Gebührenbasierte Auswahl</h3>
             <p>
-              Miner maximieren ihren Gewinn, indem sie Transaktionen mit höheren Gebühren pro Byte priorisieren. 
+              Miner maximieren ihren Gewinn, indem sie Transaktionen mit höheren Gebühren pro virtuellem Byte (vByte) priorisieren. 
               Nutzer, die schnellere Bestätigungen wünschen, bieten daher höhere Gebühren an.
+            </p>
+            <p className={styles.infoNote}>
+              <FaInfoCircle className={styles.infoIcon} /> <strong>Info:</strong> vByte (virtuelles Byte) ist die Maßeinheit für Transaktionsgröße in Bitcoin nach Einführung von SegWit. Sie gewichtet die Daten je nach ihrer Auswirkung auf die Netzwerkverarbeitung.
             </p>
           </div>
         </div>
